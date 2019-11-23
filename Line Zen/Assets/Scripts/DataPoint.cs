@@ -19,8 +19,28 @@ public struct DataPoint
         this.pos = new Vector2(other.pos.x, other.pos.y);
     }
 
-      /////////////////////////////////////////////////////
-     // Operator overloading - implicit casting allowed //
+    public DataPoint(Vector2 other)
+    {
+        this.pos = new Vector2(other.x, other.y);
+    }
+
+    public DataPoint(Vector3 other)
+    {
+        this.pos = new Vector2(other.x, other.y);
+    }
+
+    public override string ToString()
+    {
+        return "[X]" + X + " [Y]" + Y;
+    }
+
+    public bool IsRealNumber()
+    {
+        return !float.IsNaN(X) && !float.IsNaN(Y);
+    }
+
+    /////////////////////////////////////////////////////
+    // Operator overloading - implicit casting allowed //
     /////////////////////////////////////////////////////
     // Vector3 Unity Type
     public static implicit operator Vector3(DataPoint p)

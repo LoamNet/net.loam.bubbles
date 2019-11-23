@@ -11,16 +11,38 @@ public class GameCore : MonoBehaviour
     private DataPoint lastLineStart;
     private DataPoint lastLineEnd;
 
+    private List<DataPoint> bubbles;
+
     private void Start()
     {
+        bubbles = new List<DataPoint>();
         wasDownPreviously = false;
     }
 
     private void Update()
     {
+        UpdateBubbles();
+        UpdatePlayerLine();
+    }
+
+    private void UpdateBubbles()
+    {
+        while(bubbles.Count < 5000)
+        {
+            DataPoint screenSize = inputManager.ScreenSizeWorld();
+            bubbles.Add(new DataPoint(
+                Random.Range(-screenSize.X + VisualBubbleManager.bubbleRadius, screenSize.X - VisualBubbleManager.bubbleRadius), 
+                Random.Range(-screenSize.Y + VisualBubbleManager.bubbleRadius, screenSize.Y - VisualBubbleManager.bubbleRadius)));
+            events.OnBubblesChange?.Invoke(bubbles);
+        }
+    }
+
+    // Handles updating positions for the player line, along with line starting and finishing events.
+    private void UpdatePlayerLine()
+    {
         if (inputManager.PrimaryInputDown())
         {
-            if(wasDownPreviously)
+            if (wasDownPreviously)
             {
                 lastLineEnd = inputManager.PrimaryInputPosWorld();
                 events.OnLineUpdated?.Invoke(lastLineStart, lastLineEnd);
@@ -36,7 +58,7 @@ public class GameCore : MonoBehaviour
         }
         else
         {
-            if(wasDownPreviously)
+            if (wasDownPreviously)
             {
                 events.OnLineDestroyed?.Invoke();
                 wasDownPreviously = false;

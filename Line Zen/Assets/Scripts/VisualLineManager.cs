@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class VisualLineManager : MonoBehaviour
 {
-    GameObject template;
+    public GameObject template;
 
     // Start is called before the first frame update
     void Start()
@@ -34,17 +34,14 @@ public class VisualLineManager : MonoBehaviour
         template.SetActive(false);
     }
 
-    public DataLine CreateLine(DataPoint start, DataPoint end)
+    public VisualLine CreateLine(DataPoint start, DataPoint end, Color color, double thickness = .2)
     {
         GameObject line = Instantiate(template);
-        line.SetActive(true);
         line.name = "line";
         line.transform.SetParent(this.transform);
+        line.SetActive(true);
 
         LineRenderer renderer = line.GetComponent<LineRenderer>();
-        renderer.SetPosition(0, start);
-        renderer.SetPosition(1, end);
-
-        return new DataLine(this, renderer, start, end);
+        return new VisualLine(this, renderer, start, end, Color.white, (float)thickness);
     }
 }

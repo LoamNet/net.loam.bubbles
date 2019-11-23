@@ -15,6 +15,14 @@ public class GameInputManager : MonoBehaviour
         return new DataPoint(world.x, world.y);
     }
 
+    public DataPoint ScreenSizeWorld()
+    {
+        Vector3 screen = new Vector3(Screen.width, Screen.height, -sceneCam.transform.position.z);
+        Vector3 world = sceneCam.ScreenToWorldPoint(screen);
+
+        return new DataPoint(world.x, world.y);
+    }
+
     public bool PrimaryInputDown()
     {
         if(Input.GetMouseButton(0))
