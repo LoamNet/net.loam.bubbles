@@ -1,2 +1,2 @@
 # Line-Zen
-A chill game about connecting thinsg with lines
+A chill game about connecting things with lines
