@@ -24,7 +24,12 @@ public class Utils
         return new DataPoint(x, y);
     }
 
-    public static bool IsLineTouchingCircle(DataPoint start, DataPoint end, DataPoint bubble, float radius)
+    public static bool IsInRadiusLineRange(DataPoint start, DataPoint end, DataPoint bubble, float triggerRadius)
+    {
+        return IsLineTouchingCircle(start, end, bubble, triggerRadius, 0, false);
+    }
+
+    public static bool IsLineTouchingCircle(DataPoint start, DataPoint end, DataPoint bubble, float triggerRadius, float bubbleRadius, bool cullOutsideT = true)
     {
         // Get length of line
         float xdif = end.X - start.X;
@@ -40,8 +45,11 @@ public class Utils
 
         // if t > 1 or < 0, we're not on the line.
         // At this point, we would be either behind or in front of it.
-        if (t > line_len + radius || t < 0 - radius)
-            return false;
+        if (cullOutsideT)
+        {
+            if (t > line_len + bubbleRadius || t < 0 - bubbleRadius)
+                return false;
+        }
 
         // get position of the closest point, p.
         float x = t * directionX + start.X;
@@ -53,7 +61,7 @@ public class Utils
         float circleDistance = Mathf.Sqrt(xdif * xdif + ydif * ydif);
 
         // Return if we hit/pass through the circle or not.
-        if (circleDistance <= radius)
+        if (circleDistance <= triggerRadius)
             return true;
 
         return false;

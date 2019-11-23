@@ -6,13 +6,13 @@ using UnityEngine;
 public class VisualLineManager : MonoBehaviour
 {
     public GameObject template;
-
+    public static float width = .2f;
+    
     // Start is called before the first frame update
     void Start()
     {
         if(template == null)
         {
-            const float width = .2f;
             const int capVertices = 10;
 
             template = new GameObject("default line template");
@@ -21,7 +21,7 @@ public class VisualLineManager : MonoBehaviour
             Texture2D texture = new Texture2D(1, 1);
             texture.SetPixel(0, 0, Color.white);
 
-            Material material = new Material(Shader.Find("Standard"));
+            Material material = new Material(Shader.Find("UI/Unlit/Text"));
             material.SetTexture("_MainTex", texture);
             renderer.material = material;
 
@@ -42,6 +42,6 @@ public class VisualLineManager : MonoBehaviour
         line.SetActive(true);
 
         LineRenderer renderer = line.GetComponent<LineRenderer>();
-        return new VisualLine(this, renderer, start, end, Color.white, (float)thickness);
+        return new VisualLine(this, renderer, start, end, color, (float)thickness);
     }
 }

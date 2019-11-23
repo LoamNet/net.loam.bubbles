@@ -5,8 +5,8 @@ using UnityEngine;
 public class VisualBubbleManager : MonoBehaviour
 {
     public GameObject template;
-    public static float bubbleRadius = 5.4f;
-
+    public static float bubbleRadius = .5f;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -17,7 +17,7 @@ public class VisualBubbleManager : MonoBehaviour
             template.transform.localScale = new Vector3(bubbleRadius * 2, bubbleRadius * 2, bubbleRadius * 2);
             GameObject.Destroy(GetComponent<SphereCollider>());
 
-            Utils.SetMaterialToColorWithAlpha(template, new Color(.2f, .6f, 1f, .3f));
+            Utils.SetMaterialToColorWithAlpha(template, new Color(.2f, .8f, 1f, .2f));
         }
 
         template.SetActive(false);

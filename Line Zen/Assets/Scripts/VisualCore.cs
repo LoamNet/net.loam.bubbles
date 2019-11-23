@@ -83,10 +83,14 @@ public class VisualCore : MonoBehaviour
                 if (bubble.visual != null)
                 {
                     DataPoint closestPoint = Utils.GetClosestPointOnLine(line.Start(), line.End(), bubble.Position);
-                    bool isHit = Utils.IsLineTouchingCircle(line.Start(), line.End(), bubble.Position, .4f);
+                    float triggerRadius = VisualBubbleManager.bubbleRadius + VisualLineManager.width / 2 + GameCore.widthLeeway;
+                    
+                    bool isHit = Utils.IsLineTouchingCircle(line.Start(), line.End(), bubble.Position, triggerRadius, VisualBubbleManager.bubbleRadius);
+                    bool isIntermediate = Utils.IsInRadiusLineRange(line.Start(), line.End(), bubble.Position, triggerRadius);
+                    
                     if (closestPoint.IsRealNumber())
                     {
-                        VisualLine visual = lineManager.CreateLine(bubble.Position, closestPoint, isHit ? Color.green : Color.red, .02);
+                        VisualLine visual = lineManager.CreateLine(bubble.Position, closestPoint, isHit ? Color.green : (isIntermediate? Color.blue : Color.red), .04f);
                         debugLines.Add(visual);
                     }
                 }

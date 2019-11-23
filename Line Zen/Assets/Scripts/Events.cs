@@ -15,6 +15,9 @@ public class Events : MonoBehaviour
     // When a line is termianted.
     public Action OnLineDestroyed;
 
+    // When a tutorial swipe is done
+    public Action OnCorrectTutorialSwipe;
+
     // Whenever the state of bubbles changes, this is fired.
     public Action<List<DataPoint>> OnBubblesChange;
 }

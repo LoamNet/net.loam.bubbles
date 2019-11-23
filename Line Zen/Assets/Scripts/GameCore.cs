@@ -2,16 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum GameState
+{
+    Startup,
+    Tutorial,
+    GameUnlimited,
+}
+
 public class GameCore : MonoBehaviour
 {
     public Events events;
     public GameInputManager inputManager;
+    public static float widthLeeway = 0.025f;
 
     private bool wasDownPreviously;
     private DataPoint lastLineStart;
     private DataPoint lastLineEnd;
 
     private List<DataPoint> bubbles;
+    private GameState gameState;
 
     private void Start()
     {
@@ -21,18 +30,27 @@ public class GameCore : MonoBehaviour
 
     private void Update()
     {
-        UpdateBubbles();
-        UpdatePlayerLine();
+        switch (gameState)
+        {
+            case GameState.Startup:
+                UpdatePlayerLine();
+                break;
+
+            case GameState.GameUnlimited:
+                UpdateBubbles();
+                UpdatePlayerLine();
+                break;
+        }
     }
 
     private void UpdateBubbles()
     {
-        while(bubbles.Count < 5000)
+        if(bubbles.Count < 6)
         {
             DataPoint screenSize = inputManager.ScreenSizeWorld();
             bubbles.Add(new DataPoint(
                 Random.Range(-screenSize.X + VisualBubbleManager.bubbleRadius, screenSize.X - VisualBubbleManager.bubbleRadius), 
-                Random.Range(-screenSize.Y + VisualBubbleManager.bubbleRadius, screenSize.Y - VisualBubbleManager.bubbleRadius)));
+                Random.Range(-screenSize.Y + VisualBubbleManager.bubbleRadius * 4, screenSize.Y - VisualBubbleManager.bubbleRadius)));
             events.OnBubblesChange?.Invoke(bubbles);
         }
     }
