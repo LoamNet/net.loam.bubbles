@@ -2,7 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DataPoint
+public struct DataPoint
 {
-    public1
+    private Vector2 pos; 
+
+    public float X { get { return pos.x; } set { pos.x = value; } }
+    public float Y { get { return pos.y; } set { pos.y = value; } }
+
+    public DataPoint(float x = 0, float y = 0)
+    {
+        this.pos = new Vector2(x, y);
+    }
+
+    public DataPoint(DataPoint other)
+    {
+        this.pos = new Vector2(other.pos.x, other.pos.y);
+    }
+
+      /////////////////////////////////////////////////////
+     // Operator overloading - implicit casting allowed //
+    /////////////////////////////////////////////////////
+    // Vector3 Unity Type
+    public static implicit operator Vector3(DataPoint p)
+    {
+        return new Vector3(p.pos.x, p.pos.y, 0);
+    }
+
+    // Vector2 Unity Type
+    public static implicit operator Vector2(DataPoint p)
+    {
+        return new Vector2(p.pos.x, p.pos.y);
+    }
 }
