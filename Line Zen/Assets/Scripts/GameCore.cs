@@ -121,7 +121,7 @@ public class GameCore : MonoBehaviour
         List<int> collectedIndexes = new List<int>();
 
         // Collect collisions
-        for (int i = bubbles.Count - 1; i > 0; --i)
+        for (int i = bubbles.Count - 1; i >= 0; --i)
         {
             DataPoint bubble = bubbles[i];
 
