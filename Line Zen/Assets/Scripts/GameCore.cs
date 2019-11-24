@@ -16,6 +16,8 @@ public class GameCore : MonoBehaviour
     private GameState _internal_gm_st;
     private bool hasInit;
 
+    private SerializedData data;
+
     public GameState State
     {
         get
@@ -43,6 +45,7 @@ public class GameCore : MonoBehaviour
         if(!hasInit)
         {
             State = GameState.Startup;
+            events.OnScoreChange?.Invoke(data.score);
             hasInit = true;
         }
 
@@ -105,8 +108,39 @@ public class GameCore : MonoBehaviour
             if (wasDownPreviously)
             {
                 events.OnLineDestroyed?.Invoke();
+                CollectBubblesAsNecessary();
                 wasDownPreviously = false;
             }
+        }
+    }
+
+    private void CollectBubblesAsNecessary()
+    {
+        float triggerRadius = VisualBubbleManager.bubbleRadius + VisualLineManager.width / 2 + GameCore.widthLeeway;
+
+        List<int> collectedIndexes = new List<int>();
+
+        // Collect collisions
+        for (int i = bubbles.Count - 1; i > 0; --i)
+        {
+            DataPoint bubble = bubbles[i];
+
+            bool isHit = Utils.IsLineTouchingCircle(lastLineStart, lastLineEnd, bubble, triggerRadius, VisualBubbleManager.bubbleRadius);
+            
+            if(isHit)
+            {
+                collectedIndexes.Add(i);
+            }
+        }
+
+        // Score updating
+        data.score = data.score + 20 * collectedIndexes.Count;
+        events.OnScoreChange?.Invoke(data.score);
+
+        // Clear colleted bubbles
+        foreach (int index in collectedIndexes)
+        {
+            bubbles.RemoveAt(index);
         }
     }
 }

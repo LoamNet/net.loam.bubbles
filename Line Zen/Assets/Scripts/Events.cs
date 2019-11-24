@@ -26,4 +26,6 @@ public class Events : MonoBehaviour
 
     // Whenever the state of bubbles changes, this is fired.
     public Action<List<DataPoint>> OnBubblesChange;
+
+    public Action<long> OnScoreChange;
 }

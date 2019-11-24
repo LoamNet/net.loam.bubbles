@@ -10,7 +10,14 @@ public class UIDisplayableStates : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        events.OnGameStateChange += SetVisibility;
+        try
+        {
+            events.OnGameStateChange += SetVisibility;
+        }
+        catch
+        {
+            Debug.LogError("Failure in object " + gameObject.name);
+        }
     }
 
     void SetVisibility(GameState state)
