@@ -6,6 +6,7 @@ public class GameCore : MonoBehaviour
 {
     public Events events;
     public GameInputManager inputManager;
+    public SerializedDataIO dataIO;
     public static float widthLeeway = 0.025f;
 
     private bool wasDownPreviously;
@@ -17,6 +18,7 @@ public class GameCore : MonoBehaviour
     private bool hasInit;
 
     private SerializedData data;
+    public SerializedData Data { get { return data; } }
 
     public GameState State
     {
@@ -37,6 +39,7 @@ public class GameCore : MonoBehaviour
         bubbles = new List<DataPoint>();
         wasDownPreviously = false;
 
+        events.OnShowHelpToggle += (isOn) => { data.displayHelpLines = isOn; };
         events.OnGameStateChangeRequest += (state) => { State = state; };
     }
 
@@ -44,8 +47,9 @@ public class GameCore : MonoBehaviour
     {
         if(!hasInit)
         {
+            data = dataIO.GetData();
             State = GameState.Startup;
-            events.OnScoreChange?.Invoke(data.score);
+            events.OnSerializedDataChange?.Invoke(data);
             hasInit = true;
         }
 
@@ -135,7 +139,7 @@ public class GameCore : MonoBehaviour
 
         // Score updating
         data.score = data.score + 20 * collectedIndexes.Count;
-        events.OnScoreChange?.Invoke(data.score);
+        events.OnSerializedDataChange?.Invoke(data);
 
         // Clear colleted bubbles
         foreach (int index in collectedIndexes)

@@ -10,6 +10,6 @@ public class UIUpdateScoreVariable : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        events.OnScoreChange += (newScore) => { GetComponent<TMPro.TextMeshProUGUI>().text = "" + newScore; };
+        events.OnSerializedDataChange += (data) => { GetComponent<TMPro.TextMeshProUGUI>().text = "" + data.score; };
     }
 }

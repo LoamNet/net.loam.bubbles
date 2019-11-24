@@ -7,6 +7,7 @@ public class VisualCore : MonoBehaviour
     public Events events;
     public VisualLineManager lineManager;
     public VisualBubbleManager bubbleManager;
+    public GameCore core;
 
     private VisualLine line;
     private List<VisualBubble> trackedBubbles;
@@ -76,22 +77,25 @@ public class VisualCore : MonoBehaviour
 
         debugLines.Clear();
 
-        if (line != null)
+        if (core.Data.displayHelpLines)
         {
-            foreach (VisualBubble bubble in trackedBubbles)
+            if (line != null)
             {
-                if (bubble.visual != null)
+                foreach (VisualBubble bubble in trackedBubbles)
                 {
-                    DataPoint closestPoint = Utils.GetClosestPointOnLine(line.Start(), line.End(), bubble.Position);
-                    float triggerRadius = VisualBubbleManager.bubbleRadius + VisualLineManager.width / 2 + GameCore.widthLeeway;
-                    
-                    bool isHit = Utils.IsLineTouchingCircle(line.Start(), line.End(), bubble.Position, triggerRadius, VisualBubbleManager.bubbleRadius);
-                    bool isIntermediate = Utils.IsInRadiusLineRange(line.Start(), line.End(), bubble.Position, triggerRadius);
-                    
-                    if (closestPoint.IsRealNumber())
+                    if (bubble.visual != null)
                     {
-                        VisualLine visual = lineManager.CreateLine(bubble.Position, closestPoint, isHit ? Color.green : (isIntermediate? Color.blue : Color.red), .04f);
-                        debugLines.Add(visual);
+                        DataPoint closestPoint = Utils.GetClosestPointOnLine(line.Start(), line.End(), bubble.Position);
+                        float triggerRadius = VisualBubbleManager.bubbleRadius + VisualLineManager.width / 2 + GameCore.widthLeeway;
+
+                        bool isHit = Utils.IsLineTouchingCircle(line.Start(), line.End(), bubble.Position, triggerRadius, VisualBubbleManager.bubbleRadius);
+                        bool isIntermediate = Utils.IsInRadiusLineRange(line.Start(), line.End(), bubble.Position, triggerRadius);
+
+                        if (closestPoint.IsRealNumber())
+                        {
+                            VisualLine visual = lineManager.CreateLine(bubble.Position, closestPoint, isHit ? Color.green : (isIntermediate ? Color.blue : Color.red), .04f);
+                            debugLines.Add(visual);
+                        }
                     }
                 }
             }
