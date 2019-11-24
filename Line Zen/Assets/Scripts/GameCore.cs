@@ -2,13 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum GameState
-{
-    Startup,
-    Tutorial,
-    GameUnlimited,
-}
-
 public class GameCore : MonoBehaviour
 {
     public Events events;
@@ -20,25 +13,58 @@ public class GameCore : MonoBehaviour
     private DataPoint lastLineEnd;
 
     private List<DataPoint> bubbles;
-    private GameState gameState;
+    private GameState _internal_gm_st;
+    private bool hasInit;
+
+    public GameState State
+    {
+        get
+        {
+            return _internal_gm_st;
+        }
+        set
+        {
+            _internal_gm_st = value;
+            events.OnGameStateChange?.Invoke(_internal_gm_st);
+        } 
+    }
 
     private void Start()
     {
+        hasInit = false;
         bubbles = new List<DataPoint>();
         wasDownPreviously = false;
+
+        events.OnGameStateChangeRequest += (state) => { State = state; };
     }
 
     private void Update()
     {
-        switch (gameState)
+        if(!hasInit)
+        {
+            State = GameState.Startup;
+            hasInit = true;
+        }
+
+        switch (State)
         {
             case GameState.Startup:
+                break;
+            case GameState.Options:
+                break;
+            case GameState.TutorialOne:
                 UpdatePlayerLine();
                 break;
-
             case GameState.GameUnlimited:
                 UpdateBubbles();
                 UpdatePlayerLine();
+                break;
+            case GameState.Exit:
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif 
                 break;
         }
     }

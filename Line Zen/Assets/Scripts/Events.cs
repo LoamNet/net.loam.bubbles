@@ -18,6 +18,12 @@ public class Events : MonoBehaviour
     // When a tutorial swipe is done
     public Action OnCorrectTutorialSwipe;
 
+    // Request a game state change
+    public Action<GameState> OnGameStateChangeRequest;
+
+    // The game state has been updated
+    public Action<GameState> OnGameStateChange;
+
     // Whenever the state of bubbles changes, this is fired.
     public Action<List<DataPoint>> OnBubblesChange;
 }
