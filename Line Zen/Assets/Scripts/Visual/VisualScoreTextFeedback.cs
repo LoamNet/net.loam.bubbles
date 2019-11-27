@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public enum TextType
 {
@@ -12,7 +13,7 @@ public class VisualScoreTextFeedback : MonoBehaviour
 {
     [Header("General")]
     public Events events;
-    public TMPro.TextMeshProUGUI textScoreVisual;
+    public TextMeshProUGUI textScoreVisual;
     public Canvas canvastarget;
 
     [Header("Text Colors")]
@@ -20,7 +21,7 @@ public class VisualScoreTextFeedback : MonoBehaviour
     public Color scoreAdditionBonus;
 
     // Private variables
-    private List<TMPro.TextMeshProUGUI> createdText;
+    private List<TextMeshProUGUI> createdText;
 
     private void Start()
     {
@@ -29,7 +30,7 @@ public class VisualScoreTextFeedback : MonoBehaviour
 
     public void CreateText(DataPoint position, string value, TextType textType)
     {
-        TMPro.TextMeshProUGUI visual = Instantiate(textScoreVisual);
+        TextMeshProUGUI visual = Instantiate(textScoreVisual);
 
         visual.transform.SetParent(canvastarget.transform);
         visual.transform.position = position;
@@ -52,13 +53,26 @@ public class VisualScoreTextFeedback : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach(TMPro.TextMeshProUGUI textVisual in createdText)
+        List<TextMeshProUGUI> expired = new List<TextMeshProUGUI>();
+
+        foreach(TextMeshProUGUI textVisual in createdText)
         {
             Vector3 pos = textVisual.transform.position;
             textVisual.transform.position = new Vector3(pos.x, pos.y + 10f * Time.deltaTime, pos.z);
 
             Color col = textVisual.color;
             textVisual.color = new Color(col.r, col.g, col.b, col.a - .01f);
+
+            if (textVisual.color.a < 0.01)
+            {
+                expired.Add(textVisual);
+            }
+        }
+
+        foreach(TextMeshProUGUI old in expired)
+        {
+            createdText.Remove(old);
+            Destroy(old.gameObject);
         }
     }
 }

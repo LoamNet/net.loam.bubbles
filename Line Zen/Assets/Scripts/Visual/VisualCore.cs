@@ -37,7 +37,7 @@ public class VisualCore : MonoBehaviour
 
     private void OnLineCreated(DataPoint start, DataPoint end)
     {
-        line = lineManager.CreateLine(start, end, Color.white);
+        line = lineManager.CreateLine(start, end);
     }
 
     private void OnLineDrawn(DataPoint start, DataPoint end)

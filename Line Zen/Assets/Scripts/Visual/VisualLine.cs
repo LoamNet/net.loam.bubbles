@@ -10,13 +10,12 @@ public class VisualLine
     public VisualLine(VisualLineManager manager, LineRenderer renderer, DataPoint start, DataPoint end, Color color, float thickness)
     {
         this.manager = manager;
-
         this.renderer = renderer;
 
-        renderer.SetPosition(0, start);
-        renderer.SetPosition(1, end);
-        renderer.startColor = color;
-        renderer.endColor = color;
+        this.renderer.SetPosition(0, start);
+        this.renderer.SetPosition(1, end);
+        this.renderer.startColor = color;
+        this.renderer.endColor = color;
         this.renderer.startWidth = thickness;
         this.renderer.endWidth = thickness;
     }
@@ -43,6 +42,7 @@ public class VisualLine
 
     public void Destroy()
     {
+        manager.StopTrackingLine(this);
         GameObject.Destroy(renderer.gameObject);
         manager = null;
     }
