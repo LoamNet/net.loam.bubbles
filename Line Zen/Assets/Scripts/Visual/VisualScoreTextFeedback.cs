@@ -61,7 +61,7 @@ public class VisualScoreTextFeedback : MonoBehaviour
             textVisual.transform.position = new Vector3(pos.x, pos.y + 10f * Time.deltaTime, pos.z);
 
             Color col = textVisual.color;
-            textVisual.color = new Color(col.r, col.g, col.b, col.a - .01f);
+            textVisual.color = new Color(col.r, col.g, col.b, col.a - .5f * Time.deltaTime);
 
             if (textVisual.color.a < 0.01)
             {
