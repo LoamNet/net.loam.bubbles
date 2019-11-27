@@ -45,7 +45,7 @@ public struct SerializedData
                             break;
                     }
                 }
-                catch (System.Exception e)
+                catch (System.Exception)
                 {
                     Debug.LogError("Parsing error for line: " + line);
                 }

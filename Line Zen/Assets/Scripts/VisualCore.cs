@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class VisualCore : MonoBehaviour
 {
+    [Header("Base links")]
     public Events events;
+    public GameCore core;
+    public GameInputManager input;
+
+
+    [Header("Visual links")]
     public VisualLineManager lineManager;
     public VisualBubbleManager bubbleManager;
-    public GameCore core;
+    public VisualScoreTextFeedback visualTextFeedback;
 
     private VisualLine line;
     private List<VisualBubble> trackedBubbles;
@@ -40,9 +46,25 @@ public class VisualCore : MonoBehaviour
         line?.SetEnd(end);
     }
 
-    private void OnLineDestroyed()
+    private void OnLineDestroyed(DataPoint start, DataPoint end, DataEarnedScore points)
     {
         line?.Destroy();
+
+        if (points.total > 0)
+        {
+            DataPoint s = input.ConvertToScreenPoint(start);
+            DataPoint e = input.ConvertToScreenPoint(end);
+            DataPoint worldPos = new DataPoint((s.X + e.X) / 2, (s.Y + e.Y) / 2);
+
+            visualTextFeedback.CreateText(s, "+" + GameCore.pointsPerBubble, TextType.ScoreAddition);
+            visualTextFeedback.CreateText(e, "+" + GameCore.pointsPerBubble, TextType.ScoreAddition);
+
+            if (points.bonus != 0)
+            {
+                visualTextFeedback.CreateText(worldPos, "Bonus! +" + points.bonus, TextType.ScoreAdditionBonus);
+            }
+        }
+
         line = null;
     }
 
@@ -86,9 +108,9 @@ public class VisualCore : MonoBehaviour
                     if (bubble.visual != null)
                     {
                         DataPoint closestPoint = Utils.GetClosestPointOnLine(line.Start(), line.End(), bubble.Position);
-                        float triggerRadius = VisualBubbleManager.bubbleRadius + VisualLineManager.width / 2 + GameCore.widthLeeway;
+                        float triggerRadius = GameCore.bubbleRadius + VisualLineManager.width / 2 + GameCore.widthLeeway;
 
-                        bool isHit = Utils.IsLineTouchingCircle(line.Start(), line.End(), bubble.Position, triggerRadius, VisualBubbleManager.bubbleRadius);
+                        bool isHit = Utils.IsLineTouchingCircle(line.Start(), line.End(), bubble.Position, triggerRadius, GameCore.bubbleRadius);
                         bool isIntermediate = Utils.IsInRadiusLineRange(line.Start(), line.End(), bubble.Position, triggerRadius);
 
                         if (closestPoint.IsRealNumber())

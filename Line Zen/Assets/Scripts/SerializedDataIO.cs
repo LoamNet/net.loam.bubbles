@@ -43,7 +43,7 @@ public class SerializedDataIO : MonoBehaviour
                 return data;
             }
         }
-        catch(System.Exception e)
+        catch(System.Exception)
         {
             Debug.Log("Couldn't find any save file - making a new one!");
             SetData(new SerializedData());

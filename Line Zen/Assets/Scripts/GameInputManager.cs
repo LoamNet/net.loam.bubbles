@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameInputManager : MonoBehaviour
 {
+    public Events events;
     public Camera sceneCam;
 
     public DataPoint PrimaryInputPosWorld()
@@ -11,8 +12,17 @@ public class GameInputManager : MonoBehaviour
         Vector3 screen = Input.mousePosition;
         screen.z = -sceneCam.transform.position.z;
         Vector3 world = sceneCam.ScreenToWorldPoint(screen);
-
+        
         return new DataPoint(world.x, world.y);
+    }
+
+    public DataPoint ConvertToScreenPoint(DataPoint worldPoint)
+    {
+        Vector3 world = worldPoint;
+        world.z = 0;
+        Vector3 screen = sceneCam.WorldToScreenPoint(world);
+
+        return new DataPoint(screen.x, screen.y);
     }
 
     public DataPoint ScreenSizeWorld()
@@ -23,6 +33,16 @@ public class GameInputManager : MonoBehaviour
         return new DataPoint(world.x, world.y);
     }
 
+    public bool PrimaryInputPressed()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public bool PrimaryInputDown()
     {
         if(Input.GetMouseButton(0))
@@ -31,5 +51,13 @@ public class GameInputManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void Update()
+    {
+        if(PrimaryInputPressed())
+        {
+            events.OnClick?.Invoke(new DataPoint(Input.mousePosition.x, Input.mousePosition.y));
+        }
     }
 }

@@ -4,11 +4,19 @@ using UnityEngine;
 
 public class GameCore : MonoBehaviour
 {
+    // Setup and linsk
     public Events events;
     public GameInputManager inputManager;
     public SerializedDataIO dataIO;
-    public static float widthLeeway = 0.025f;
 
+    // Static values
+    public static readonly float widthLeeway = 0.025f;
+    public static readonly float bubbleRadius = .3f;
+    public static readonly int bonusThreshold = 2;
+    public static readonly int pointsPerBubble = 20;
+    public static readonly int pointsPerBonusBubble = 15;
+
+    // Private internal state
     private bool wasDownPreviously;
     private DataPoint lastLineStart;
     private DataPoint lastLineEnd;
@@ -82,8 +90,8 @@ public class GameCore : MonoBehaviour
         {
             DataPoint screenSize = inputManager.ScreenSizeWorld();
             bubbles.Add(new DataPoint(
-                Random.Range(-screenSize.X + VisualBubbleManager.bubbleRadius, screenSize.X - VisualBubbleManager.bubbleRadius), 
-                Random.Range(-screenSize.Y + VisualBubbleManager.bubbleRadius * 4, screenSize.Y - VisualBubbleManager.bubbleRadius)));
+                Random.Range(-screenSize.X + bubbleRadius, screenSize.X - bubbleRadius), 
+                Random.Range(-screenSize.Y + bubbleRadius * 4, screenSize.Y - bubbleRadius)));
             events.OnBubblesChange?.Invoke(bubbles);
         }
     }
@@ -102,7 +110,7 @@ public class GameCore : MonoBehaviour
             {
                 lastLineStart = inputManager.PrimaryInputPosWorld();
                 lastLineEnd = inputManager.PrimaryInputPosWorld();
-                events.OnLineCreated?.Invoke(lastLineEnd, lastLineEnd);
+                events.OnLineCreated?.Invoke(lastLineStart, lastLineEnd);
             }
 
             wasDownPreviously = true;
@@ -111,16 +119,17 @@ public class GameCore : MonoBehaviour
         {
             if (wasDownPreviously)
             {
-                events.OnLineDestroyed?.Invoke();
-                CollectBubblesAsNecessary();
+                DataEarnedScore points = CollectBubblesAsNecessary();
+                events.OnLineDestroyed?.Invoke(lastLineStart, lastLineEnd, points);
                 wasDownPreviously = false;
             }
         }
     }
 
-    private void CollectBubblesAsNecessary()
+    // Returns how much the score changed by
+    private DataEarnedScore CollectBubblesAsNecessary()
     {
-        float triggerRadius = VisualBubbleManager.bubbleRadius + VisualLineManager.width / 2 + GameCore.widthLeeway;
+        float triggerRadius = bubbleRadius + VisualLineManager.width / 2 + GameCore.widthLeeway;
 
         List<int> collectedIndexes = new List<int>();
 
@@ -129,7 +138,7 @@ public class GameCore : MonoBehaviour
         {
             DataPoint bubble = bubbles[i];
 
-            bool isHit = Utils.IsLineTouchingCircle(lastLineStart, lastLineEnd, bubble, triggerRadius, VisualBubbleManager.bubbleRadius);
+            bool isHit = Utils.IsLineTouchingCircle(lastLineStart, lastLineEnd, bubble, triggerRadius, bubbleRadius);
             
             if(isHit)
             {
@@ -138,13 +147,30 @@ public class GameCore : MonoBehaviour
         }
 
         // Score updating
-        data.score = data.score + 20 * collectedIndexes.Count;
-        events.OnSerializedDataChange?.Invoke(data);
+        int hit = collectedIndexes.Count;
+        int scoreBase = GameCore.pointsPerBubble * hit;
+        int scoreBonus = 0;
+
+        if(hit > bonusThreshold)
+        {
+            int bonusHits = hit - bonusThreshold;
+            scoreBonus = bonusHits * bonusHits * pointsPerBonusBubble;
+        }
+
+        DataEarnedScore dataEarnedScore = new DataEarnedScore(scoreBase, scoreBonus);
+
+        if (pointsPerBubble != 0)
+        {
+            data.score = data.score + dataEarnedScore.total;
+            events.OnSerializedDataChange?.Invoke(data);
+        }
 
         // Clear colleted bubbles
         foreach (int index in collectedIndexes)
         {
             bubbles.RemoveAt(index);
         }
+
+        return dataEarnedScore;
     }
 }
