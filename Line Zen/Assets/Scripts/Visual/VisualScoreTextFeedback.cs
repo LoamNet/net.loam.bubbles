@@ -30,13 +30,12 @@ public class VisualScoreTextFeedback : MonoBehaviour
 
     public void CreateText(DataPoint position, string value, TextType textType)
     {
-        TextMeshProUGUI visual = Instantiate(textScoreVisual);
-
-        visual.transform.SetParent(canvastarget.transform);
+        TextMeshProUGUI visual = Instantiate(textScoreVisual, canvastarget.transform);
         visual.transform.position = position;
         visual.text = value;
 
-        switch(textType)
+
+        switch (textType)
         {
             case TextType.ScoreAddition:
                 visual.color = scoreAddition;

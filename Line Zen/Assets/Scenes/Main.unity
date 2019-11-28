@@ -2788,7 +2788,7 @@ MonoBehaviour:
     type: 3}
   canvastarget: {fileID: 1879515259}
   scoreAddition: {r: 0.4818886, g: 0.6861057, b: 0.8584906, a: 0.85490197}
-  scoreAdditionBonus: {r: 0.8915094, g: 0.92977923, b: 1, a: 1}
+  scoreAdditionBonus: {r: 0.51366144, g: 0.83404607, b: 0.9150943, a: 0.8509804}
 --- !u!1 &1419096288
 GameObject:
   m_ObjectHideFlags: 0
