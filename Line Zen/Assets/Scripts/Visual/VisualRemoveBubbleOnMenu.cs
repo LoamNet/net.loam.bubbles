@@ -8,13 +8,11 @@ public class VisualRemoveBubbleOnMenu : MonoBehaviour
     private float timeout;
     private bool isShrinking;
     private float size;
-    private float accel;
 
     // Start is called before the first frame update
     void Start()
     {
         isShrinking = false;
-        accel = 0;
         events.OnGameStateChangeRequest += StartShrinkOut;
         timeout = Random.Range(2f, 5f);
         size = GameCore.bubbleRadius * 2;
