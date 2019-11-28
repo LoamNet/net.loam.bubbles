@@ -8,7 +8,7 @@ public class VisualCore : MonoBehaviour
     [Header("Base links")]
     public Events events;
     public GameCore core;
-    public GameInputManager input;
+    public GameInputManager inputManager;
 
     [Header("Visual links")]
     public VisualLineManager lineManager;
@@ -61,13 +61,13 @@ public class VisualCore : MonoBehaviour
 
         if (points.total > 0)
         {
-            DataPoint s = input.ConvertToScreenPoint(start);
-            DataPoint e = input.ConvertToScreenPoint(end);
+            DataPoint s = inputManager.ConvertToScreenPoint(start);
+            DataPoint e = inputManager.ConvertToScreenPoint(end);
             DataPoint worldPos = new DataPoint((s.X + e.X) / 2, (s.Y + e.Y) / 2);
 
             foreach (DataPoint point in points.locations)
             {
-                DataPoint loc = input.ConvertToScreenPoint(point);
+                DataPoint loc = inputManager.ConvertToScreenPoint(point);
                 visualTextFeedback.CreateText(loc, "+" + GameCore.pointsPerBubble, TextType.ScoreAddition);
             }
 
@@ -147,6 +147,8 @@ public class VisualCore : MonoBehaviour
         {
             if (line != null)
             {
+                float lineWidth = .04f;
+
                 foreach (VisualBubble bubble in trackedBubbles)
                 {
                     if (bubble.visual != null)
@@ -170,12 +172,29 @@ public class VisualCore : MonoBehaviour
                                 color = Color.HSVToRGB(.33f, .8f, .8f);
                             }
 
-                            VisualLine visual = lineManager.CreateLine(bubble.Position, closestPoint, color, .04f);
+                            VisualLine visual = lineManager.CreateLine(bubble.Position, closestPoint, color, lineWidth);
                             debugLines.Add(visual);
                         }
                     }
                 }
+
+                Vector2 directionUnscaled = new Vector2(line.End().X - line.Start().X, line.End().Y - line.Start().Y);
+                Vector2 direction = directionUnscaled.normalized;
+                Color col = new Color(.3f, .3f, .3f, .03f);
+                float length = 50f;
+                
+                debugLines.Add(lineManager.CreateLine(line.Start(), line.Start() + new DataPoint(-direction * length), col, lineWidth));
+                debugLines.Add(lineManager.CreateLine(line.End(), line.End() + new DataPoint(direction * length), col, lineWidth));
             }
+
+            /*
+             Screen boundary debugging
+            DataPoint screenSize = inputManager.ScreenSizeWorld();
+            debugLines.Add(lineManager.CreateLine(new DataPoint(-screenSize.X, screenSize.Y), new DataPoint(-screenSize.X, -screenSize.Y), Color.magenta, .1f)); // left
+            debugLines.Add(lineManager.CreateLine(new DataPoint(screenSize.X, screenSize.Y), new DataPoint(screenSize.X, -screenSize.Y), Color.magenta, .1f)); // right
+            debugLines.Add(lineManager.CreateLine(new DataPoint(-screenSize.X, screenSize.Y), new DataPoint(screenSize.X, screenSize.Y), Color.magenta, .1f)); // top
+            debugLines.Add(lineManager.CreateLine(new DataPoint(-screenSize.X, -screenSize.Y), new DataPoint(screenSize.X, -screenSize.Y), Color.magenta, .1f)); // bottom
+            */
         }
     }
 }

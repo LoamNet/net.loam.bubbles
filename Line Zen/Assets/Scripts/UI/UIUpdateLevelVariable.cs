@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(TMPro.TextMeshProUGUI))]
-public class UIUpdateScoreVariable : MonoBehaviour
+public class UIUpdateLevelVariable : MonoBehaviour
 {
     public Events events;
 
@@ -11,7 +10,7 @@ public class UIUpdateScoreVariable : MonoBehaviour
     void Start()
     {
         events.OnSerializedDataChange += (data) => {
-            GetComponent<TMPro.TextMeshProUGUI>().text = "" + data.score;
+            GetComponent<TMPro.TextMeshProUGUI>().text = "" + data.level;
         };
     }
 }

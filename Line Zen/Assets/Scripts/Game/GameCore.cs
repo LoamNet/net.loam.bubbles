@@ -10,12 +10,14 @@ public class GameCore : MonoBehaviour
     public Events events;
     public GameInputManager inputManager;
     public SerializedDataIO dataIO;
+
     // Static values
     public static readonly float widthLeeway = 0.025f;
     public static readonly float bubbleRadius = .3f;
     public static readonly int bonusThreshold = 1;
     public static readonly int pointsPerBubble = 20;
     public static readonly int pointsPerBonusBubble = 10;
+    public static readonly int maxBubblesOnScreen = 12;
 
     [Header("State")]
     public GameState internalState;
@@ -31,6 +33,9 @@ public class GameCore : MonoBehaviour
     private List<DataPoint> bubbles;
     private List<Tuple<DataPoint, DataPoint>> guideLines;
     private bool hasInit;
+
+    // Unlimited info
+    private Utils.WichmannRng rand;
 
     private SerializedData data;
     public SerializedData Data { get { return data; } }
@@ -59,7 +64,7 @@ public class GameCore : MonoBehaviour
         guideLines = new List<Tuple<DataPoint, DataPoint>>();
         wasDownPreviously = false;
 
-        events.OnShowHelpToggle += (isOn) => { data.displayHelpLines = isOn; };
+        events.OnShowHelpToggle += (isOn) => { data.displayHelpLines = isOn; events.OnSerializedDataChange?.Invoke(data); };
         events.OnGameStateChangeRequest += (state) => { State = state; };
     }
 
@@ -68,6 +73,7 @@ public class GameCore : MonoBehaviour
         if(!hasInit)
         {
             data = dataIO.GetData();
+
             events.OnGameStateChange?.Invoke(internalState);
             events.OnSerializedDataChange?.Invoke(data);
             hasInit = true;
@@ -188,6 +194,8 @@ public class GameCore : MonoBehaviour
     {
         if (bubbles.Count < 1)
         {
+            data.level = data.level + 1;
+            events.OnSerializedDataChange?.Invoke(data);
             State = GameState.GameUnlimited;
             return;
         }
@@ -197,16 +205,17 @@ public class GameCore : MonoBehaviour
     {
         if (!internalStateCurrentHasInit)
         {
+            rand = new Utils.WichmannRng(data.level);
             bubbles.Clear();
             guideLines.Clear();
 
-            while (bubbles.Count < 7)
+            while (bubbles.Count < (data.level / 2) + 2 && bubbles.Count < maxBubblesOnScreen)
             {
+                double x = (rand.Next() - 0.5f) * 2;
+                double y = (rand.Next() - 0.5f) * 2;
                 DataPoint screenSize = inputManager.ScreenSizeWorld();
-                bubbles.Add(new DataPoint(
-                    UnityEngine.Random.Range(-screenSize.X + bubbleRadius, screenSize.X - bubbleRadius),
-                    UnityEngine.Random.Range(-screenSize.Y + bubbleRadius * 4, screenSize.Y - bubbleRadius)));
-                
+                DataPoint pos = new DataPoint(x * (screenSize.X - bubbleRadius), y * (screenSize.Y - bubbleRadius * 2));
+                bubbles.Add(pos);
             }
 
             events.OnBubblesChange?.Invoke(bubbles);

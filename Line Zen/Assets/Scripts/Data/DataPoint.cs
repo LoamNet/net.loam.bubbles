@@ -9,19 +9,22 @@ public struct DataPoint
     public float X { get { return pos.x; } set { pos.x = value; } }
     public float Y { get { return pos.y; } set { pos.y = value; } }
 
+
+    public DataPoint(double x = 0, double y = 0)
+    {
+        this.pos = new Vector2((float)x, (float)y);
+    }
     public DataPoint(float x = 0, float y = 0)
     {
         this.pos = new Vector2(x, y);
     }
-
-    public DataPoint(DataPoint other)
-    {
-        this.pos = new Vector2(other.pos.x, other.pos.y);
-    }
-
     public DataPoint(Vector2 other)
     {
         this.pos = new Vector2(other.x, other.y);
+    }
+    public DataPoint(DataPoint other)
+    {
+        this.pos = new Vector2(other.pos.x, other.pos.y);
     }
 
     public DataPoint(Vector3 other)
@@ -52,5 +55,25 @@ public struct DataPoint
     public static implicit operator Vector2(DataPoint p)
     {
         return new Vector2(p.pos.x, p.pos.y);
+    }
+
+    public static DataPoint operator -(DataPoint lhs, DataPoint rhs)
+    {
+        return new DataPoint(lhs.X - rhs.X, lhs.Y - rhs.Y);
+    }
+
+    public static DataPoint operator +(DataPoint lhs, DataPoint rhs)
+    {
+        return new DataPoint(lhs.X + rhs.X, lhs.Y + rhs.Y);
+    }
+
+    public static DataPoint operator *(DataPoint lhs, DataPoint rhs)
+    {
+        return new DataPoint(lhs.X * rhs.X, lhs.Y * rhs.Y);
+    }
+
+    public static DataPoint operator *(DataPoint lhs, int rhs)
+    {
+        return new DataPoint(lhs.X * rhs, lhs.Y * rhs);
     }
 }

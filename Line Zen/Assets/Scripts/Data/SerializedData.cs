@@ -11,6 +11,7 @@ public struct SerializedData
 
     public long score;
     public bool displayHelpLines;
+    public int level;
 
     public override string ToString()
     {
@@ -18,6 +19,7 @@ public struct SerializedData
         string sep = keyValueSeparator.ToString();
         string end = contentSeparator.ToString();
 
+        created += "level" + sep + level.ToString() + end;
         created += "score" + sep + score.ToString() + end;
         created += "displayHelp" + sep + displayHelpLines.ToString() + end;
 
@@ -42,6 +44,9 @@ public struct SerializedData
                             break;
                         case "displayhelp":
                             displayHelpLines = bool.Parse(line[1]);
+                            break;
+                        case "level":
+                            level = int.Parse(line[1]);
                             break;
                     }
                 }

@@ -27,7 +27,7 @@ public class GameInputManager : MonoBehaviour
 
     public DataPoint ScreenSizeWorld()
     {
-        Vector3 screen = new Vector3(Screen.width, Screen.height, -sceneCam.transform.position.z);
+        Vector2 screen = new Vector2(Screen.width, Screen.height);
         Vector3 world = sceneCam.ScreenToWorldPoint(screen);
 
         return new DataPoint(world.x, world.y);
