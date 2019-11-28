@@ -173,8 +173,10 @@ MonoBehaviour:
   events: {fileID: 57648228}
   inputManager: {fileID: 57648227}
   dataIO: {fileID: 57648229}
-  internalState: 5
-  currentLevel: {fileID: 0}
+  internalState: 1
+  tutorialOne: {fileID: 4900000, guid: 79ccb4b363f83c045930be92fb8d215b, type: 3}
+  tutorialTwo: {fileID: 4900000, guid: 3e2c6be780cf2444c8ccf81f3694a2af, type: 3}
+  currentLevel: {fileID: 4900000, guid: 79ccb4b363f83c045930be92fb8d215b, type: 3}
 --- !u!114 &57648223
 MonoBehaviour:
   m_ObjectHideFlags: 0

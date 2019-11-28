@@ -13,7 +13,7 @@ public class UIOnMenuButtonPressed : MonoBehaviour
         UnityEngine.UI.Button button = GetComponent<UnityEngine.UI.Button>();
 
         button.onClick.AddListener(() => {
-            events.OnLineDestroyed?.Invoke(new DataPoint(), new DataPoint(), new DataEarnedScore(0, 0));
+            events.OnLineDestroyed?.Invoke(new DataPoint(), new DataPoint(), new DataEarnedScore(0, 0, null));
         });
     }
 }

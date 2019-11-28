@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,12 +13,14 @@ public class GameCore : MonoBehaviour
     // Static values
     public static readonly float widthLeeway = 0.025f;
     public static readonly float bubbleRadius = .3f;
-    public static readonly int bonusThreshold = 2;
+    public static readonly int bonusThreshold = 1;
     public static readonly int pointsPerBubble = 20;
-    public static readonly int pointsPerBonusBubble = 15;
+    public static readonly int pointsPerBonusBubble = 10;
 
     [Header("State")]
     public GameState internalState;
+    public TextAsset tutorialOne;
+    public TextAsset tutorialTwo;
     public TextAsset currentLevel;
 
     // Private internal state
@@ -26,6 +29,7 @@ public class GameCore : MonoBehaviour
     private DataPoint lastLineEnd;
 
     private List<DataPoint> bubbles;
+    private List<Tuple<DataPoint, DataPoint>> guideLines;
     private bool hasInit;
 
     private SerializedData data;
@@ -52,6 +56,7 @@ public class GameCore : MonoBehaviour
         hasInit = false;
         internalStateCurrentHasInit = false;
         bubbles = new List<DataPoint>();
+        guideLines = new List<Tuple<DataPoint, DataPoint>>();
         wasDownPreviously = false;
 
         events.OnShowHelpToggle += (isOn) => { data.displayHelpLines = isOn; };
@@ -75,15 +80,19 @@ public class GameCore : MonoBehaviour
             case GameState.Options:
                 break;
             case GameState.TutorialOne:
+                PopulateLevelBubbles(tutorialOne);
                 UpdatePlayerLine();
+                CheckIfDoneLevelBubbles(GameState.TutorialTwo);
                 break;
             case GameState.TutorialTwo:
+                PopulateLevelBubbles(tutorialTwo);
                 UpdatePlayerLine();
+                CheckIfDoneLevelBubbles(GameState.GameUnlimited);
                 break;
             case GameState.GameLoadLevel:
                 PopulateLevelBubbles(currentLevel);
                 UpdatePlayerLine();
-                CheckIfDoneLevelBubbles();
+                CheckIfDoneLevelBubbles(GameState.GameLoadLevel);
                 break;
             case GameState.GameUnlimited:
                 PopulateUnlimitedBubbles();
@@ -104,11 +113,53 @@ public class GameCore : MonoBehaviour
     {
         if(!internalStateCurrentHasInit)
         {
+            currentLevel = levelData;
+
+            bubbles.Clear();
+            guideLines.Clear();
+
+            string content = levelData.text;
+            string[] lines = content.Split('\n');
+
+            foreach(string line in lines)
+            {
+                string[] split = line.Split('=');
+                string key = split[0].Trim().ToLowerInvariant();
+                string value = split[1].Trim();
+
+                if(key.Equals("bubble"))
+                {
+                    string[] point = value.Split(',');
+                    float x = float.Parse(point[0].Trim());
+                    float y = float.Parse(point[1].Trim());
+
+                    bubbles.Add(new DataPoint(x, y));
+                }
+                else if(key.Equals("line"))
+                {
+                    string[] multiplePoints = value.Split(':');
+                    string[] point1 = multiplePoints[0].Split(',');
+                    string[] point2 = multiplePoints[1].Split(',');
+
+                    float x1 = float.Parse(point1[0].Trim());
+                    float y1 = float.Parse(point1[1].Trim());
+                    float x2 = float.Parse(point2[0].Trim());
+                    float y2 = float.Parse(point2[1].Trim());
+
+                    guideLines.Add(new Tuple<DataPoint, DataPoint>(
+                            new DataPoint(x1, y1),
+                            new DataPoint(x2, y2)));
+                }
+            }
+
+            events.OnBubblesChange?.Invoke(bubbles);
+            events.OnGuideLinesChange?.Invoke(guideLines);
+
             internalStateCurrentHasInit = true;
         }
     }
 
-    private void CheckIfDoneLevelBubbles()
+    private void CheckIfDoneLevelBubbles(GameState nextState)
     {
         if (currentLevel == null)
         {
@@ -119,7 +170,7 @@ public class GameCore : MonoBehaviour
 
         if (bubbles.Count < 1)
         {
-            State = GameState.GameLoadLevel;
+            State = nextState;
             return;
         }
     }
@@ -137,14 +188,20 @@ public class GameCore : MonoBehaviour
     {
         if (!internalStateCurrentHasInit)
         {
+            bubbles.Clear();
+            guideLines.Clear();
+
             while (bubbles.Count < 7)
             {
                 DataPoint screenSize = inputManager.ScreenSizeWorld();
                 bubbles.Add(new DataPoint(
-                    Random.Range(-screenSize.X + bubbleRadius, screenSize.X - bubbleRadius),
-                    Random.Range(-screenSize.Y + bubbleRadius * 4, screenSize.Y - bubbleRadius)));
-                events.OnBubblesChange?.Invoke(bubbles);
+                    UnityEngine.Random.Range(-screenSize.X + bubbleRadius, screenSize.X - bubbleRadius),
+                    UnityEngine.Random.Range(-screenSize.Y + bubbleRadius * 4, screenSize.Y - bubbleRadius)));
+                
             }
+
+            events.OnBubblesChange?.Invoke(bubbles);
+            events.OnGuideLinesChange?.Invoke(guideLines);
 
             internalStateCurrentHasInit = true;
         }
@@ -186,6 +243,7 @@ public class GameCore : MonoBehaviour
     {
         float triggerRadius = bubbleRadius + VisualLineManager.width / 2 + GameCore.widthLeeway;
 
+        List<DataPoint> locs = new List<DataPoint>();
         List<int> collectedIndexes = new List<int>();
 
         // Collect collisions
@@ -198,6 +256,7 @@ public class GameCore : MonoBehaviour
             if(isHit)
             {
                 collectedIndexes.Add(i);
+                locs.Add(bubble);
             }
         }
 
@@ -205,14 +264,14 @@ public class GameCore : MonoBehaviour
         int hit = collectedIndexes.Count;
         int scoreBase = GameCore.pointsPerBubble * hit;
         int scoreBonus = 0;
-
+        
         if(hit > bonusThreshold)
         {
             int bonusHits = hit - bonusThreshold;
             scoreBonus = bonusHits * bonusHits * pointsPerBonusBubble;
         }
 
-        DataEarnedScore dataEarnedScore = new DataEarnedScore(scoreBase, scoreBonus);
+        DataEarnedScore dataEarnedScore = new DataEarnedScore(scoreBase, scoreBonus, locs);
 
         if (pointsPerBubble != 0)
         {

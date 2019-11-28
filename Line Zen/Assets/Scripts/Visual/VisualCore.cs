@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,19 +10,26 @@ public class VisualCore : MonoBehaviour
     public GameCore core;
     public GameInputManager input;
 
-
     [Header("Visual links")]
     public VisualLineManager lineManager;
     public VisualBubbleManager bubbleManager;
     public VisualScoreTextFeedback visualTextFeedback;
 
+    [Header("Specific Visuals")]
+    public GameObject lineEndCap; 
+
+    // Internal private variables
     private VisualLine line;
     private List<VisualBubble> trackedBubbles;
-
+    private List<VisualLine> trackedGuideLines;
+    private List<GameObject> trackedGuideLineCaps;
+    
     private void Awake()
     {
         line = null;
         trackedBubbles = new List<VisualBubble>();
+        trackedGuideLines = new List<VisualLine>();
+        trackedGuideLineCaps = new List<GameObject>();
     }
 
     public void Start()
@@ -33,6 +41,7 @@ public class VisualCore : MonoBehaviour
 
         // Bubble related gameplay events
         events.OnBubblesChange += OnBubblesChange;
+        events.OnGuideLinesChange += OnGuideLinesChange;
     }
 
     private void OnLineCreated(DataPoint start, DataPoint end)
@@ -70,16 +79,38 @@ public class VisualCore : MonoBehaviour
 
     private void OnBubblesChange(List<DataPoint> bubbles)
     {
-        foreach(VisualBubble bubble in trackedBubbles)
+        foreach (VisualBubble bubble in trackedBubbles)
         {
             bubble.Destroy();
         }
 
         trackedBubbles.Clear();
 
-        foreach(DataPoint position in bubbles)
+        foreach (DataPoint position in bubbles)
         {
             trackedBubbles.Add(bubbleManager.CreateBubble(position));
+        }
+    }
+
+    private void OnGuideLinesChange(List<Tuple<DataPoint, DataPoint>> lines)
+    {
+        foreach (VisualLine line in trackedGuideLines)
+        {
+            line.Destroy();
+        }
+
+        trackedGuideLines.Clear();
+
+        foreach (GameObject obj in trackedGuideLineCaps)
+        {
+            Destroy(obj);
+        }
+
+        trackedGuideLineCaps.Clear();
+
+        foreach (Tuple<DataPoint, DataPoint> line in lines)
+        {
+            trackedGuideLines.Add(lineManager.CreateLine(line.Item1, line.Item2, new Color(.5f, .8f, 1, .3f), .1f));
         }
     }
 
@@ -92,7 +123,7 @@ public class VisualCore : MonoBehaviour
     private List<VisualLine> debugLines = new List<VisualLine>();
     private void DrawDebug()
     {
-        foreach(VisualLine obj in debugLines)
+        foreach (VisualLine obj in debugLines)
         {
             obj.Destroy();
         }
