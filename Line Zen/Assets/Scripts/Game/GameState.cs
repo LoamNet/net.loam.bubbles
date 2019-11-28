@@ -9,6 +9,7 @@ public enum GameState
     TutorialOne,
     TutorialTwo,
     Options,
+    GameLoadLevel,
     GameUnlimited,
     Exit
 }

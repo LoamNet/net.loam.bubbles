@@ -5,10 +5,10 @@ using UnityEngine;
 public class GameCore : MonoBehaviour
 {
     // Setup and linsk
+    [Header("Base links")]
     public Events events;
     public GameInputManager inputManager;
     public SerializedDataIO dataIO;
-
     // Static values
     public static readonly float widthLeeway = 0.025f;
     public static readonly float bubbleRadius = .3f;
@@ -16,34 +16,41 @@ public class GameCore : MonoBehaviour
     public static readonly int pointsPerBubble = 20;
     public static readonly int pointsPerBonusBubble = 15;
 
+    [Header("State")]
+    public GameState internalState;
+    public TextAsset currentLevel;
+
     // Private internal state
     private bool wasDownPreviously;
     private DataPoint lastLineStart;
     private DataPoint lastLineEnd;
 
     private List<DataPoint> bubbles;
-    private GameState _internal_gm_st;
     private bool hasInit;
 
     private SerializedData data;
     public SerializedData Data { get { return data; } }
 
+
+    bool internalStateCurrentHasInit;
     public GameState State
     {
         get
         {
-            return _internal_gm_st;
+            return internalState;
         }
         set
         {
-            _internal_gm_st = value;
-            events.OnGameStateChange?.Invoke(_internal_gm_st);
+            internalState = value;
+            internalStateCurrentHasInit = false;
+            events.OnGameStateChange?.Invoke(internalState);
         } 
     }
 
     private void Start()
     {
         hasInit = false;
+        internalStateCurrentHasInit = false;
         bubbles = new List<DataPoint>();
         wasDownPreviously = false;
 
@@ -56,7 +63,7 @@ public class GameCore : MonoBehaviour
         if(!hasInit)
         {
             data = dataIO.GetData();
-            State = GameState.Startup;
+            events.OnGameStateChange?.Invoke(internalState);
             events.OnSerializedDataChange?.Invoke(data);
             hasInit = true;
         }
@@ -70,9 +77,18 @@ public class GameCore : MonoBehaviour
             case GameState.TutorialOne:
                 UpdatePlayerLine();
                 break;
-            case GameState.GameUnlimited:
-                UpdateBubbles();
+            case GameState.TutorialTwo:
                 UpdatePlayerLine();
+                break;
+            case GameState.GameLoadLevel:
+                PopulateLevelBubbles(currentLevel);
+                UpdatePlayerLine();
+                CheckIfDoneLevelBubbles();
+                break;
+            case GameState.GameUnlimited:
+                PopulateUnlimitedBubbles();
+                UpdatePlayerLine();
+                CheckIfDoneUnlimitedBubbles();
                 break;
             case GameState.Exit:
 #if UNITY_EDITOR
@@ -84,15 +100,53 @@ public class GameCore : MonoBehaviour
         }
     }
 
-    private void UpdateBubbles()
+    public void PopulateLevelBubbles(TextAsset levelData)
     {
-        if(bubbles.Count < 6)
+        if(!internalStateCurrentHasInit)
         {
-            DataPoint screenSize = inputManager.ScreenSizeWorld();
-            bubbles.Add(new DataPoint(
-                Random.Range(-screenSize.X + bubbleRadius, screenSize.X - bubbleRadius), 
-                Random.Range(-screenSize.Y + bubbleRadius * 4, screenSize.Y - bubbleRadius)));
-            events.OnBubblesChange?.Invoke(bubbles);
+            internalStateCurrentHasInit = true;
+        }
+    }
+
+    private void CheckIfDoneLevelBubbles()
+    {
+        if (currentLevel == null)
+        {
+            Debug.LogWarning("No level was present, swapping to unlimited!");
+            State = GameState.GameUnlimited;
+            return;
+        }
+
+        if (bubbles.Count < 1)
+        {
+            State = GameState.GameLoadLevel;
+            return;
+        }
+    }
+
+    private void CheckIfDoneUnlimitedBubbles()
+    {
+        if (bubbles.Count < 1)
+        {
+            State = GameState.GameUnlimited;
+            return;
+        }
+    }
+
+    private void PopulateUnlimitedBubbles()
+    {
+        if (!internalStateCurrentHasInit)
+        {
+            while (bubbles.Count < 7)
+            {
+                DataPoint screenSize = inputManager.ScreenSizeWorld();
+                bubbles.Add(new DataPoint(
+                    Random.Range(-screenSize.X + bubbleRadius, screenSize.X - bubbleRadius),
+                    Random.Range(-screenSize.Y + bubbleRadius * 4, screenSize.Y - bubbleRadius)));
+                events.OnBubblesChange?.Invoke(bubbles);
+            }
+
+            internalStateCurrentHasInit = true;
         }
     }
 
@@ -120,6 +174,7 @@ public class GameCore : MonoBehaviour
             if (wasDownPreviously)
             {
                 DataEarnedScore points = CollectBubblesAsNecessary();
+                events.OnBubblesChange?.Invoke(bubbles);
                 events.OnLineDestroyed?.Invoke(lastLineStart, lastLineEnd, points);
                 wasDownPreviously = false;
             }
