@@ -66,6 +66,7 @@ public class GameCore : MonoBehaviour
 
         events.OnShowHelpToggle += (isOn) => { data.displayHelpLines = isOn; events.OnSerializedDataChange?.Invoke(data); };
         events.OnGameStateChangeRequest += (state) => { State = state; };
+        events.OnClearSavedData += () => { data = new SerializedData(); events.OnSerializedDataChange?.Invoke(data); };
     }
 
     private void Update()
@@ -300,6 +301,7 @@ public class GameCore : MonoBehaviour
         // Clear colleted bubbles
         foreach (int index in collectedIndexes)
         {
+            events.OnBubbleDestroyed?.Invoke(bubbles[index]);
             bubbles.RemoveAt(index);
         }
 

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class VisualBubbleManager : MonoBehaviour
 {
+    public Events events;
     public GameObject template;
     
     // Start is called before the first frame update
@@ -25,6 +26,11 @@ public class VisualBubbleManager : MonoBehaviour
     public VisualBubble CreateBubble(DataPoint position)
     {
         GameObject bubble = Instantiate(template);
+        VisualRemoveBubbleOnMenu vrbm = bubble.GetComponent<VisualRemoveBubbleOnMenu>();
+        if(vrbm != null)
+        {
+            vrbm.events = events;
+        }
         bubble.SetActive(true);
         bubble.name = "bubble";
         bubble.transform.SetParent(this.transform);

@@ -11,7 +11,7 @@ public class UIUpdateScoreVariable : MonoBehaviour
     void Start()
     {
         events.OnSerializedDataChange += (data) => {
-            GetComponent<TMPro.TextMeshProUGUI>().text = "" + data.score;
+            GetComponent<TMPro.TextMeshProUGUI>().text = (data.score > 0 ? "" + data.score : "Nothing Yet!");
         };
     }
 }

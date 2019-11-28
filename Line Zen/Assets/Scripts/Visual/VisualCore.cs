@@ -14,6 +14,7 @@ public class VisualCore : MonoBehaviour
     public VisualLineManager lineManager;
     public VisualBubbleManager bubbleManager;
     public VisualScoreTextFeedback visualTextFeedback;
+    public VisualParticleManager particleManager;
 
     [Header("Specific Visuals")]
     public GameObject lineEndCap; 
@@ -42,6 +43,12 @@ public class VisualCore : MonoBehaviour
         // Bubble related gameplay events
         events.OnBubblesChange += OnBubblesChange;
         events.OnGuideLinesChange += OnGuideLinesChange;
+        events.OnBubbleDestroyed += OnBubbleDestroyed;
+    }
+
+    private void OnBubbleDestroyed(DataPoint pos)
+    {
+        particleManager.CreateBubbleExplosion(pos);
     }
 
     private void OnLineCreated(DataPoint start, DataPoint end)

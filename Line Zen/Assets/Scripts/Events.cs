@@ -35,6 +35,8 @@ public class Events : MonoBehaviour
     // When the mouse is clicked
     public Action<DataPoint> OnClick;
 
+    public Action<DataPoint> OnBubbleDestroyed;
+
     /// <summary>
     /// Settings
     /// </summary>
@@ -50,4 +52,6 @@ public class Events : MonoBehaviour
     // Serialization/internal event
     public Action<SerializedData> OnSerializedDataChange;
 
+    // Clear
+    public Action OnClearSavedData;
 }
