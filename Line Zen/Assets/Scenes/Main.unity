@@ -1969,7 +1969,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   events: {fileID: 399031073}
-  displayDuring: 00000000
+  displayDuring: 06000000
 --- !u!114 &627930604
 MonoBehaviour:
   m_ObjectHideFlags: 0
