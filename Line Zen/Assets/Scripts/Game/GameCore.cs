@@ -88,6 +88,7 @@ public class GameCore : MonoBehaviour
                 PopulateLevelBubbles(tutorialTwo);
                 UpdatePlayerLine();
                 CheckIfDoneLevelBubbles(GameState.GameUnlimited);
+                ResetTutorialIfIncomplete();
                 break;
             case GameState.GameLoadLevel:
                 PopulateLevelBubbles(currentLevel);
@@ -106,6 +107,14 @@ public class GameCore : MonoBehaviour
                 Application.Quit();
 #endif 
                 break;
+        }
+    }
+
+    public void ResetTutorialIfIncomplete()
+    {
+        if(bubbles.Count == 1)
+        {
+            internalStateCurrentHasInit = false;
         }
     }
 

@@ -159,7 +159,18 @@ public class VisualCore : MonoBehaviour
 
                         if (closestPoint.IsRealNumber())
                         {
-                            VisualLine visual = lineManager.CreateLine(bubble.Position, closestPoint, isHit ? Color.green : (isIntermediate ? Color.blue : Color.red), .04f);
+                            Color color = Color.HSVToRGB(1, .8f, .8f);
+
+                            if (isIntermediate)
+                            {
+                                color = Color.HSVToRGB(.66f, .8f, .8f);
+                            }
+                            if (isHit)
+                            {
+                                color = Color.HSVToRGB(.33f, .8f, .8f);
+                            }
+
+                            VisualLine visual = lineManager.CreateLine(bubble.Position, closestPoint, color, .04f);
                             debugLines.Add(visual);
                         }
                     }
