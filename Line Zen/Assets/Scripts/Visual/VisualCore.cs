@@ -65,8 +65,11 @@ public class VisualCore : MonoBehaviour
             DataPoint e = input.ConvertToScreenPoint(end);
             DataPoint worldPos = new DataPoint((s.X + e.X) / 2, (s.Y + e.Y) / 2);
 
-            visualTextFeedback.CreateText(s, "+" + GameCore.pointsPerBubble, TextType.ScoreAddition);
-            visualTextFeedback.CreateText(e, "+" + GameCore.pointsPerBubble, TextType.ScoreAddition);
+            foreach (DataPoint point in points.locations)
+            {
+                DataPoint loc = input.ConvertToScreenPoint(point);
+                visualTextFeedback.CreateText(loc, "+" + GameCore.pointsPerBubble, TextType.ScoreAddition);
+            }
 
             if (points.bonus != 0)
             {
@@ -110,7 +113,17 @@ public class VisualCore : MonoBehaviour
 
         foreach (Tuple<DataPoint, DataPoint> line in lines)
         {
-            trackedGuideLines.Add(lineManager.CreateLine(line.Item1, line.Item2, new Color(.5f, .8f, 1, .3f), .1f));
+            trackedGuideLines.Add(lineManager.CreateLine(line.Item1, line.Item2, new Color(.4f, .4f, .6f, .1f), .075f));
+
+            GameObject endcap = Instantiate(lineEndCap, this.gameObject.transform);
+            endcap.transform.position = line.Item1;
+            VisualObjectFadeInDirection vofid = endcap.GetComponent<VisualObjectFadeInDirection>();
+            if(vofid != null)
+            {
+                vofid.direction = (new Vector2(line.Item2.X - line.Item1.X, line.Item2.Y - line.Item1.Y)).normalized;
+            }
+
+            trackedGuideLineCaps.Add(endcap);
         }
     }
 
