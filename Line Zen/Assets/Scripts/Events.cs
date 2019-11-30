@@ -23,7 +23,7 @@ public class Events : MonoBehaviour
     public Action OnCorrectTutorialSwipe;
 
     // Request a game state change
-    public Action<GameState> OnGameStateChangeRequest;
+    public Action<GameState, GameMode> OnGameStateChangeRequest;
 
     // The game state has been updated
     public Action<GameState> OnGameStateChange;
@@ -41,17 +41,18 @@ public class Events : MonoBehaviour
     /// Settings
     /// </summary>
 
-    // When the help section is toggled on or off in settings
-    public Action<bool> OnShowHelpToggle;
-
+    public Action<bool> OnShowHelpToggle;      // When the guide lines section is toggled on or off in settings
+    public Action<bool> OnShowParticlesToggle; // When the particles visual is toggled on or off in settings.
 
     /// <summary>
     /// Internal
     /// </summary>
 
     // Serialization/internal event
-    public Action<SerializedData> OnSerializedDataChange;
+    public Action<DataGeneral> OnDataChanged;
 
     // Clear
     public Action OnClearSavedData;
+
+    public Action OnGameInitialized;
 }

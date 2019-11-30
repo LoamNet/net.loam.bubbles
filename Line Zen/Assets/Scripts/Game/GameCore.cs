@@ -7,9 +7,9 @@ public class GameCore : MonoBehaviour
 {
     // Setup and linsk
     [Header("Base links")]
+    public Data data;
     public Events events;
     public GameInputManager inputManager;
-    public SerializedDataIO dataIO;
 
     // Static values
     public static readonly float widthLeeway = 0.025f;
@@ -19,11 +19,14 @@ public class GameCore : MonoBehaviour
     public static readonly int pointsPerBonusBubble = 10;
     public static readonly int maxBubblesOnScreen = 12;
 
-    [Header("State")]
-    public GameState internalState;
+    [Header("Levels")]
     public TextAsset tutorialOne;
     public TextAsset tutorialTwo;
     public TextAsset currentLevel;
+
+    [Header("Internals")]
+    public GameMode internalMode;
+    public GameState internalState;
 
     // Private internal state
     private bool wasDownPreviously;
@@ -36,10 +39,6 @@ public class GameCore : MonoBehaviour
 
     // Unlimited info
     private Utils.WichmannRng rand;
-
-    private SerializedData data;
-    public SerializedData Data { get { return data; } }
-
 
     bool internalStateCurrentHasInit;
     public GameState State
@@ -55,6 +54,17 @@ public class GameCore : MonoBehaviour
             events.OnGameStateChange?.Invoke(internalState);
         } 
     }
+    public GameMode Mode
+    {
+        get
+        {
+            return internalMode;
+        }
+        set
+        {
+            internalMode = value;
+        }
+    }
 
     private void Start()
     {
@@ -64,19 +74,28 @@ public class GameCore : MonoBehaviour
         guideLines = new List<Tuple<DataPoint, DataPoint>>();
         wasDownPreviously = false;
 
-        events.OnShowHelpToggle += (isOn) => { data.displayHelpLines = isOn; events.OnSerializedDataChange?.Invoke(data); };
-        events.OnGameStateChangeRequest += (state) => { State = state; };
-        events.OnClearSavedData += () => { data = new SerializedData(); events.OnSerializedDataChange?.Invoke(data); };
+        events.OnShowHelpToggle += (isOn) => {
+            DataGeneral toModify = data.GetDataGeneral();
+            toModify.displayHelp = isOn;
+            data.SetDataGeneral(toModify);
+        };
+
+        events.OnShowParticlesToggle += (isOn) => {
+            DataGeneral toModify = data.GetDataGeneral();
+            toModify.displayParticles = isOn;
+            data.SetDataGeneral(toModify);
+        };
+
+        events.OnGameStateChangeRequest += (state, mode) => { State = state; Mode = mode; };
     }
 
     private void Update()
     {
         if(!hasInit)
         {
-            data = dataIO.GetData();
-
+            data.Initialize();
             events.OnGameStateChange?.Invoke(internalState);
-            events.OnSerializedDataChange?.Invoke(data);
+            events.OnGameInitialized?.Invoke();
             hasInit = true;
         }
 
@@ -94,18 +113,22 @@ public class GameCore : MonoBehaviour
             case GameState.TutorialTwo:
                 PopulateLevelBubbles(tutorialTwo);
                 UpdatePlayerLine();
-                CheckIfDoneLevelBubbles(GameState.GameUnlimited);
+                CheckIfDoneLevelBubbles(GameState.Game);
                 ResetTutorialIfIncomplete();
                 break;
-            case GameState.GameLoadLevel:
-                PopulateLevelBubbles(currentLevel);
-                UpdatePlayerLine();
-                CheckIfDoneLevelBubbles(GameState.GameLoadLevel);
-                break;
-            case GameState.GameUnlimited:
-                PopulateUnlimitedBubbles();
-                UpdatePlayerLine();
-                CheckIfDoneUnlimitedBubbles();
+            case GameState.Game:
+                if (Mode == GameMode.ChallengeLevel)
+                {
+                    PopulateLevelBubbles(currentLevel);
+                    UpdatePlayerLine();
+                    CheckIfDoneLevelBubbles(GameState.Game);
+                }
+                else if (Mode == GameMode.Infinite)
+                {
+                    PopulateUnlimitedBubbles();
+                    UpdatePlayerLine();
+                    CheckIfDoneUnlimitedBubbles();
+                }
                 break;
             case GameState.Exit:
 #if UNITY_EDITOR
@@ -179,8 +202,7 @@ public class GameCore : MonoBehaviour
     {
         if (currentLevel == null)
         {
-            Debug.LogWarning("No level was present, swapping to unlimited!");
-            State = GameState.GameUnlimited;
+            State = GameState.Game;
             return;
         }
 
@@ -195,9 +217,11 @@ public class GameCore : MonoBehaviour
     {
         if (bubbles.Count < 1)
         {
-            data.level = data.level + 1;
-            events.OnSerializedDataChange?.Invoke(data);
-            State = GameState.GameUnlimited;
+            DataGeneral gen = data.GetDataGeneral();
+            gen.level = gen.level + 1;
+            data.SetDataGeneral(gen);
+
+            State = GameState.Game;
             return;
         }
     }
@@ -206,11 +230,13 @@ public class GameCore : MonoBehaviour
     {
         if (!internalStateCurrentHasInit)
         {
-            rand = new Utils.WichmannRng(data.level);
+            int level = data.GetDataGeneral().level;
+
+            rand = new Utils.WichmannRng(level);
             bubbles.Clear();
             guideLines.Clear();
 
-            while (bubbles.Count < (data.level / 2) + 2 && bubbles.Count < maxBubblesOnScreen)
+            while (bubbles.Count < (level / 2) + 2 && bubbles.Count < maxBubblesOnScreen)
             {
                 double x = (rand.Next() - 0.5f) * 2;
                 double y = (rand.Next() - 0.5f) * 2;
@@ -294,8 +320,9 @@ public class GameCore : MonoBehaviour
 
         if (pointsPerBubble != 0)
         {
-            data.score = data.score + dataEarnedScore.total;
-            events.OnSerializedDataChange?.Invoke(data);
+            DataGeneral gen = data.GetDataGeneral();
+            gen.score = gen.score + dataEarnedScore.total;
+            data.SetDataGeneral(gen);
         }
 
         // Clear colleted bubbles

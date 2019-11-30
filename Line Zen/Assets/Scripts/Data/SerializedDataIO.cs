@@ -9,10 +9,10 @@ public class SerializedDataIO : MonoBehaviour
 
     private void Start()
     {
-        events.OnSerializedDataChange += OnSerializedDataChange;
+        events.OnDataChanged += OnSerializedDataChange;
     }
 
-    void OnSerializedDataChange(SerializedData data)
+    void OnSerializedDataChange(DataGeneral data)
     {
         SetData(data);
     }
@@ -22,14 +22,14 @@ public class SerializedDataIO : MonoBehaviour
         return Application.persistentDataPath + "/";
     }
 
-    public void SetData(SerializedData data)
+    public void SetData(DataGeneral data)
     {
         string writeFile = SavePath() + statsFile;
         System.IO.File.WriteAllText(writeFile, data.ToString());
     }
 
 
-    public SerializedData GetData()
+    public DataGeneral GetData()
     {
         string readFile = SavePath() + statsFile;
         try
@@ -38,7 +38,7 @@ public class SerializedDataIO : MonoBehaviour
 
             if (text != null)
             {
-                SerializedData data = new SerializedData();
+                DataGeneral data = DataGeneral.Defaults();
                 data.FromString(text);
                 return data;
             }
@@ -46,9 +46,9 @@ public class SerializedDataIO : MonoBehaviour
         catch(System.Exception)
         {
             Debug.Log("Couldn't find any save file - making a new one!");
-            SetData(new SerializedData());
+            SetData(DataGeneral.Defaults());
         }
 
-        return new SerializedData();
+        return DataGeneral.Defaults();
     }
 }

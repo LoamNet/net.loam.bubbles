@@ -7,11 +7,12 @@ public class UIAdvanceToStateOnClick : MonoBehaviour
 {
     public Events events;
     public GameState state;
+    public GameMode mode;
 
     void Start()
     {
         GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
-            events.OnGameStateChangeRequest?.Invoke(state);
+            events.OnGameStateChangeRequest?.Invoke(state, mode);
         });
     }
 }

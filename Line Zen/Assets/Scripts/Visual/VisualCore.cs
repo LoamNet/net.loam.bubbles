@@ -6,8 +6,8 @@ using UnityEngine;
 public class VisualCore : MonoBehaviour
 {
     [Header("Base links")]
+    public Data data;
     public Events events;
-    public GameCore core;
     public GameInputManager inputManager;
 
     [Header("Visual links")]
@@ -125,6 +125,7 @@ public class VisualCore : MonoBehaviour
             GameObject endcap = Instantiate(lineEndCap, this.gameObject.transform);
             endcap.transform.position = line.Item1;
             VisualObjectFadeInDirection vofid = endcap.GetComponent<VisualObjectFadeInDirection>();
+            
             if(vofid != null)
             {
                 vofid.direction = (new Vector2(line.Item2.X - line.Item1.X, line.Item2.Y - line.Item1.Y)).normalized;
@@ -150,7 +151,7 @@ public class VisualCore : MonoBehaviour
 
         debugLines.Clear();
 
-        if (core.Data.displayHelpLines)
+        if (data.GetDataGeneral().displayHelp)
         {
             if (line != null)
             {

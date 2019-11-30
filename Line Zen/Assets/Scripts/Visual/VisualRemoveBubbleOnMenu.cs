@@ -23,7 +23,7 @@ public class VisualRemoveBubbleOnMenu : MonoBehaviour
         events.OnGameStateChangeRequest -= StartShrinkOut;
     }
 
-    private void StartShrinkOut(GameState state)
+    private void StartShrinkOut(GameState state, GameMode mode)
     {
         if(state != GameState.Startup)
         {

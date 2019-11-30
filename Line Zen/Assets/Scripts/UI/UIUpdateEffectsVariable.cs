@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(UnityEngine.UI.Toggle))]
-public class UIUpdateHelpVariable : MonoBehaviour
+public class UIUpdateEffectsVariable : MonoBehaviour
 {
     public Events events;
 
@@ -11,11 +11,11 @@ public class UIUpdateHelpVariable : MonoBehaviour
     void Start()
     {
         GetComponent<UnityEngine.UI.Toggle>().onValueChanged.AddListener((newVal) => {
-            events.OnShowHelpToggle?.Invoke(newVal);
+            events.OnShowParticlesToggle?.Invoke(newVal);
         });
 
         events.OnDataChanged += (data) => {
-            GetComponent<UnityEngine.UI.Toggle>().isOn = data.displayHelp;
+            GetComponent<UnityEngine.UI.Toggle>().isOn = data.displayParticles;
         };
     }
 }

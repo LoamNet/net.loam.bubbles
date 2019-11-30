@@ -4,14 +4,37 @@ using UnityEngine;
 
 
 [System.Serializable]
-public struct SerializedData
+public struct DataGeneral
 {
     public static readonly char keyValueSeparator = '=';
     public static readonly char contentSeparator = '\n';
 
+    //////////////////////////////////////////////////////////
     public long score;
-    public bool displayHelpLines;
     public int level;
+    public bool displayHelp;
+    public bool displayParticles;
+    //////////////////////////////////////////////////////////
+
+    public DataGeneral(DataGeneral other)
+    {
+        this.score = other.score;
+        this.level = other.level;
+        this.displayHelp = other.displayHelp;
+        this.displayParticles = other.displayParticles;
+    }
+
+    public static DataGeneral Defaults()
+    {
+        DataGeneral data;
+
+        data.score = 0;
+        data.level = 0;
+        data.displayHelp = false;
+        data.displayParticles = true;
+
+        return data;
+    }
 
     public override string ToString()
     {
@@ -21,7 +44,8 @@ public struct SerializedData
 
         created += "level" + sep + level.ToString() + end;
         created += "score" + sep + score.ToString() + end;
-        created += "displayHelp" + sep + displayHelpLines.ToString() + end;
+        created += "displayhelp" + sep + displayHelp.ToString() + end;
+        created += "displayParticles" + sep + displayParticles.ToString() + end;
 
         return created;
     }
@@ -42,11 +66,14 @@ public struct SerializedData
                         case "score":
                             score = long.Parse(line[1]);
                             break;
-                        case "displayhelp":
-                            displayHelpLines = bool.Parse(line[1]);
-                            break;
                         case "level":
                             level = int.Parse(line[1]);
+                            break;
+                        case "displayhelp":
+                            displayHelp = bool.Parse(line[1]);
+                            break;
+                        case "displayparticles":
+                            displayParticles = bool.Parse(line[1]);
                             break;
                     }
                 }

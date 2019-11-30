@@ -4,14 +4,41 @@ using UnityEngine;
 
 public class VisualParticleManager : MonoBehaviour
 {
+    public Data data;
+    public Events events;
     public ParticleSystem bubbleExplosionTemplate;
+    public List<ParticleSystem> spawnOnStart;
 
+    private List<ParticleSystem> spawnedOnStart;
     private List<ParticleSystem> bubbleExplosionParticles;
 
     // Start is called before the first frame update
     void Start()
     {
+        spawnedOnStart = new List<ParticleSystem>();
         bubbleExplosionParticles = new List<ParticleSystem>();
+
+        events.OnShowParticlesToggle += (isOn) => { HandleStartupSystems(isOn); };
+        events.OnGameInitialized += () => { HandleStartupSystems(data.GetDataGeneral().displayParticles); };
+    }
+
+
+    void HandleStartupSystems(bool isDoingSpawn)
+    {
+        foreach (ParticleSystem sys in spawnedOnStart)
+        {
+            Destroy(sys.gameObject);
+        }
+
+        spawnedOnStart.Clear();
+        if (isDoingSpawn)
+        {
+            foreach (ParticleSystem sys in spawnOnStart)
+            {
+                ParticleSystem ps = Instantiate(sys, this.gameObject.transform);
+                spawnedOnStart.Add(ps);
+            }
+        }
     }
 
     // Update is called once per frame
@@ -29,9 +56,12 @@ public class VisualParticleManager : MonoBehaviour
 
     public void CreateBubbleExplosion(DataPoint location)
     {
-        ParticleSystem obj = Instantiate(bubbleExplosionTemplate, this.gameObject.transform);
-        obj.transform.position = location;
+        if (data.GetDataGeneral().displayParticles)
+        {
+            ParticleSystem obj = Instantiate(bubbleExplosionTemplate, this.gameObject.transform);
+            obj.transform.position = location;
 
-        bubbleExplosionParticles.Add(obj);
+            bubbleExplosionParticles.Add(obj);
+        }
     }
 }
