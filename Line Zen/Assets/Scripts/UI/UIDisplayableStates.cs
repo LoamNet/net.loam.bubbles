@@ -20,15 +20,22 @@ public class UIDisplayableStates : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        events.OnGameStateChange -= SetVisibility;
+    }
+
     void SetVisibility(GameState state)
     {
         if (displayDuring.Contains(state))
         {
-            this.gameObject.SetActive(true);
+            if(this.gameObject as UnityEngine.GameObject != null)
+                this.gameObject.SetActive(true);
         }
         else
         {
-            this.gameObject.SetActive(false);
+            if (this.gameObject as UnityEngine.GameObject != null)
+                this.gameObject.SetActive(false);
         }
     }
 }
