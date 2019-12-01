@@ -15,23 +15,42 @@ public struct DataGeneral
     public int level;
     public bool displayHelp;
     public bool displayParticles;
-    public List<DataChallenge> stars;
+    public List<DataChallenge> challenges;
     //////////////////////////////////////////////////////////
 
+    // Utility function for updating tracked level info.
+    public void SetChallengeStats(string name, int score, bool onlyIncrease = true)
+    {
+        for (int i = 0; i < challenges.Count; ++i)
+        {
+            if(challenges[i].name.Equals(name))
+            {
+                if (!onlyIncrease || score > challenges[i].stars)
+                {
+                    challenges[i] = new DataChallenge(score, name);
+                }
+
+                return;
+            }
+        }
+    }
+
+
+    // Copy constructor
     public DataGeneral(DataGeneral other)
     {
         this.score = other.score;
         this.level = other.level;
         this.displayHelp = other.displayHelp;
         this.displayParticles = other.displayParticles;
-        this.stars = new List<DataChallenge>();
+        this.challenges = new List<DataChallenge>();
 
-        if (other.stars != null)
+        if (other.challenges != null)
         {
 
-            for(int i = 0; i < other.stars.Count; ++i)
+            for(int i = 0; i < other.challenges.Count; ++i)
             {
-                 this.stars.Add(new DataChallenge(other.stars[i]));
+                 this.challenges.Add(new DataChallenge(other.challenges[i]));
             }
         }
     }
@@ -44,7 +63,7 @@ public struct DataGeneral
         data.level = 0;
         data.displayHelp = false;
         data.displayParticles = true;
-        data.stars = new List<DataChallenge>();
+        data.challenges = new List<DataChallenge>();
 
         return data;
     }
@@ -57,7 +76,7 @@ public struct DataGeneral
 
         created += "level" + sep + level.ToString() + end;
         created += "score" + sep + score.ToString() + end;
-        created += "stars" + sep + ListToString(stars) + end;
+        created += "challenges" + sep + ListToString(challenges) + end;
         created += "displayhelp" + sep + displayHelp.ToString() + end;
         created += "displayParticles" + sep + displayParticles.ToString() + end;
 
@@ -121,8 +140,8 @@ public struct DataGeneral
                         case "level":
                             level = int.Parse(line[1]);
                             break;
-                        case "stars":
-                            stars = ListFromString(line[1]);
+                        case "challenges":
+                            challenges = ListFromString(line[1]);
                             break;
                         case "displayhelp":
                             displayHelp = bool.Parse(line[1]);

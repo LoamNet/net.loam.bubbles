@@ -2,6 +2,4 @@ name=Challenge One
 bubble=0,0
 bubble=1,2
 bubble=0.5,.25
-star1=3
-star2=2
-star3=1
+stars=3,2,1

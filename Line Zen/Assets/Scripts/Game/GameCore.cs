@@ -22,7 +22,10 @@ public class GameCore : MonoBehaviour
     [Header("Levels")]
     public TextAsset tutorialOne;
     public TextAsset tutorialTwo;
-    public TextAsset currentLevel;
+    public TextAsset internalLevel;
+    private int star1 = 0;
+    private int star2 = 0;
+    private int star3 = 0;
 
     [Header("Internals")]
     public GameMode internalMode;
@@ -35,10 +38,12 @@ public class GameCore : MonoBehaviour
     private bool wasDownPreviously;
     private DataPoint lastLineStart;
     private DataPoint lastLineEnd;
+    private bool hasInit;
 
+    // Internal bubble and level tracking
     private List<DataPoint> bubbles;
     private List<Tuple<DataPoint, DataPoint>> guideLines;
-    private bool hasInit;
+    private int linesDrawn;
 
     // Unlimited info
     private Utils.WichmannRng rand;
@@ -69,6 +74,22 @@ public class GameCore : MonoBehaviour
         }
     }
 
+    public TextAsset CurrentLevel
+    {
+        get
+        {
+            return internalLevel;
+        }
+        set
+        {
+            internalLevel = value;
+            linesDrawn = 0;
+            star1 = 0;
+            star2 = 0;
+            star3 = 0;
+        }
+    }
+
     public SOChallengeList ChallengeLevels
     {
         get
@@ -80,6 +101,7 @@ public class GameCore : MonoBehaviour
     private void Start()
     {
         hasInit = false;
+        linesDrawn = 0;
         internalStateCurrentHasInit = false;
         bubbles = new List<DataPoint>();
         guideLines = new List<Tuple<DataPoint, DataPoint>>();
@@ -99,14 +121,14 @@ public class GameCore : MonoBehaviour
 
         events.OnNoSaveEntryFound += (name) => {
             DataGeneral toModify = data.GetDataGeneral();
-            toModify.stars.Add(new DataChallenge(0, name));
+            toModify.challenges.Add(new DataChallenge(0, name));
             data.SetDataGeneral(toModify);
         };
 
         events.OnLevelLoadRequest += (levelName) => {
             Mode = GameMode.ChallengeLevel;
-            currentLevel = levels.GetByName(levelName);
-            PopulateLevelBubbles(currentLevel);
+            CurrentLevel = levels.GetByName(levelName);
+            PopulateLevelBubbles(CurrentLevel);
             State = GameState.Game;
         };
 
@@ -145,7 +167,7 @@ public class GameCore : MonoBehaviour
             case GameState.Game:
                 if (Mode == GameMode.ChallengeLevel)
                 {
-                    PopulateLevelBubbles(currentLevel);
+                    PopulateLevelBubbles(CurrentLevel);
                     UpdatePlayerLine();
                     CheckIfDoneChallengeBubbles(GameState.Game);
                 }
@@ -178,7 +200,7 @@ public class GameCore : MonoBehaviour
     {
         if(!internalStateCurrentHasInit)
         {
-            currentLevel = levelData;
+            CurrentLevel = levelData;
 
             bubbles.Clear();
             guideLines.Clear();
@@ -215,6 +237,14 @@ public class GameCore : MonoBehaviour
                             new DataPoint(x1, y1),
                             new DataPoint(x2, y2)));
                 }
+                else if (key.Equals("stars"))
+                {
+                    string[] values = value.Split(',');
+
+                    star1 = int.Parse(values[0].Trim());
+                    star2 = int.Parse(values[1].Trim());
+                    star3 = int.Parse(values[2].Trim());
+                }
             }
 
             events.OnBubblesChange?.Invoke(bubbles);
@@ -223,9 +253,11 @@ public class GameCore : MonoBehaviour
             internalStateCurrentHasInit = true;
         }
     }
+
+    // Check to see if bubbles have been collected
     private void CheckIfDoneChallengeBubbles(GameState nextState)
     {
-        if (currentLevel == null)
+        if (CurrentLevel == null)
         {
             State = GameState.Game;
             return;
@@ -233,26 +265,47 @@ public class GameCore : MonoBehaviour
 
         if (bubbles.Count < 1)
         {
-            int target = levels.levels.IndexOf(currentLevel) + 1;
-            
+            int target = levels.levels.IndexOf(CurrentLevel) + 1;
+
+            if(linesDrawn > 0)
+            {
+                DataGeneral toModify = data.GetDataGeneral();
+
+                if (linesDrawn <= star3)
+                {
+                    toModify.SetChallengeStats(internalLevel.name, 3);
+                }
+                else if (linesDrawn <= star2)
+                {
+                    toModify.SetChallengeStats(internalLevel.name, 2);
+                }
+                else
+                {
+                    toModify.SetChallengeStats(internalLevel.name, 1);
+                }
+
+                data.SetDataGeneral(toModify);
+            }
+
             if (target >= levels.levels.Count)
             {
                 State = GameState.PickChallenge;
-                currentLevel = null;
+                CurrentLevel = null;
                 return;
             }
             else
             {
-                currentLevel = levels.levels[target];
+                CurrentLevel = levels.levels[target];
                 State = nextState;
                 return;
             }
         }
     }
 
+    // A tutorial may only continue 
     private void CheckIfDoneTutorialBubbles(GameState nextState)
     {
-        if (currentLevel == null)
+        if (CurrentLevel == null)
         {
             State = GameState.Game;
             return;
@@ -265,6 +318,7 @@ public class GameCore : MonoBehaviour
         }
     }
 
+    // Unlimited bubbles are done if we have no bubbles left
     private void CheckIfDoneUnlimitedBubbles()
     {
         if (bubbles.Count < 1)
@@ -278,6 +332,7 @@ public class GameCore : MonoBehaviour
         }
     }
 
+    // Unlimited bubbles are positioned in a random orientation
     private void PopulateUnlimitedBubbles()
     {
         if (!internalStateCurrentHasInit)
@@ -336,7 +391,7 @@ public class GameCore : MonoBehaviour
     }
 
     // Returns how much the score changed by
-    private DataEarnedScore CollectBubblesAsNecessary()
+    private DataEarnedScore CollectBubblesAsNecessary(bool impactsScore = true)
     {
         float triggerRadius = bubbleRadius + VisualLineManager.width / 2 + GameCore.widthLeeway;
 
@@ -362,6 +417,11 @@ public class GameCore : MonoBehaviour
         int scoreBase = GameCore.pointsPerBubble * hit;
         int scoreBonus = 0;
         
+        if(hit > 0)
+        {
+            ++linesDrawn;
+        }
+
         if(hit > bonusThreshold)
         {
             int bonusHits = hit - bonusThreshold;
@@ -370,7 +430,7 @@ public class GameCore : MonoBehaviour
 
         DataEarnedScore dataEarnedScore = new DataEarnedScore(scoreBase, scoreBonus, locs);
 
-        if (pointsPerBubble != 0)
+        if (pointsPerBubble != 0 && impactsScore)
         {
             DataGeneral gen = data.GetDataGeneral();
             gen.score = gen.score + dataEarnedScore.total;
@@ -382,6 +442,12 @@ public class GameCore : MonoBehaviour
         {
             events.OnBubbleDestroyed?.Invoke(bubbles[index]);
             bubbles.RemoveAt(index);
+        }
+
+        // Clear score impacting stuff if we don't impact scores
+        if(!impactsScore)
+        {
+            return new DataEarnedScore(0, 0, locs);
         }
 
         return dataEarnedScore;

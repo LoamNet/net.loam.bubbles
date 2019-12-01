@@ -10,16 +10,31 @@ public class UIChallengeList : MonoBehaviour
     public UIChallengeEntry entryTemplate;
 
     private List<UIChallengeEntry> entries;
+    private SOChallengeList list;
 
     public void Start()
     {
         entries = new List<UIChallengeEntry>();
         entryTemplate.gameObject.SetActive(false);
+
+        events.OnGameStateChange += (state) => {
+            if (state == GameState.PickChallenge)
+            {
+                foreach (UIChallengeEntry entry in entries)
+                {
+                    Destroy(entry.gameObject);
+                }
+
+                entries.Clear();
+                Initialize(list);
+            }
+        };
     }
 
     public void Initialize(SOChallengeList challenges)
     {
         int count = challenges.levels.Count;
+        list = challenges;
 
         for (int i = 0; i < count; ++i)
         {
@@ -61,13 +76,13 @@ public class UIChallengeList : MonoBehaviour
         DataGeneral dataGeneral = data.GetDataGeneral();
         string target = toGet.Trim().ToLowerInvariant();
 
-        for (int i = 0; i < dataGeneral.stars.Count; ++i)
+        for (int i = 0; i < dataGeneral.challenges.Count; ++i)
         {
-            string lower = dataGeneral.stars[i].name.Trim().ToLowerInvariant();
+            string lower = dataGeneral.challenges[i].name.Trim().ToLowerInvariant();
 
             if (lower.Equals(target))
             {
-                return dataGeneral.stars[i];
+                return dataGeneral.challenges[i];
             }
         }
 

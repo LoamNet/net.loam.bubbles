@@ -24,11 +24,13 @@ public class UIChallengeEntry : MonoBehaviour
     public void Start()
     {
         Button button = GetComponent<Button>();
-        button.onClick.AddListener(()=> {
+        button.onClick.AddListener(() =>
+        {
             events.OnLevelLoadRequest?.Invoke(file);
         });
     }
 
+    // Set default values and content, and adjust display settings
     public void Initialize(string file, int stars, string title)
     {
         this.file = file;
