@@ -6,6 +6,7 @@ public enum GameState
     TutorialTwo,
     Options,
     Game,
-    Exit
+    Exit,
+    PickChallenge
 }
 

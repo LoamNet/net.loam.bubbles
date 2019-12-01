@@ -34,6 +34,7 @@ public class UIChallengeList : MonoBehaviour
 
             ////////////////////////////
             
+            toParent.events = events;
 
             // Parent accordingly
             toParent.transform.position = Vector3.zero;
@@ -49,7 +50,7 @@ public class UIChallengeList : MonoBehaviour
             }
 
             toParent.gameObject.SetActive(true);
-            toParent.Initialize(stars, displayName);
+            toParent.Initialize(entry.name, stars, displayName);
             entries.Add(toParent);
         }
     }

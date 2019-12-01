@@ -6,4 +6,17 @@ using UnityEngine;
 public class SOChallengeList : ScriptableObject
 {
     public List<TextAsset> levels = new List<TextAsset>();
+
+    public TextAsset GetByName(string name)
+    {
+        for (int i = 0; i < levels.Count; ++i)
+        {
+            if (levels[i].name.Equals(name))
+            {
+                return levels[i];
+            }
+        }
+
+        return null;
+    }
 }

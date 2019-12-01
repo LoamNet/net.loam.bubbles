@@ -103,6 +103,13 @@ public class GameCore : MonoBehaviour
             data.SetDataGeneral(toModify);
         };
 
+        events.OnLevelLoadRequest += (levelName) => {
+            Mode = GameMode.ChallengeLevel;
+            currentLevel = levels.GetByName(levelName);
+            PopulateLevelBubbles(currentLevel);
+            State = GameState.Game;
+        };
+
         events.OnGameStateChangeRequest += (state, mode) => { State = state; Mode = mode; };
     }
 
@@ -125,20 +132,22 @@ public class GameCore : MonoBehaviour
             case GameState.TutorialOne:
                 PopulateLevelBubbles(tutorialOne);
                 UpdatePlayerLine();
-                CheckIfDoneLevelBubbles(GameState.TutorialTwo);
+                CheckIfDoneTutorialBubbles(GameState.TutorialTwo);
                 break;
             case GameState.TutorialTwo:
                 PopulateLevelBubbles(tutorialTwo);
                 UpdatePlayerLine();
-                CheckIfDoneLevelBubbles(GameState.Game);
+                CheckIfDoneTutorialBubbles(GameState.Game);
                 ResetTutorialIfIncomplete();
+                break;
+            case GameState.PickChallenge:
                 break;
             case GameState.Game:
                 if (Mode == GameMode.ChallengeLevel)
                 {
                     PopulateLevelBubbles(currentLevel);
                     UpdatePlayerLine();
-                    CheckIfDoneLevelBubbles(GameState.Game);
+                    CheckIfDoneChallengeBubbles(GameState.Game);
                 }
                 else if (Mode == GameMode.Infinite)
                 {
@@ -214,8 +223,34 @@ public class GameCore : MonoBehaviour
             internalStateCurrentHasInit = true;
         }
     }
+    private void CheckIfDoneChallengeBubbles(GameState nextState)
+    {
+        if (currentLevel == null)
+        {
+            State = GameState.Game;
+            return;
+        }
 
-    private void CheckIfDoneLevelBubbles(GameState nextState)
+        if (bubbles.Count < 1)
+        {
+            int target = levels.levels.IndexOf(currentLevel) + 1;
+            
+            if (target >= levels.levels.Count)
+            {
+                State = GameState.PickChallenge;
+                currentLevel = null;
+                return;
+            }
+            else
+            {
+                currentLevel = levels.levels[target];
+                State = nextState;
+                return;
+            }
+        }
+    }
+
+    private void CheckIfDoneTutorialBubbles(GameState nextState)
     {
         if (currentLevel == null)
         {

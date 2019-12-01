@@ -9,33 +9,19 @@ public class Events : MonoBehaviour
     /// Game Events
     /// </summary>
 
-    // When a line is created.
-    public Action<DataPoint, DataPoint> OnLineCreated;
-    
-    // This is the action performed when a line is drawn, and contains a start and end accordingly.
-    // It's more of an upate.
-    public Action<DataPoint, DataPoint> OnLineUpdated;
+    // Line and gameplay updates
+    public Action<DataPoint, DataPoint> OnLineCreated;                    // When a line is created.
+    public Action<DataPoint, DataPoint> OnLineUpdated;                    // This is the action performed when a line is drawn, and contains a start and end accordingly. It's more of an upate.
+    public Action<DataPoint, DataPoint, DataEarnedScore> OnLineDestroyed; // When a line is termianted.
+    public Action<GameState, GameMode> OnGameStateChangeRequest;          // Request a game state change
+    public Action OnCorrectTutorialSwipe;                                 // When a tutorial swipe specifically dis done
+    public Action<DataPoint> OnClick;                                     // When the primary input format is clicked
 
-    // When a line is termianted.
-    public Action<DataPoint, DataPoint, DataEarnedScore> OnLineDestroyed;
-
-    // When a tutorial swipe is done
-    public Action OnCorrectTutorialSwipe;
-
-    // Request a game state change
-    public Action<GameState, GameMode> OnGameStateChangeRequest;
-
-    // The game state has been updated
-    public Action<GameState> OnGameStateChange;
-
-    // Whenever the state of bubbles changes, this is fired.
-    public Action<List<DataPoint>> OnBubblesChange;
-    public Action<List<Tuple<DataPoint, DataPoint>>> OnGuideLinesChange;
-
-    // When the mouse is clicked
-    public Action<DataPoint> OnClick;
-
-    public Action<DataPoint> OnBubbleDestroyed;
+    // State updates
+    public Action<GameState> OnGameStateChange;                          // The game state has been updated 
+    public Action<List<DataPoint>> OnBubblesChange;                      // Whenever the state of bubbles changes, this is fired.
+    public Action<List<Tuple<DataPoint, DataPoint>>> OnGuideLinesChange; // When one of the guide lines in the level visually is adjusted.
+    public Action<DataPoint> OnBubbleDestroyed;                          // When a bubble is destroyed
 
     /// <summary>
     /// Settings
@@ -48,13 +34,9 @@ public class Events : MonoBehaviour
     /// Internal
     /// </summary>
 
-    // Serialization/internal event
-    public Action<DataGeneral> OnDataChanged;
-
-    // Clear
-    public Action OnClearSavedData;
-
-    public Action OnGameInitialized;
-
-    public Action<string> OnNoSaveEntryFound;
+    public Action<DataGeneral> OnDataChanged; // Serialization/internal event stating that something at some point in data we serialize is changed.
+    public Action OnClearSavedData;           // When requesting the existing saved game data be cleared, post-confirm. At this point, we're positive we want it gone.
+    public Action OnGameInitialized;          // When the game core itself is ready to go - happens AFTER start().
+    public Action<string> OnNoSaveEntryFound; // When a level save isn't found when populating the level list
+    public Action<string> OnLevelLoadRequest; // Contains name of the levle to load. Dispatched when challenge level button/entry is pressed.
 }
