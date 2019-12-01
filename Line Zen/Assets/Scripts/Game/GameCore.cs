@@ -28,6 +28,9 @@ public class GameCore : MonoBehaviour
     public GameMode internalMode;
     public GameState internalState;
 
+    [Header("Levels")]
+    public List<TextAsset> levels;
+
     // Private internal state
     private bool wasDownPreviously;
     private DataPoint lastLineStart;
