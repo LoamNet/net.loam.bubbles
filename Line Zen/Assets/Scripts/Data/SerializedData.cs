@@ -7,6 +7,7 @@ using UnityEngine;
 public struct DataGeneral
 {
     public static readonly char keyValueSeparator = '=';
+    public static readonly char valueSeparator = ',';
     public static readonly char contentSeparator = '\n';
 
     //////////////////////////////////////////////////////////
@@ -14,6 +15,7 @@ public struct DataGeneral
     public int level;
     public bool displayHelp;
     public bool displayParticles;
+    public List<DataChallenge> stars;
     //////////////////////////////////////////////////////////
 
     public DataGeneral(DataGeneral other)
@@ -22,6 +24,16 @@ public struct DataGeneral
         this.level = other.level;
         this.displayHelp = other.displayHelp;
         this.displayParticles = other.displayParticles;
+        this.stars = new List<DataChallenge>();
+
+        if (other.stars != null)
+        {
+
+            for(int i = 0; i < other.stars.Count; ++i)
+            {
+                 this.stars.Add(new DataChallenge(other.stars[i]));
+            }
+        }
     }
 
     public static DataGeneral Defaults()
@@ -32,6 +44,7 @@ public struct DataGeneral
         data.level = 0;
         data.displayHelp = false;
         data.displayParticles = true;
+        data.stars = new List<DataChallenge>();
 
         return data;
     }
@@ -44,10 +57,49 @@ public struct DataGeneral
 
         created += "level" + sep + level.ToString() + end;
         created += "score" + sep + score.ToString() + end;
+        created += "stars" + sep + ListToString(stars) + end;
         created += "displayhelp" + sep + displayHelp.ToString() + end;
         created += "displayParticles" + sep + displayParticles.ToString() + end;
 
         return created;
+    }
+
+    public string ListToString(List<DataChallenge> toWrite)
+    {
+        string str = "";
+
+        for(int i = 0; i < toWrite.Count; ++i)
+        {
+            if (i != 0)
+            {
+                str += valueSeparator;
+            }
+
+            str += toWrite[i].ToString();
+        }
+
+        return str;
+    }
+
+    public List<DataChallenge> ListFromString(string toRead)
+    {
+        List<DataChallenge> parsed = new List<DataChallenge>();
+
+        if(string.IsNullOrEmpty(toRead))
+        {
+            return parsed;
+        }
+
+        string[] split = toRead.Split(valueSeparator);
+
+        for(int i = 0; i < split.Length; ++i)
+        {
+            DataChallenge dataChallenge = new DataChallenge();
+            dataChallenge.FromString(split[i]);
+            parsed.Add(dataChallenge);
+        }
+
+        return parsed;
     }
 
     public void FromString(string toParse)
@@ -69,6 +121,9 @@ public struct DataGeneral
                         case "level":
                             level = int.Parse(line[1]);
                             break;
+                        case "stars":
+                            stars = ListFromString(line[1]);
+                            break;
                         case "displayhelp":
                             displayHelp = bool.Parse(line[1]);
                             break;
@@ -79,7 +134,7 @@ public struct DataGeneral
                 }
                 catch (System.Exception)
                 {
-                    Debug.LogError("Parsing error for line: " + line);
+                    Debug.LogError("Parsing error for line: " + line[0]);
                 }
             }
         }

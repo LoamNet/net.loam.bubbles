@@ -55,4 +55,6 @@ public class Events : MonoBehaviour
     public Action OnClearSavedData;
 
     public Action OnGameInitialized;
+
+    public Action<string> OnNoSaveEntryFound;
 }

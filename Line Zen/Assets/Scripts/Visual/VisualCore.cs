@@ -8,6 +8,7 @@ public class VisualCore : MonoBehaviour
     [Header("Base links")]
     public Data data;
     public Events events;
+    public GameCore core;
     public GameInputManager inputManager;
 
     [Header("Visual links")]
@@ -15,6 +16,7 @@ public class VisualCore : MonoBehaviour
     public VisualBubbleManager bubbleManager;
     public VisualScoreTextFeedback visualTextFeedback;
     public VisualParticleManager particleManager;
+    public UIChallengeList challengeList;
 
     [Header("Specific Visuals")]
     public GameObject lineEndCap; 
@@ -44,6 +46,10 @@ public class VisualCore : MonoBehaviour
         events.OnBubblesChange += OnBubblesChange;
         events.OnGuideLinesChange += OnGuideLinesChange;
         events.OnBubbleDestroyed += OnBubbleDestroyed;
+
+        events.OnGameInitialized += () => {
+            challengeList.Initialize(core.ChallengeLevels);
+        };
     }
 
     private void OnBubbleDestroyed(DataPoint pos)

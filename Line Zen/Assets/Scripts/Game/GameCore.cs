@@ -29,7 +29,7 @@ public class GameCore : MonoBehaviour
     public GameState internalState;
 
     [Header("Levels")]
-    public List<TextAsset> levels;
+    public SOChallengeList levels;
 
     // Private internal state
     private bool wasDownPreviously;
@@ -69,6 +69,14 @@ public class GameCore : MonoBehaviour
         }
     }
 
+    public SOChallengeList ChallengeLevels
+    {
+        get
+        {
+            return levels;
+        }
+    }
+
     private void Start()
     {
         hasInit = false;
@@ -86,6 +94,12 @@ public class GameCore : MonoBehaviour
         events.OnShowParticlesToggle += (isOn) => {
             DataGeneral toModify = data.GetDataGeneral();
             toModify.displayParticles = isOn;
+            data.SetDataGeneral(toModify);
+        };
+
+        events.OnNoSaveEntryFound += (name) => {
+            DataGeneral toModify = data.GetDataGeneral();
+            toModify.stars.Add(new DataChallenge(0, name));
             data.SetDataGeneral(toModify);
         };
 
