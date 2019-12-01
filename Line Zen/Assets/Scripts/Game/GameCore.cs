@@ -153,12 +153,12 @@ public class GameCore : MonoBehaviour
                 break;
             case GameState.TutorialOne:
                 PopulateLevelBubbles(tutorialOne);
-                UpdatePlayerLine();
+                UpdatePlayerLine(false);
                 CheckIfDoneTutorialBubbles(GameState.TutorialTwo);
                 break;
             case GameState.TutorialTwo:
                 PopulateLevelBubbles(tutorialTwo);
-                UpdatePlayerLine();
+                UpdatePlayerLine(false);
                 CheckIfDoneTutorialBubbles(GameState.Game);
                 ResetTutorialIfIncomplete();
                 break;
@@ -168,13 +168,13 @@ public class GameCore : MonoBehaviour
                 if (Mode == GameMode.ChallengeLevel)
                 {
                     PopulateLevelBubbles(CurrentLevel);
-                    UpdatePlayerLine();
+                    UpdatePlayerLine(false);
                     CheckIfDoneChallengeBubbles(GameState.Game);
                 }
                 else if (Mode == GameMode.Infinite)
                 {
                     PopulateUnlimitedBubbles();
-                    UpdatePlayerLine();
+                    UpdatePlayerLine(true);
                     CheckIfDoneUnlimitedBubbles();
                 }
                 break;
@@ -360,7 +360,7 @@ public class GameCore : MonoBehaviour
     }
 
     // Handles updating positions for the player line, along with line starting and finishing events.
-    private void UpdatePlayerLine()
+    private void UpdatePlayerLine(bool impactScore)
     {
         if (inputManager.PrimaryInputDown())
         {
@@ -382,7 +382,7 @@ public class GameCore : MonoBehaviour
         {
             if (wasDownPreviously)
             {
-                DataEarnedScore points = CollectBubblesAsNecessary();
+                DataEarnedScore points = CollectBubblesAsNecessary(impactScore);
                 events.OnBubblesChange?.Invoke(bubbles);
                 events.OnLineDestroyed?.Invoke(lastLineStart, lastLineEnd, points);
                 wasDownPreviously = false;
@@ -430,11 +430,15 @@ public class GameCore : MonoBehaviour
 
         DataEarnedScore dataEarnedScore = new DataEarnedScore(scoreBase, scoreBonus, locs);
 
-        if (pointsPerBubble != 0 && impactsScore)
+        if (pointsPerBubble != 0)
         {
             DataGeneral gen = data.GetDataGeneral();
             gen.score = gen.score + dataEarnedScore.total;
-            data.SetDataGeneral(gen);
+
+            if (impactsScore)
+            {
+                data.SetDataGeneral(gen);
+            }
         }
 
         // Clear colleted bubbles
@@ -442,12 +446,6 @@ public class GameCore : MonoBehaviour
         {
             events.OnBubbleDestroyed?.Invoke(bubbles[index]);
             bubbles.RemoveAt(index);
-        }
-
-        // Clear score impacting stuff if we don't impact scores
-        if(!impactsScore)
-        {
-            return new DataEarnedScore(0, 0, locs);
         }
 
         return dataEarnedScore;
