@@ -1,0 +1,9 @@
+name=Lucky Seven
+bubble=1.6,.5
+bubble=-1.6,-1.2
+bubble=1.25,-2
+bubble=-1.40,3
+bubble=-1.6,-2.15
+bubble=0,1
+bubble=1.85,-2.25
+stars=4,3,2
