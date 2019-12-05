@@ -57,7 +57,7 @@ public class GameInputManager : MonoBehaviour
     {
         if(PrimaryInputPressed())
         {
-            events.OnClick?.Invoke(new DataPoint(Input.mousePosition.x, Input.mousePosition.y));
+            events?.OnClick?.Invoke(new DataPoint(Input.mousePosition.x, Input.mousePosition.y));
         }
     }
 }

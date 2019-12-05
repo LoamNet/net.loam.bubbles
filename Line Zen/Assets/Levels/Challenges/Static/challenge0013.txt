@@ -1,0 +1,9 @@
+name=Shield
+stars=4,3,2
+bubble=-1.669,1.090
+bubble=1.639,1.135
+bubble=0.647,1.887
+bubble=-0.632,-0.554
+bubble=0.992,-0.654
+bubble=0.150,-1.361
+bubble=-0.647,1.782

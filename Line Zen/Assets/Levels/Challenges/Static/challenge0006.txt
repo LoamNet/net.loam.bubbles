@@ -1,0 +1,9 @@
+name=Reach
+stars=4,3,2
+bubble=-0.218,2.323
+bubble=0.850,1.000
+bubble=0.639,0.060
+bubble=-1.135,-3.677
+bubble=1.316,4.293
+bubble=0.835,2.368
+bubble=1.256,-1.376

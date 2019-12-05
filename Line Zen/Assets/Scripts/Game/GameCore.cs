@@ -210,10 +210,18 @@ public class GameCore : MonoBehaviour
 
             foreach(string line in lines)
             {
+                // Split on the line, and skip if it's an empty line
                 string[] split = line.Split('=');
+                if(split.Length == 1)
+                {
+                    continue;
+                }
+                
+                // Establish key/value for parsing, keys are case insensitve but really should be lowercase.
                 string key = split[0].Trim().ToLowerInvariant();
                 string value = split[1].Trim();
-
+                
+                // Bubbles can appear as a duplicate key, and are treated as such.
                 if(key.Equals("bubble"))
                 {
                     string[] point = value.Split(',');
@@ -222,6 +230,8 @@ public class GameCore : MonoBehaviour
 
                     bubbles.Add(new DataPoint(x, y));
                 }
+
+                // Lines can be duplicate keys, and so are treated as such
                 else if(key.Equals("line"))
                 {
                     string[] multiplePoints = value.Split(':');
@@ -237,6 +247,9 @@ public class GameCore : MonoBehaviour
                             new DataPoint(x1, y1),
                             new DataPoint(x2, y2)));
                 }
+
+                // There can only be one star entry, and so this entry will write over with the 
+                // last entry in the file if multiple are present.
                 else if (key.Equals("stars"))
                 {
                     string[] values = value.Split(',');

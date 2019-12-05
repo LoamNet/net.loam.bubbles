@@ -13,7 +13,15 @@ public class Data : MonoBehaviour
 
     public void Initialize()
     {
-        SetDataGeneral(dataIO.GetData());
+        if (dataIO != null)
+        {
+            SetDataGeneral(dataIO.GetData());
+        }
+        else
+        {
+            SetDataGeneral(DataGeneral.Defaults());
+            Debug.LogWarning("no serialization system was specified for data. Constructing dummy data only.");
+        }
         
         events.OnClearSavedData += () => {
             SetDataGeneral(DataGeneral.Defaults());

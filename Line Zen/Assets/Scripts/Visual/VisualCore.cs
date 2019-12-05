@@ -48,7 +48,14 @@ public class VisualCore : MonoBehaviour
         events.OnBubbleDestroyed += OnBubbleDestroyed;
 
         events.OnGameInitialized += () => {
-            challengeList.Initialize(core.ChallengeLevels);
+            if (challengeList != null)
+            {
+                challengeList.Initialize(core.ChallengeLevels);
+            }
+            else
+            {
+                Debug.LogWarning("No challenge list was specified, and so no challenge list could be initialized!");
+            }
         };
     }
 

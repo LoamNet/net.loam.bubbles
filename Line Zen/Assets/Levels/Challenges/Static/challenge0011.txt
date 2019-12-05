@@ -1,0 +1,13 @@
+name=E-ll-even
+stars=6,4,2
+bubble=1.368,3.947
+bubble=-0.256,3.752
+bubble=0.812,1.481
+bubble=0.632,-0.053
+bubble=-0.586,-0.383
+bubble=-1.233,-1.391
+bubble=0.541,-3.015
+bubble=1.188,-3.857
+bubble=-0.902,-4.203
+bubble=0.812,-1.150
+bubble=-1.008,2.609

@@ -1,0 +1,8 @@
+name=Curve
+stars=3,2,1
+bubble=0.068,2.955
+bubble=1.195,3.812
+bubble=-0.023,1.677
+bubble=-0.910,0.579
+bubble=-1.195,-1.810
+bubble=-1.150,-2.203

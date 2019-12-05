@@ -1,0 +1,9 @@
+name=Swish
+stars=4,3,2
+bubble=-1.035,3.344
+bubble=1.067,3.328
+bubble=-0.111,0.812
+bubble=-1.290,-1.672
+bubble=0.446,-2.946
+bubble=0.271,-4.522
+bubble=-1.226,-2.994

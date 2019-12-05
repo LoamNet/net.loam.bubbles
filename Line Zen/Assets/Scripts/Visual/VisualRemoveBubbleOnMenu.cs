@@ -13,14 +13,27 @@ public class VisualRemoveBubbleOnMenu : MonoBehaviour
     void Start()
     {
         isShrinking = false;
-        events.OnGameStateChangeRequest += StartShrinkOut;
+
+        if (events != null)
+        {
+            events.OnGameStateChangeRequest += StartShrinkOut;
+        }
+        else
+        {
+            Debug.LogWarning("no event system found! Will operate without, but no events will be fired from this bubble!");
+            name += "[No Events]";
+        }
+
         timeout = Random.Range(2f, 5f);
         size = GameCore.bubbleRadius * 2;
     }
 
     private void OnDestroy()
     {
-        events.OnGameStateChangeRequest -= StartShrinkOut;
+        if (events != null)
+        {
+            events.OnGameStateChangeRequest -= StartShrinkOut;
+        }
     }
 
     private void StartShrinkOut(GameState state, GameMode mode)
@@ -46,7 +59,12 @@ public class VisualRemoveBubbleOnMenu : MonoBehaviour
             else
             {
                 isShrinking = false;
-                events.OnBubbleDestroyed?.Invoke(new DataPoint(gameObject.transform.position));
+
+                if (events != null)
+                {
+                    events.OnBubbleDestroyed?.Invoke(new DataPoint(gameObject.transform.position));
+                }
+
                 Destroy(this.gameObject);
             }
         }

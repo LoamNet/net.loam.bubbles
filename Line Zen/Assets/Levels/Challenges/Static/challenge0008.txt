@@ -1,0 +1,9 @@
+name=Kite
+stars=4,3,2
+bubble=-0.835,2.609
+bubble=-1.165,1.000
+bubble=-0.534,-1.602
+bubble=0.519,-2.669
+bubble=1.060,-.333
+bubble=1.286,2.639
+bubble=0.534,0.865

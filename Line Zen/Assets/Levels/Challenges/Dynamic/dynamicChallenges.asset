@@ -10,11 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 890be18cfcca3ba4581ad870e1c01782, type: 3}
-  m_Name: challenges
+  m_Name: dynamicChallenges
   m_EditorClassIdentifier: 
   levels:
-  - {fileID: 4900000, guid: 5e5af65451e4d0c498da4412fe48ba2c, type: 3}
-  - {fileID: 4900000, guid: f30ca06121485df4c83c7216d93a7051, type: 3}
-  - {fileID: 4900000, guid: 7e3cd7d098300454bb986c22e317142c, type: 3}
-  - {fileID: 4900000, guid: 3b8cea0a31f5790489785c93da808591, type: 3}
-  - {fileID: 4900000, guid: 816db4900c9b334498746f279c5cbf53, type: 3}
+  - {fileID: 4900000, guid: 8c79047e092d2ee429909ff9d7a52520, type: 3}
