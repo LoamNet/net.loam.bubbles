@@ -1,0 +1,10 @@
+name=Tracks
+stars=4,3,2
+bubble=-1.019,3.790
+bubble=0.478,2.978
+bubble=1.736,0.510
+bubble=-1.401,-0.971
+bubble=0.000,-1.545
+bubble=0.462,1.497
+bubble=1.545,-2.357
+bubble=0.382,-2.627
