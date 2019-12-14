@@ -506,7 +506,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 0.6}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -1606,6 +1606,7 @@ MonoBehaviour:
   events: {fileID: 399031073}
   state: 6
   mode: 1
+  triggerKeys: 
 --- !u!114 &394478346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2013,6 +2014,7 @@ MonoBehaviour:
   events: {fileID: 399031073}
   state: 0
   mode: 0
+  triggerKeys: 
 --- !u!114 &432801626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2314,6 +2316,7 @@ MonoBehaviour:
   events: {fileID: 399031073}
   state: 3
   mode: 0
+  triggerKeys: 
 --- !u!114 &493730068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3120,6 +3123,7 @@ MonoBehaviour:
   events: {fileID: 399031073}
   state: 5
   mode: 0
+  triggerKeys: 
 --- !u!114 &627930603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3997,6 +4001,7 @@ MonoBehaviour:
   events: {fileID: 399031073}
   state: 0
   mode: 0
+  triggerKeys: 1b0000000d000000
 --- !u!114 &721297491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4655,7 +4660,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 20
+  m_ScrollSensitivity: 25
   m_Viewport: {fileID: 894054632}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 1994731834}
@@ -9158,6 +9163,7 @@ MonoBehaviour:
   events: {fileID: 399031073}
   state: 0
   mode: 0
+  triggerKeys: 1b000000
 --- !u!114 &1919846584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9489,6 +9495,7 @@ MonoBehaviour:
   events: {fileID: 399031073}
   state: 1
   mode: 2
+  triggerKeys: 
 --- !u!114 &1993860411
 MonoBehaviour:
   m_ObjectHideFlags: 0

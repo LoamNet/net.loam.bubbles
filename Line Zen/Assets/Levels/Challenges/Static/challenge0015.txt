@@ -1,8 +1,8 @@
 name=Dodge
-stars=4,3,2
+stars=6,4,2
 bubble=-1.564,3.015
-bubble=-0.105,2.038
+bubble=-0.425,2.238
 bubble=1.774,3.466
 bubble=-1.549,-3.902
 bubble=1.564,-4.038
-bubble=-0.271,-3.015
+bubble=-0.471,-3.015
