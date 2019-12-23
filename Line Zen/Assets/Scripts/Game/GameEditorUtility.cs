@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 // Custom editor for levels to make creating them easier
 public class GameEditorUtility : MonoBehaviour
 {
+    public string fileName = "challenge0000";
     public string levelTitle = "Untitled";
     public int bronze = 3;
     public int silver = 2;
@@ -16,8 +18,25 @@ public class GameEditorUtility : MonoBehaviour
     public GameObject template;
     public GameInputManager inputManager;
 
+    public void SaveToFile()
+    {
+#if UNITY_EDITOR
+        string path = UnityEditor.EditorUtility.SaveFilePanel("Save level",
+            System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop),
+            fileName,
+            "txt");
+
+        if (!string.IsNullOrEmpty(path))
+        {
+            File.WriteAllText(path, this.Serialize());
+        }
+#endif
+
+    }
+
     public void Clear()
     {
+        fileName = "challenge0000";
         levelTitle = "Untitled";
         bronze = 3;
         silver = 2;

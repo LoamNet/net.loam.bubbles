@@ -16,16 +16,7 @@ public class GameEditorUtilityEditor : Editor
         GameEditorUtility util = (GameEditorUtility)this.target;
         if (GUILayout.Button("Save As"))
         {
-            string path = EditorUtility.SaveFilePanel(
-                "Save level",
-                System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop),
-                "challenge0000",
-                "txt");
-
-            if (!string.IsNullOrEmpty(path))
-            {
-                File.WriteAllText(path, util.Serialize());
-            }
+            util.SaveToFile();
         }
 
         if (GUILayout.Button("Clear All"))
