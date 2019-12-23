@@ -178,10 +178,10 @@ MonoBehaviour:
   inputManager: {fileID: 57648227}
   tutorialOne: {fileID: 4900000, guid: 79ccb4b363f83c045930be92fb8d215b, type: 3}
   tutorialTwo: {fileID: 4900000, guid: 3e2c6be780cf2444c8ccf81f3694a2af, type: 3}
-  internalLevel: {fileID: 4900000, guid: 5e5af65451e4d0c498da4412fe48ba2c, type: 3}
+  internalLevel: {fileID: 4900000, guid: 8c79047e092d2ee429909ff9d7a52520, type: 3}
   internalMode: 1
   internalState: 4
-  levels: {fileID: 11400000, guid: daea1422827ef584a99b10228a688e29, type: 2}
+  levels: {fileID: 11400000, guid: 394c585430be46d4d896c53bcb79da4e, type: 2}
 --- !u!114 &57648223
 MonoBehaviour:
   m_ObjectHideFlags: 0

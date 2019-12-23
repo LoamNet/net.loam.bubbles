@@ -100,7 +100,8 @@ public class VisualCore : MonoBehaviour
         line = null;
     }
 
-    private void OnBubblesChange(List<DataPoint> bubbles)
+    // When bubbles change in any way, redraw them all at their new positions.
+    private void OnBubblesChange(List<DataBubble> bubbles)
     {
         foreach (VisualBubble bubble in trackedBubbles)
         {
@@ -109,12 +110,13 @@ public class VisualCore : MonoBehaviour
 
         trackedBubbles.Clear();
 
-        foreach (DataPoint position in bubbles)
+        foreach (DataBubble bubble in bubbles)
         {
-            trackedBubbles.Add(bubbleManager.CreateBubble(position));
+            trackedBubbles.Add(bubbleManager.CreateBubble(bubble.GetPosition()));
         }
     }
 
+    // Adjust the location of any guidelines being drawn
     private void OnGuideLinesChange(List<Tuple<DataPoint, DataPoint>> lines)
     {
         foreach (VisualLine line in trackedGuideLines)
@@ -154,6 +156,7 @@ public class VisualCore : MonoBehaviour
     }
 
 
+    // Debug lines are used to determine the behavior once the input is released for the bubbles present.
     private List<VisualLine> debugLines = new List<VisualLine>();
     private void DrawDebug()
     {
@@ -170,6 +173,7 @@ public class VisualCore : MonoBehaviour
             {
                 float lineWidth = .04f;
 
+                // Take every bubble and draw debug lines from it to the line to help display what's going on.
                 foreach (VisualBubble bubble in trackedBubbles)
                 {
                     if (bubble.visual != null)
@@ -199,6 +203,7 @@ public class VisualCore : MonoBehaviour
                     }
                 }
 
+                // Draw extensions on the line itself
                 Vector2 directionUnscaled = new Vector2(line.End().X - line.Start().X, line.End().Y - line.Start().Y);
                 Vector2 direction = directionUnscaled.normalized;
                 Color col = new Color(.3f, .3f, .3f, .03f);
@@ -209,7 +214,7 @@ public class VisualCore : MonoBehaviour
             }
 
             /*
-             Screen boundary debugging
+            // Screen boundary debugging
             DataPoint screenSize = inputManager.ScreenSizeWorld();
             debugLines.Add(lineManager.CreateLine(new DataPoint(-screenSize.X, screenSize.Y), new DataPoint(-screenSize.X, -screenSize.Y), Color.magenta, .1f)); // left
             debugLines.Add(lineManager.CreateLine(new DataPoint(screenSize.X, screenSize.Y), new DataPoint(screenSize.X, -screenSize.Y), Color.magenta, .1f)); // right

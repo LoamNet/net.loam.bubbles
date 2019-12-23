@@ -41,7 +41,7 @@ public class GameCore : MonoBehaviour
     private bool hasInit;
 
     // Internal bubble and level tracking
-    private List<DataPoint> bubbles;
+    private List<DataBubble> bubbles;
     private List<Tuple<DataPoint, DataPoint>> guideLines;
     private int linesDrawn;
 
@@ -103,7 +103,7 @@ public class GameCore : MonoBehaviour
         hasInit = false;
         linesDrawn = 0;
         internalStateCurrentHasInit = false;
-        bubbles = new List<DataPoint>();
+        bubbles = new List<DataBubble>();
         guideLines = new List<Tuple<DataPoint, DataPoint>>();
         wasDownPreviously = false;
 
@@ -217,18 +217,49 @@ public class GameCore : MonoBehaviour
                     continue;
                 }
                 
-                // Establish key/value for parsing, keys are case insensitve but really should be lowercase.
+                // Establish key/value for parsing, keys are case insensitve but really 
+                // should be lowercase.
                 string key = split[0].Trim().ToLowerInvariant();
                 string value = split[1].Trim();
                 
                 // Bubbles can appear as a duplicate key, and are treated as such.
                 if(key.Equals("bubble"))
                 {
-                    string[] point = value.Split(',');
+                    // There are two formats for the bubble value in the serialized file.
+                    // The first of the two is just the location of the bubble in the world itself,
+                    // and the second specifies any movement associated with the bubble.
+                    //
+                    // .75,1:0,-1@.8
+                    //  ^ Initial X position
+                    //     ^ Initial Y position
+                    //      ^ split to see if we have a velocity
+                    //       ^ Initail X velocity
+                    //          ^ Initial Y velocity
+                    //              ^ Initial Speed (sinusoidal)
+                    //
+                    string[] movementSplit = value.Split(':'); // Check to see if we have velocity info. 
+                    float target_x = 0;
+                    float target_y = 0;
+                    float speed = 0;
+
+                    // If we found the additional informaiton section, we can parse out velocity and speed.
+                    // Once we start parsing this section, we assume it's formatted correctly.
+                    if (movementSplit.Length > 1)
+                    {
+                        string[] speedSplit = movementSplit[1].Split('@');
+                        string[] velocity = speedSplit[0].Split(',');
+                        target_x = float.Parse(velocity[0].Trim());
+                        target_y = float.Parse(velocity[1].Trim());
+                        speed = float.Parse(speedSplit[1].Trim());
+                    }
+
+                    // We require the position at the very least. It's impoertant 
+                    string[] point = movementSplit[0].Split(',');
                     float x = float.Parse(point[0].Trim());
                     float y = float.Parse(point[1].Trim());
 
-                    bubbles.Add(new DataPoint(x, y));
+                    // Add a new bubble with parsed info 
+                    bubbles.Add(new DataBubble(new DataPoint(x, y), new DataPoint(target_x, target_y), speed));
                 }
 
                 // Lines can be duplicate keys, and so are treated as such
@@ -362,7 +393,7 @@ public class GameCore : MonoBehaviour
                 double y = (rand.Next() - 0.5f) * 2;
                 DataPoint screenSize = inputManager.ScreenSizeWorld();
                 DataPoint pos = new DataPoint(x * (screenSize.X - bubbleRadius), y * (screenSize.Y - bubbleRadius * 2));
-                bubbles.Add(pos);
+                bubbles.Add(new DataBubble(new DataPoint(pos)));
             }
 
             events.OnBubblesChange?.Invoke(bubbles);
@@ -414,14 +445,14 @@ public class GameCore : MonoBehaviour
         // Collect collisions
         for (int i = bubbles.Count - 1; i >= 0; --i)
         {
-            DataPoint bubble = bubbles[i];
+            DataBubble bubble = bubbles[i];
 
-            bool isHit = Utils.IsLineTouchingCircle(lastLineStart, lastLineEnd, bubble, triggerRadius, bubbleRadius);
+            bool isHit = Utils.IsLineTouchingCircle(lastLineStart, lastLineEnd, bubble.GetPosition(), triggerRadius, bubbleRadius);
             
             if(isHit)
             {
                 collectedIndexes.Add(i);
-                locs.Add(bubble);
+                locs.Add(bubble.GetPosition());
             }
         }
 
@@ -457,7 +488,7 @@ public class GameCore : MonoBehaviour
         // Clear colleted bubbles
         foreach (int index in collectedIndexes)
         {
-            events.OnBubbleDestroyed?.Invoke(bubbles[index]);
+            events.OnBubbleDestroyed?.Invoke(bubbles[index].GetPosition());
             bubbles.RemoveAt(index);
         }
 
