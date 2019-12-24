@@ -6,22 +6,19 @@ using UnityEngine.UI;
 public class UILevelEditorWriter : MonoBehaviour
 {
     public GameEditorUtility editor;
-    public TMPro.TMP_InputField fileName;
-    public TMPro.TMP_InputField levelName;
-    public TMPro.TMP_InputField starBronze;
-    public TMPro.TMP_InputField starSilver;
-    public TMPro.TMP_InputField starGold;
+    public InputField fileName;
+    public InputField levelName;
+    public InputField starBronze;
+    public InputField starSilver;
+    public InputField starGold;
     public Button clearAll;
     public Button saveAll;
-
-    [Header("Internal Tracked Values")]
-    [SerializeField] private string filename;
 
     // Start is called before the first frame update
     void Start()
     {
         // String value parsing
-        fileName.onValueChanged.AddListener((newval) => { filename = newval; });
+        fileName.onValueChanged.AddListener((newval) => { editor.fileName = newval; });
         levelName.onValueChanged.AddListener((newval) => { editor.levelTitle = newval; });
 
         // Star parsing/binding
@@ -45,14 +42,19 @@ public class UILevelEditorWriter : MonoBehaviour
         });
 
         // Button hooking up
-        clearAll.onClick.AddListener(() => { editor.Clear(); });
+        clearAll.onClick.AddListener(() => { editor.Clear(); UpdateToEditorContent(); });
+
+        // Initial reset
+        UpdateToEditorContent();
     }
 
+    // This sets the state of the UI to the state of the editor internally.
     void UpdateToEditorContent()
     {
         levelName.text = editor.levelTitle;
+        fileName.text = editor.fileName;
         starBronze.text = editor.bronze.ToString();
         starSilver.text = editor.silver.ToString();
-        starBronze.text = editor.gold.ToString();
+        starGold.text = editor.gold.ToString();
     }
 }

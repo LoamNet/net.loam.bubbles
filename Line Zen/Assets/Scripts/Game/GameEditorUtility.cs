@@ -17,6 +17,7 @@ public class GameEditorUtility : MonoBehaviour
     public Camera sceneCam;
     public GameObject template;
     public GameInputManager inputManager;
+    public SpriteRenderer safeArea;
 
     public void SaveToFile()
     {
@@ -77,7 +78,7 @@ public class GameEditorUtility : MonoBehaviour
             RaycastHit hit;
             bool hitSomething = false;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
+            
             if (Physics.Raycast(ray, out hit))
             {
                 if (hit.collider != null)
@@ -90,8 +91,21 @@ public class GameEditorUtility : MonoBehaviour
 
             if (!hitSomething)
             {
+                DataPoint pos = inputManager.PrimaryInputPosWorld();
+
+                float left = safeArea.transform.position.x - safeArea.size.x / 2;
+                float right = safeArea.transform.position.x + safeArea.size.x / 2;
+                float top = safeArea.transform.position.y + safeArea.size.y / 2;
+                float bottom = safeArea.transform.position.y - safeArea.size.x / 2;
+
+                if (pos.X > right || pos.X < left)
+                    return;
+
+                if (pos.Y > top || pos.Y < bottom)
+                    return;
+
                 GameObject newBubble = GameObject.Instantiate(template);
-                newBubble.transform.position = inputManager.PrimaryInputPosWorld();
+                newBubble.transform.position = pos;
                 newBubble.SetActive(true);
                 SphereCollider col = newBubble.AddComponent<SphereCollider>();
                 col.radius = .5f;
