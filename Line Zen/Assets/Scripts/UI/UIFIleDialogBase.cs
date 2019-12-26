@@ -13,6 +13,7 @@ public class UIFIleDialogBase : MonoBehaviour
     public GameObject entryTemplate;
     public Sprite fileIcon;
     public Sprite folderIcon;
+    public UIFadeOut errorSymbol;
 
     private List<GameObject> entries;
     private Transform entryParent;
@@ -25,8 +26,7 @@ public class UIFIleDialogBase : MonoBehaviour
         }
         set
         {
-            _currentPath = value;
-            UpdateDialogWithDirectoryInfo();
+            UpdateDialogWithDirectoryInfo(value);
         }
     }
 
@@ -57,8 +57,37 @@ public class UIFIleDialogBase : MonoBehaviour
     }
 
     // Update is called once per frame
-    void UpdateDialogWithDirectoryInfo()
+    void UpdateDialogWithDirectoryInfo(string newValue)
     {
+        DirectoryInfo d = null;
+        FileInfo[] files = null;
+        DirectoryInfo[] directories = null;
+
+        // Start by getting the path and files and seeing if we can proceed.
+        // If we don't end with an acceptable directory separator character, add the default one.
+        string adjustedPath = newValue.Trim();
+        if (!adjustedPath.EndsWith("" + Path.DirectorySeparatorChar) && !adjustedPath.EndsWith("" + Path.AltDirectorySeparatorChar))
+        {
+            adjustedPath += Path.DirectorySeparatorChar;
+        }
+
+        // Attempt to get directory and file info. If we error out, report that to the user
+        // but allow them to continue to use things, so exit early to avoid clearing out folders/etc.
+        try
+        {
+            d = new DirectoryInfo(adjustedPath);
+            files = d.GetFiles();
+            directories = d.GetDirectories();
+        }
+        catch(System.Exception)
+        {
+            errorSymbol.ResetAlpha();
+            return;
+        }
+
+        // Now, we can finally keep tabs since we've confirmed this is updated.
+        _currentPath = newValue.Trim();
+
         // Clear old content and update path string
         foreach (GameObject g in entries)
         {
@@ -66,17 +95,6 @@ public class UIFIleDialogBase : MonoBehaviour
         }
         entries.Clear();
         textPath.text = _currentPath;
-
-        // Get path. If we don't end with an acceptable directory separator character, add the default one.
-        string adjustedPath = _currentPath.Trim();
-        if(!adjustedPath.EndsWith("" + Path.DirectorySeparatorChar) && !adjustedPath.EndsWith("" + Path.AltDirectorySeparatorChar))
-        {
-            adjustedPath += Path.DirectorySeparatorChar;
-        }
-        
-        DirectoryInfo d = new DirectoryInfo(adjustedPath);
-        FileInfo[] files = d.GetFiles();
-        DirectoryInfo[] directories = d.GetDirectories();
 
         // Display all folders
         foreach (DirectoryInfo dir in directories)

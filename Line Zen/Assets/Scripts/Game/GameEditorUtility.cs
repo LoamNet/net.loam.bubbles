@@ -86,6 +86,7 @@ public class GameEditorUtility : MonoBehaviour
             bool hitSomething = false;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             
+            // Cast a ray into the scene and see if we hit anything.
             if (Physics.Raycast(ray, out hit))
             {
                 if (hit.collider != null)
@@ -96,6 +97,8 @@ public class GameEditorUtility : MonoBehaviour
                 }
             }
 
+            // Verify we're in the safezone. If we are and nothing was hit, 
+            // well, we can go ahead and place a bubble now!
             if (!hitSomething)
             {
                 DataPoint pos = inputManager.PrimaryInputPosWorld();
