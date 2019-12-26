@@ -43,6 +43,7 @@ public class UILevelEditorWriter : MonoBehaviour
 
         // Button hooking up
         clearAll.onClick.AddListener(() => { editor.Clear(); UpdateToEditorContent(); });
+        saveAll.onClick.AddListener(() => { editor.SaveToFile(); UpdateToEditorContent(); });
 
         // Initial reset
         UpdateToEditorContent();

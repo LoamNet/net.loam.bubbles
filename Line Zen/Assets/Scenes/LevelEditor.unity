@@ -1195,17 +1195,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f165e77fa77fac4a81a771d0f6fc47a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: Default
+  fileName: challenge0000
   levelTitle: Untitled
   bronze: 3
   silver: 2
   gold: 1
   spawned: []
-  safeArea: {fileID: 637012667}
   sceneCam: {fileID: 1671581560}
   template: {fileID: 7035226729118270333, guid: 52196803e3e5e7143b28c818644a862d,
     type: 3}
   inputManager: {fileID: 521167733}
+  safeArea: {fileID: 637012667}
 --- !u!114 &521167733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3227,7 +3227,6 @@ MonoBehaviour:
   starGold: {fileID: 330410043}
   clearAll: {fileID: 486201811}
   saveAll: {fileID: 251157772}
-  filename: 
 --- !u!222 &1523705013
 CanvasRenderer:
   m_ObjectHideFlags: 0

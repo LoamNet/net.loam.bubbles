@@ -19,6 +19,11 @@ public class GameEditorUtility : MonoBehaviour
     public GameInputManager inputManager;
     public SpriteRenderer safeArea;
 
+    public void Awake()
+    {
+        Clear();
+    }
+
     public void SaveToFile()
     {
 #if UNITY_EDITOR
@@ -96,13 +101,12 @@ public class GameEditorUtility : MonoBehaviour
                 float left = safeArea.transform.position.x - safeArea.size.x / 2;
                 float right = safeArea.transform.position.x + safeArea.size.x / 2;
                 float top = safeArea.transform.position.y + safeArea.size.y / 2;
-                float bottom = safeArea.transform.position.y - safeArea.size.x / 2;
+                float bottom = safeArea.transform.position.y - safeArea.size.y / 2;
 
-                if (pos.X > right || pos.X < left)
+                if (pos.X > right || pos.X < left || pos.Y > top || pos.Y < bottom)
+                {
                     return;
-
-                if (pos.Y > top || pos.Y < bottom)
-                    return;
+                }
 
                 GameObject newBubble = GameObject.Instantiate(template);
                 newBubble.transform.position = pos;
