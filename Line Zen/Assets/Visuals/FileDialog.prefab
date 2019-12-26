@@ -1329,7 +1329,7 @@ GameObject:
   - component: {fileID: 9136736259836869189}
   - component: {fileID: 7866967188468820721}
   m_Layer: 5
-  m_Name: SaveDialog
+  m_Name: FileDialog
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1452,7 +1452,7 @@ MonoBehaviour:
   cancel: {fileID: 9136736260006364974}
   select: {fileID: 9136736258722406590}
   textPath: {fileID: 9136736260735895659}
-  entryTemplate: {fileID: 0}
+  entryTemplate: {fileID: 8103416261081264828}
 --- !u!1 &9136736259980898788
 GameObject:
   m_ObjectHideFlags: 0

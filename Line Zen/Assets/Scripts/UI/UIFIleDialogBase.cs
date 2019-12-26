@@ -30,6 +30,7 @@ public class UIFIleDialogBase : MonoBehaviour
     // Collect some basic info and hide the template in the dialog.
     void Start()
     {
+        entries = new List<GameObject>();
         entryTemplate.SetActive(false);
         entryParent = entryTemplate.gameObject.transform.parent;
         CurrentPath = Application.dataPath;
