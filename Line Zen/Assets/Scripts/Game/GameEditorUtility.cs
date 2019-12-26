@@ -36,6 +36,8 @@ public class GameEditorUtility : MonoBehaviour
         {
             File.WriteAllText(path, this.Serialize());
         }
+#else
+
 #endif
 
     }
