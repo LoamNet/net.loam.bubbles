@@ -167,7 +167,7 @@ public class VisualCore : MonoBehaviour
 
         debugLines.Clear();
 
-        if (data.GetDataGeneral().displayHelp)
+        if (data.GetDataGeneral().showHelp)
         {
             if (line != null)
             {

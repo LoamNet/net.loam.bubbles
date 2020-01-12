@@ -53,9 +53,9 @@ public class UIFIleDialogBase : MonoBehaviour
         });
 
         // Sets the current path and adjusts accordingly
-        CurrentPath = Application.dataPath;
+        CurrentPath = Application.persistentDataPath;
     }
-
+ 
     // Update is called once per frame
     void UpdateDialogWithDirectoryInfo(string newValue)
     {

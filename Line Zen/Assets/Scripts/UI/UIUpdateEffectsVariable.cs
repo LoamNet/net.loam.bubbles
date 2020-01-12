@@ -15,7 +15,7 @@ public class UIUpdateEffectsVariable : MonoBehaviour
         });
 
         events.OnDataChanged += (data) => {
-            GetComponent<UnityEngine.UI.Toggle>().isOn = data.displayParticles;
+            GetComponent<UnityEngine.UI.Toggle>().isOn = data.showParticles;
         };
     }
 }

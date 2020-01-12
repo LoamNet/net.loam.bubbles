@@ -37,7 +37,7 @@ public class GameEditorUtility : MonoBehaviour
             File.WriteAllText(path, this.Serialize());
         }
 #else
-
+        Debug.LogError("There is no path here");
 #endif
 
     }

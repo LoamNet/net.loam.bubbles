@@ -109,13 +109,19 @@ public class GameCore : MonoBehaviour
 
         events.OnShowHelpToggle += (isOn) => {
             DataGeneral toModify = data.GetDataGeneral();
-            toModify.displayHelp = isOn;
+            toModify.showHelp = isOn;
             data.SetDataGeneral(toModify);
         };
 
         events.OnShowParticlesToggle += (isOn) => {
             DataGeneral toModify = data.GetDataGeneral();
-            toModify.displayParticles = isOn;
+            toModify.showParticles = isOn;
+            data.SetDataGeneral(toModify);
+        };
+
+        events.OnTutorialToggle += (isOn) => {
+            DataGeneral toModify = data.GetDataGeneral();
+            toModify.showTutorial = isOn;
             data.SetDataGeneral(toModify);
         };
 
@@ -152,10 +158,18 @@ public class GameCore : MonoBehaviour
             case GameState.Options:
                 break;
             case GameState.TutorialOne:
-                PopulateLevelBubbles(tutorialOne);
-                UpdatePlayerLine(false);
-                CheckIfDoneTutorialBubbles(GameState.TutorialTwo);
-                break;
+                if (!data.GetDataGeneral().showTutorial)
+                {
+                    State = GameState.Game;
+                    goto case GameState.Game;
+                }
+                else
+                {
+                    PopulateLevelBubbles(tutorialOne);
+                    UpdatePlayerLine(false);
+                    CheckIfDoneTutorialBubbles(GameState.TutorialTwo);
+                    break;
+                }
             case GameState.TutorialTwo:
                 PopulateLevelBubbles(tutorialTwo);
                 UpdatePlayerLine(false);

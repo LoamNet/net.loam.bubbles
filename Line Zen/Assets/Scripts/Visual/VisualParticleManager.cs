@@ -19,7 +19,7 @@ public class VisualParticleManager : MonoBehaviour
         bubbleExplosionParticles = new List<ParticleSystem>();
 
         events.OnShowParticlesToggle += (isOn) => { HandleStartupSystems(isOn); };
-        events.OnGameInitialized += () => { HandleStartupSystems(data.GetDataGeneral().displayParticles); };
+        events.OnGameInitialized += () => { HandleStartupSystems(data.GetDataGeneral().showParticles); };
     }
 
 
@@ -56,7 +56,7 @@ public class VisualParticleManager : MonoBehaviour
 
     public void CreateBubbleExplosion(DataPoint location)
     {
-        if (data.GetDataGeneral().displayParticles)
+        if (data.GetDataGeneral().showParticles)
         {
             ParticleSystem obj = Instantiate(bubbleExplosionTemplate, this.gameObject.transform);
             obj.transform.position = location;

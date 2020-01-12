@@ -27,9 +27,11 @@ public class Events : MonoBehaviour
     /// Settings
     /// </summary>
 
+    // Menu toggles
     public Action<bool> OnShowHelpToggle;      // When the guide lines section is toggled on or off in settings
     public Action<bool> OnShowParticlesToggle; // When the particles visual is toggled on or off in settings.
-
+    public Action<bool> OnTutorialToggle;      // Should we display the tutorial when starting a play session?
+    
     /// <summary>
     /// Internal
     /// </summary>

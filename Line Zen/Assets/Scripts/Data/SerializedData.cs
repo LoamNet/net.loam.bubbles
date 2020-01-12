@@ -13,8 +13,9 @@ public struct DataGeneral
     //////////////////////////////////////////////////////////
     public long score;
     public int level;
-    public bool displayHelp;
-    public bool displayParticles;
+    public bool showTutorial;
+    public bool showHelp;
+    public bool showParticles;
     public List<DataChallenge> challenges;
     //////////////////////////////////////////////////////////
 
@@ -41,13 +42,13 @@ public struct DataGeneral
     {
         this.score = other.score;
         this.level = other.level;
-        this.displayHelp = other.displayHelp;
-        this.displayParticles = other.displayParticles;
+        this.showTutorial = other.showTutorial;
+        this.showHelp = other.showHelp;
+        this.showParticles = other.showParticles;
         this.challenges = new List<DataChallenge>();
 
         if (other.challenges != null)
         {
-
             for(int i = 0; i < other.challenges.Count; ++i)
             {
                  this.challenges.Add(new DataChallenge(other.challenges[i]));
@@ -61,8 +62,9 @@ public struct DataGeneral
 
         data.score = 0;
         data.level = 0;
-        data.displayHelp = false;
-        data.displayParticles = true;
+        data.showTutorial = true;
+        data.showHelp = false;
+        data.showParticles = true;
         data.challenges = new List<DataChallenge>();
 
         return data;
@@ -77,8 +79,9 @@ public struct DataGeneral
         created += "level" + sep + level.ToString() + end;
         created += "score" + sep + score.ToString() + end;
         created += "challenges" + sep + ListToString(challenges) + end;
-        created += "displayhelp" + sep + displayHelp.ToString() + end;
-        created += "displayParticles" + sep + displayParticles.ToString() + end;
+        created += "showTutorial" + sep + showTutorial.ToString() + end;
+        created += "showHelp" + sep + showHelp.ToString() + end;
+        created += "showParticles" + sep + showParticles.ToString() + end;
 
         return created;
     }
@@ -143,11 +146,14 @@ public struct DataGeneral
                         case "challenges":
                             challenges = ListFromString(line[1]);
                             break;
-                        case "displayhelp":
-                            displayHelp = bool.Parse(line[1]);
+                        case "showtutorial":
+                            showTutorial = bool.Parse(line[1]);
                             break;
-                        case "displayparticles":
-                            displayParticles = bool.Parse(line[1]);
+                        case "showhelp":
+                            showHelp = bool.Parse(line[1]);
+                            break;
+                        case "showparticles":
+                            showParticles = bool.Parse(line[1]);
                             break;
                     }
                 }

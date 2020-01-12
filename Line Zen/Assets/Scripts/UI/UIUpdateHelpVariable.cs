@@ -15,7 +15,7 @@ public class UIUpdateHelpVariable : MonoBehaviour
         });
 
         events.OnDataChanged += (data) => {
-            GetComponent<UnityEngine.UI.Toggle>().isOn = data.displayHelp;
+            GetComponent<UnityEngine.UI.Toggle>().isOn = data.showHelp;
         };
     }
 }
