@@ -7,6 +7,7 @@ public enum GameState
     Options,
     Game,
     Exit,
-    PickChallenge
+    PickChallenge,
+    PickMode
 }
 

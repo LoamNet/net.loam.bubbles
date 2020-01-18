@@ -6,6 +6,7 @@ public class UIDisplayableStates : MonoBehaviour
 {
     public Events events;
     public List<GameState> displayDuring = new List<GameState>();
+    public GameMode selectiveMode = GameMode.Undefined;
 
     // Start is called before the first frame update
     void Start()
@@ -25,12 +26,28 @@ public class UIDisplayableStates : MonoBehaviour
         events.OnGameStateChange -= SetVisibility;
     }
 
-    void SetVisibility(GameState state)
+    void SetVisibility(GameState state, GameMode mode)
     {
         if (displayDuring.Contains(state))
         {
-            if(this.gameObject as UnityEngine.GameObject != null)
-                this.gameObject.SetActive(true);
+            if (this.gameObject as UnityEngine.GameObject != null)
+            {
+                if (selectiveMode != GameMode.Undefined)
+                {
+                    if (selectiveMode == mode)
+                    {
+                        this.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        this.gameObject.SetActive(false);
+                    }
+                }
+                else
+                {
+                    this.gameObject.SetActive(true);
+                }
+            }
         }
         else
         {

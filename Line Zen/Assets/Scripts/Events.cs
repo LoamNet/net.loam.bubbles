@@ -18,7 +18,7 @@ public class Events : MonoBehaviour
     public Action<DataPoint> OnClick;                                     // When the primary input format is clicked
 
     // State updates
-    public Action<GameState> OnGameStateChange;                          // The game state has been updated 
+    public Action<GameState, GameMode> OnGameStateChange;                // The game state has been updated 
     public Action<List<DataBubble>> OnBubblesChange;                     // Whenever the state of bubbles changes, this is fired.
     public Action<List<Tuple<DataPoint, DataPoint>>> OnGuideLinesChange; // When one of the guide lines in the level visually is adjusted.
     public Action<DataPoint> OnBubbleDestroyed;                          // When a bubble is destroyed

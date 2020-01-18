@@ -17,7 +17,7 @@ public class UIChallengeList : MonoBehaviour
         entries = new List<UIChallengeEntry>();
         entryTemplate.gameObject.SetActive(false);
 
-        events.OnGameStateChange += (state) => {
+        events.OnGameStateChange += (state, mode) => {
             if (state == GameState.PickChallenge)
             {
                 foreach (UIChallengeEntry entry in entries)

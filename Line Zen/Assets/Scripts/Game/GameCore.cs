@@ -59,10 +59,11 @@ public class GameCore : MonoBehaviour
         {
             internalState = value;
             internalStateCurrentHasInit = false;
-            events.OnGameStateChange?.Invoke(internalState);
+            events.OnGameStateChange?.Invoke(internalState, Mode);
         } 
     }
-    public GameMode Mode
+
+    private GameMode Mode
     {
         get
         {
@@ -138,7 +139,7 @@ public class GameCore : MonoBehaviour
             State = GameState.Game;
         };
 
-        events.OnGameStateChangeRequest += (state, mode) => { State = state; Mode = mode; };
+        events.OnGameStateChangeRequest += (state, mode) => { Mode = mode; State = state; };
     }
 
     private void Update()
@@ -146,7 +147,7 @@ public class GameCore : MonoBehaviour
         if(!hasInit)
         {
             data.Initialize();
-            events.OnGameStateChange?.Invoke(internalState);
+            events.OnGameStateChange?.Invoke(internalState, Mode);
             events.OnGameInitialized?.Invoke();
             hasInit = true;
         }
@@ -156,6 +157,8 @@ public class GameCore : MonoBehaviour
             case GameState.Startup:
                 break;
             case GameState.Options:
+                break;
+            case GameState.PickMode:
                 break;
             case GameState.TutorialOne:
                 if (!data.GetDataGeneral().showTutorial)
@@ -173,7 +176,7 @@ public class GameCore : MonoBehaviour
             case GameState.TutorialTwo:
                 PopulateLevelBubbles(tutorialTwo);
                 UpdatePlayerLine(false);
-                CheckIfDoneTutorialBubbles(GameState.Game);
+                CheckIfDoneTutorialBubbles(GameState.PickMode);
                 ResetTutorialIfIncomplete();
                 break;
             case GameState.PickChallenge:
@@ -219,96 +222,100 @@ public class GameCore : MonoBehaviour
             bubbles.Clear();
             guideLines.Clear();
 
-            string content = levelData.text;
-            string[] lines = content.Split('\n');
-
-            foreach(string line in lines)
+            if (levelData != null)
             {
-                // Split on the line, and skip if it's an empty line
-                string[] split = line.Split('=');
-                if(split.Length == 1)
-                {
-                    continue;
-                }
-                
-                // Establish key/value for parsing, keys are case insensitve but really 
-                // should be lowercase.
-                string key = split[0].Trim().ToLowerInvariant();
-                string value = split[1].Trim();
-                
-                // Bubbles can appear as a duplicate key, and are treated as such.
-                if(key.Equals("bubble"))
-                {
-                    // There are two formats for the bubble value in the serialized file.
-                    // The first of the two is just the location of the bubble in the world itself,
-                    // and the second specifies any movement associated with the bubble.
-                    //
-                    // .75,1:0,-1@.8
-                    //  ^ Initial X position
-                    //     ^ Initial Y position
-                    //      ^ split to see if we have a velocity
-                    //       ^ Initail X velocity
-                    //          ^ Initial Y velocity
-                    //              ^ Initial Speed (sinusoidal)
-                    //
-                    string[] movementSplit = value.Split(':'); // Check to see if we have velocity info. 
-                    float target_x = 0;
-                    float target_y = 0;
-                    float speed = 0;
 
-                    // If we found the additional informaiton section, we can parse out velocity and speed.
-                    // Once we start parsing this section, we assume it's formatted correctly.
-                    if (movementSplit.Length > 1)
+                string content = levelData.text;
+                string[] lines = content.Split('\n');
+
+                foreach (string line in lines)
+                {
+                    // Split on the line, and skip if it's an empty line
+                    string[] split = line.Split('=');
+                    if (split.Length == 1)
                     {
-                        string[] speedSplit = movementSplit[1].Split('@');
-                        string[] velocity = speedSplit[0].Split(',');
-                        target_x = float.Parse(velocity[0].Trim());
-                        target_y = float.Parse(velocity[1].Trim());
-                        speed = float.Parse(speedSplit[1].Trim());
+                        continue;
                     }
 
-                    // We require the position at the very least. It's impoertant 
-                    string[] point = movementSplit[0].Split(',');
-                    float x = float.Parse(point[0].Trim());
-                    float y = float.Parse(point[1].Trim());
+                    // Establish key/value for parsing, keys are case insensitve but really 
+                    // should be lowercase.
+                    string key = split[0].Trim().ToLowerInvariant();
+                    string value = split[1].Trim();
 
-                    // Add a new bubble with parsed info 
-                    bubbles.Add(new DataBubble(new DataPoint(x, y), new DataPoint(target_x, target_y), speed));
+                    // Bubbles can appear as a duplicate key, and are treated as such.
+                    if (key.Equals("bubble"))
+                    {
+                        // There are two formats for the bubble value in the serialized file.
+                        // The first of the two is just the location of the bubble in the world itself,
+                        // and the second specifies any movement associated with the bubble.
+                        //
+                        // .75,1:0,-1@.8
+                        //  ^ Initial X position
+                        //     ^ Initial Y position
+                        //      ^ split to see if we have a velocity
+                        //       ^ Initail X velocity
+                        //          ^ Initial Y velocity
+                        //              ^ Initial Speed (sinusoidal)
+                        //
+                        string[] movementSplit = value.Split(':'); // Check to see if we have velocity info. 
+                        float target_x = 0;
+                        float target_y = 0;
+                        float speed = 0;
+
+                        // If we found the additional informaiton section, we can parse out velocity and speed.
+                        // Once we start parsing this section, we assume it's formatted correctly.
+                        if (movementSplit.Length > 1)
+                        {
+                            string[] speedSplit = movementSplit[1].Split('@');
+                            string[] velocity = speedSplit[0].Split(',');
+                            target_x = float.Parse(velocity[0].Trim());
+                            target_y = float.Parse(velocity[1].Trim());
+                            speed = float.Parse(speedSplit[1].Trim());
+                        }
+
+                        // We require the position at the very least. It's impoertant 
+                        string[] point = movementSplit[0].Split(',');
+                        float x = float.Parse(point[0].Trim());
+                        float y = float.Parse(point[1].Trim());
+
+                        // Add a new bubble with parsed info 
+                        bubbles.Add(new DataBubble(new DataPoint(x, y), new DataPoint(target_x, target_y), speed));
+                    }
+
+                    // Lines can be duplicate keys, and so are treated as such
+                    else if (key.Equals("line"))
+                    {
+                        string[] multiplePoints = value.Split(':');
+                        string[] point1 = multiplePoints[0].Split(',');
+                        string[] point2 = multiplePoints[1].Split(',');
+
+                        float x1 = float.Parse(point1[0].Trim());
+                        float y1 = float.Parse(point1[1].Trim());
+                        float x2 = float.Parse(point2[0].Trim());
+                        float y2 = float.Parse(point2[1].Trim());
+
+                        guideLines.Add(new Tuple<DataPoint, DataPoint>(
+                                new DataPoint(x1, y1),
+                                new DataPoint(x2, y2)));
+                    }
+
+                    // There can only be one star entry, and so this entry will write over with the 
+                    // last entry in the file if multiple are present.
+                    else if (key.Equals("stars"))
+                    {
+                        string[] values = value.Split(',');
+
+                        star1 = int.Parse(values[0].Trim());
+                        star2 = int.Parse(values[1].Trim());
+                        star3 = int.Parse(values[2].Trim());
+                    }
                 }
 
-                // Lines can be duplicate keys, and so are treated as such
-                else if(key.Equals("line"))
-                {
-                    string[] multiplePoints = value.Split(':');
-                    string[] point1 = multiplePoints[0].Split(',');
-                    string[] point2 = multiplePoints[1].Split(',');
-
-                    float x1 = float.Parse(point1[0].Trim());
-                    float y1 = float.Parse(point1[1].Trim());
-                    float x2 = float.Parse(point2[0].Trim());
-                    float y2 = float.Parse(point2[1].Trim());
-
-                    guideLines.Add(new Tuple<DataPoint, DataPoint>(
-                            new DataPoint(x1, y1),
-                            new DataPoint(x2, y2)));
-                }
-
-                // There can only be one star entry, and so this entry will write over with the 
-                // last entry in the file if multiple are present.
-                else if (key.Equals("stars"))
-                {
-                    string[] values = value.Split(',');
-
-                    star1 = int.Parse(values[0].Trim());
-                    star2 = int.Parse(values[1].Trim());
-                    star3 = int.Parse(values[2].Trim());
-                }
+                internalStateCurrentHasInit = true;
             }
 
             events.OnBubblesChange?.Invoke(bubbles);
             events.OnGuideLinesChange?.Invoke(guideLines);
-
-            internalStateCurrentHasInit = true;
         }
     }
 
@@ -372,6 +379,7 @@ public class GameCore : MonoBehaviour
         if (bubbles.Count < 1)
         {
             State = nextState;
+            PopulateLevelBubbles(null);
             return;
         }
     }
