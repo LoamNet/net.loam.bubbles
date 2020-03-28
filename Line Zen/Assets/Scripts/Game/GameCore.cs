@@ -163,8 +163,9 @@ public class GameCore : MonoBehaviour
             case GameState.TutorialOne:
                 if (!data.GetDataGeneral().showTutorial)
                 {
-                    State = GameState.Game;
-                    goto case GameState.Game;
+                    State = GameState.PickMode;
+                    PopulateLevelBubbles(null);
+                    goto case GameState.PickMode;
                 }
                 else
                 {
