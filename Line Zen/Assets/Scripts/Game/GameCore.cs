@@ -182,6 +182,8 @@ public class GameCore : MonoBehaviour
                 break;
             case GameState.PickChallenge:
                 break;
+            case GameState.LevelEditorMenu:
+                break;
             case GameState.Game:
                 if (Mode == GameMode.ChallengeLevel)
                 {

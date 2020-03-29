@@ -8,6 +8,8 @@ public class UIChallengeList : MonoBehaviour
     public Data data;
     public GameObject parent;
     public UIChallengeEntry entryTemplate;
+    public TMPro.TextMeshProUGUI fraction;
+    public TMPro.TextMeshProUGUI percentage;
 
     private List<UIChallengeEntry> entries;
     private SOChallengeList list;
@@ -36,6 +38,10 @@ public class UIChallengeList : MonoBehaviour
         int count = challenges.levels.Count;
         list = challenges;
 
+        int starsTotal = count * 3;
+        int starsCurrent = 0;
+
+        // Parse out and add list items
         for (int i = 0; i < count; ++i)
         {
             UIChallengeEntry toParent = Instantiate(entryTemplate);
@@ -62,12 +68,17 @@ public class UIChallengeList : MonoBehaviour
             if (challenge.HasValue)
             {
                 stars = challenge.Value.stars;
+                starsCurrent += stars;
             }
 
             toParent.gameObject.SetActive(true);
             toParent.Initialize(entry.name, stars, displayName);
             entries.Add(toParent);
         }
+
+        // Display data about stars
+        fraction.text = starsCurrent.ToString() + " / " + starsTotal.ToString();
+        percentage.text = ((int)((float)starsCurrent) / (float)starsTotal * 100).ToString() + "%";
     }
 
     // Search the saved data to see if a name of a level is there, and if so, get data on it.
