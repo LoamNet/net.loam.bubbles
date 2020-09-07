@@ -11,6 +11,7 @@ public struct DataGeneral
     public static readonly char contentSeparator = '\n';
 
     //////////////////////////////////////////////////////////
+    public int seed;
     public long score;
     public int level;
     public bool showTutorial;
@@ -40,6 +41,7 @@ public struct DataGeneral
     // Copy constructor
     public DataGeneral(DataGeneral other)
     {
+        this.seed = other.seed;
         this.score = other.score;
         this.level = other.level;
         this.showTutorial = other.showTutorial;
@@ -60,6 +62,7 @@ public struct DataGeneral
     {
         DataGeneral data;
 
+        data.seed = Random.Range(1, int.MaxValue);
         data.score = 0;
         data.level = 0;
         data.showTutorial = true;
@@ -70,18 +73,24 @@ public struct DataGeneral
         return data;
     }
 
+    private string Line(string label, object value)
+    {
+        // String interpolation simplifies .ToString() calls on all values used.
+        return $"{label}{keyValueSeparator}{value}{contentSeparator}";
+    }
+
     public override string ToString()
     {
         string created = "";
-        string sep = keyValueSeparator.ToString();
-        string end = contentSeparator.ToString();
 
-        created += "level" + sep + level.ToString() + end;
-        created += "score" + sep + score.ToString() + end;
-        created += "challenges" + sep + ListToString(challenges) + end;
-        created += "showTutorial" + sep + showTutorial.ToString() + end;
-        created += "showHelp" + sep + showHelp.ToString() + end;
-        created += "showParticles" + sep + showParticles.ToString() + end;
+
+        created += Line("seed", seed);
+        created += Line("level", level);
+        created += Line("score", score);
+        created += Line("challenges", ListToString(challenges));
+        created += Line("showTutorial", showTutorial);
+        created += Line("showHelp", showHelp);
+        created += Line("showParticles", showParticles);
 
         return created;
     }
@@ -135,25 +144,30 @@ public struct DataGeneral
                 try
                 {
                     string cleaned = line[0].Trim().ToLowerInvariant();
+                    string value = line[1];
+
                     switch(cleaned)
                     {
+                        case "seed":
+                            seed = int.Parse(value);
+                            break;
                         case "score":
-                            score = long.Parse(line[1]);
+                            score = long.Parse(value);
                             break;
                         case "level":
-                            level = int.Parse(line[1]);
+                            level = int.Parse(value);
                             break;
                         case "challenges":
-                            challenges = ListFromString(line[1]);
+                            challenges = ListFromString(value);
                             break;
                         case "showtutorial":
-                            showTutorial = bool.Parse(line[1]);
+                            showTutorial = bool.Parse(value);
                             break;
                         case "showhelp":
-                            showHelp = bool.Parse(line[1]);
+                            showHelp = bool.Parse(value);
                             break;
                         case "showparticles":
-                            showParticles = bool.Parse(line[1]);
+                            showParticles = bool.Parse(value);
                             break;
                     }
                 }

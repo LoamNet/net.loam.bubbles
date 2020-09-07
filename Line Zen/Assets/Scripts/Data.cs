@@ -24,7 +24,10 @@ public class Data : MonoBehaviour
         }
         
         events.OnClearSavedData += () => {
-            SetDataGeneral(DataGeneral.Defaults());
+            int savedSeed = dataIO.GetData().seed;
+            DataGeneral resetData = DataGeneral.Defaults();
+            resetData.seed = savedSeed;
+            SetDataGeneral(resetData);
         };
     }
 

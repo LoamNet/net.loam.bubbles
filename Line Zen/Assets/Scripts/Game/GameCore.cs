@@ -17,7 +17,7 @@ public class GameCore : MonoBehaviour
     public static readonly int bonusThreshold = 1;
     public static readonly int pointsPerBubble = 20;
     public static readonly int pointsPerBonusBubble = 10;
-    public static readonly int maxBubblesOnScreen = 12;
+    public static readonly int maxBubblesOnScreen = 30;
 
     [Header("Levels")]
     public TextAsset tutorialOne;
@@ -406,13 +406,17 @@ public class GameCore : MonoBehaviour
     {
         if (!internalStateCurrentHasInit)
         {
-            int level = data.GetDataGeneral().level;
+            DataGeneral readOnlyData = data.GetDataGeneral();
+            int seed = readOnlyData.seed;
+            int level = readOnlyData.level;
 
-            rand = new Utils.WichmannRng(level);
+            rand = new Utils.WichmannRng(seed + level);
             bubbles.Clear();
             guideLines.Clear();
 
-            while (bubbles.Count < (level / 2) + 2 && bubbles.Count < maxBubblesOnScreen)
+            float bubbleCountFloat = 12.0f * Mathf.Log10(((float)level) + 9.1f) - 9.9f;
+
+            while (bubbles.Count < bubbleCountFloat)
             {
                 double x = (rand.Next() - 0.5f) * 2;
                 double y = (rand.Next() - 0.5f) * 2;
