@@ -78,7 +78,7 @@ public class UIChallengeList : MonoBehaviour
 
         // Display data about stars
         fraction.text = starsCurrent.ToString() + " / " + starsTotal.ToString();
-        percentage.text = ((int)((float)starsCurrent) / (float)starsTotal * 100).ToString() + "%";
+        percentage.text = Mathf.RoundToInt(((float)starsCurrent) / (float)starsTotal * 100).ToString() + "%";
     }
 
     // Search the saved data to see if a name of a level is there, and if so, get data on it.

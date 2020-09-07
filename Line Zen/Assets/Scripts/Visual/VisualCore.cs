@@ -19,7 +19,10 @@ public class VisualCore : MonoBehaviour
     public UIChallengeList challengeList;
 
     [Header("Specific Visuals")]
-    public GameObject lineEndCap; 
+    public GameObject lineEndCap;
+
+    [Header("Colors")]
+    public Color guideLineColor = new Color(.4f, .4f, .6f, .1f);
 
     // Internal private variables
     private VisualLine line;
@@ -135,7 +138,7 @@ public class VisualCore : MonoBehaviour
 
         foreach (Tuple<DataPoint, DataPoint> line in lines)
         {
-            trackedGuideLines.Add(lineManager.CreateLine(line.Item1, line.Item2, new Color(.4f, .4f, .6f, .1f), .075f));
+            trackedGuideLines.Add(lineManager.CreateLine(line.Item1, line.Item2, guideLineColor, .075f));
 
             GameObject endcap = Instantiate(lineEndCap, this.gameObject.transform);
             endcap.transform.position = line.Item1;
