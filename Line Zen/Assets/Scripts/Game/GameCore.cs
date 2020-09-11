@@ -182,8 +182,6 @@ public class GameCore : MonoBehaviour
                 break;
             case GameState.PickChallenge:
                 break;
-            case GameState.LevelEditorMenu:
-                break;
             case GameState.Game:
                 if (Mode == GameMode.ChallengeLevel)
                 {
@@ -204,6 +202,8 @@ public class GameCore : MonoBehaviour
 #else
                 Application.Quit();
 #endif 
+                break;
+            default:
                 break;
         }
     }
