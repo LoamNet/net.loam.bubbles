@@ -44,7 +44,6 @@ public class BenchmarkManager : MonoBehaviour
     public TMPro.TextMeshProUGUI progress;
 
     private List<Benchmark> benchmarks;
-    private List<float> times;
     private BenchmarkState state;
     private Benchmark currentBench;
     private int currentBenchIndex = 0;
@@ -52,6 +51,7 @@ public class BenchmarkManager : MonoBehaviour
     private long endTime;
     private Utils.WichmannRng rand;
     private const int BENCH_GENERAL_SEED = 28282;
+    private string preformat = "";
 
     // Start is called before the first frame update
     void Start()
@@ -65,10 +65,12 @@ public class BenchmarkManager : MonoBehaviour
     {
         switch (state)
         {
-            // General states
+            // General idle states
             case BenchmarkState.Idle:
+                // This state intentionally left blank
                 break;
 
+            // Run once to set up the benchmark. NOTE: Avoiding const folding chance w/ system random to choose specific seeded random.
             case BenchmarkState.Begin:
                 benchmarks = new List<Benchmark>();
                 System.Random sysRand = new System.Random(); // Derived by default from system clock. Can be different per system, but it's effectively random.
@@ -105,38 +107,45 @@ public class BenchmarkManager : MonoBehaviour
 
 
 
-            // Specific states
+
             case BenchmarkState.Init:
-                times = new List<float>(100);
+                // Some casual resets. pre-calc/format as much as possible.
                 state = BenchmarkState.Execute;
+                preformat = $"%, {currentBenchIndex}/{benchmarks.Count}";
                 progress.text = "";
+
+                // Force a blocking clear for the GC to level the playing field
                 System.GC.Collect(generation: 0, mode: GCCollectionMode.Forced, blocking: true);
 
-                // Begin recording right before coroutine start
+                // Begin recording right before coroutine start. *nothing* after this but coroutine start.
                 startTime = System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
                 // At start of execute
                 StartCoroutine(currentBench.Perform(
                     () =>
                     {
+                        // End time before *anything* else.
                         endTime = System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                         state = BenchmarkState.Display;
                     },
                     (percent) =>
                     {
-                        progress.text = $"{percent} %";
+                        // Preformatted for simple join. String.Join is fastest w/o string builder apparently(?)
+                        // https://dotnetcoretutorials.com/2020/02/06/performance-of-string-concatenation-in-c/
+                        progress.text = String.Join("", percent, preformat);
                     }
                 ));
                 break;
 
             case BenchmarkState.Execute:
-                times.Add(FPS.CurrentFPS);
+                // This state intentionally left blank
                 break;
 
             case BenchmarkState.Display:
                 long diff = endTime - startTime;
                 display.AddItem(currentBench.Name, $"{diff}ms");
                 progress.text = "";
+
                 if (++currentBenchIndex < benchmarks.Count)
                 {
                     currentBench = benchmarks[currentBenchIndex];
@@ -152,7 +161,7 @@ public class BenchmarkManager : MonoBehaviour
 
 
 
-                // General end state
+            // General end state
             case BenchmarkState.Finished:
                 run.interactable = true;
                 currentBench = null;

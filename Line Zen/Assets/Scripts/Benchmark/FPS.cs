@@ -30,7 +30,7 @@ public class FPS : MonoBehaviour
             CurrentFPS = (fpsAccumulator / fpsMeasurePeriod);
             fpsAccumulator = 0;
             fpsNextPeriod += fpsMeasurePeriod;
-            display.text = string.Format("{0:0.00}", CurrentFPS);
+            display.text = string.Format("{0:0}", CurrentFPS);
         }
     }
 }
