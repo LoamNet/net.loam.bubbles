@@ -788,10 +788,9 @@ GameObject:
   - component: {fileID: 789081797}
   - component: {fileID: 789081796}
   - component: {fileID: 789081795}
-  - component: {fileID: 789081794}
   - component: {fileID: 789081793}
   m_Layer: 5
-  m_Name: '[B] Back to Menu (Back to Menu)'
+  m_Name: '[B] Back to Menu'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -826,28 +825,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 789081791}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bcfb46bcb15c0b54b8d59e9d6ab33481, type: 3}
+  m_Script: {fileID: 11500000, guid: 8d1b6fb39f236db408213458d0a8b88b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  events: {fileID: 0}
-  displayDuring: 0700000008000000
-  selectiveMode: 0
---- !u!114 &789081794
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 789081791}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3674bf9e0a67af14885133ea257c009b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  events: {fileID: 0}
-  state: 0
-  mode: 0
-  triggerKeys: 1b000000
+  targetScene: Main
 --- !u!114 &789081795
 MonoBehaviour:
   m_ObjectHideFlags: 0

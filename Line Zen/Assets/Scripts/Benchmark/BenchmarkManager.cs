@@ -78,6 +78,7 @@ public class BenchmarkManager : MonoBehaviour
                 benchmarks = new List<Benchmark>();
                 System.Random sysRand = new System.Random(); // Derived by default from system clock. Can be different per system, but it's effectively random.
                 rand = new Utils.WichmannRng(BENCH_GENERAL_SEED);
+                display.ClearAll();
 
                 // Prevent const folding w/ sys rand, use wichmannRNG for controlled rand in testing
                 double sysDouble = sysRand.NextDouble() * 2;
@@ -211,10 +212,10 @@ public class Benchmark_Int : Benchmark
         int arb5 = (int)(rand.Next() * 100);
 
         // Encourage fold
-        int num = 100000000;
-        int mod = (((int)num) / 20);
+        const int num = 100000000;
+        const int mod = (((int)num) / 20);
 
-        for (int i = 0; i < num; i += 1)
+        for (int i = 0; i < num; ++i)
         {
             accum *= mult1;
             accum /= div1;
@@ -263,10 +264,10 @@ public class Benchmark_Long : Benchmark
         long arb5 = (long)(rand.Next() * 100);
 
         // Encourage fold
-        const long num = 100000000;
+        const int num = 100000000;
         const int mod = (((int)num) / 20); // Permissable int
 
-        for (long i = 0; i < num; i += 1)
+        for (int i = 0; i < num; ++i)
         {
             accum *= mult1;
             accum /= div1;

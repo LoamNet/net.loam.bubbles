@@ -25,4 +25,14 @@ public class BenchmarkDisplay : MonoBehaviour
 
         lines.Add(line);
     }
+
+    public void ClearAll()
+    {
+        foreach(BenchmarkLine line in lines)
+        {
+            GameObject.Destroy(line.gameObject);
+        }
+
+        lines.Clear();
+    }
 }
