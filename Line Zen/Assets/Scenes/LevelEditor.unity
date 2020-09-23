@@ -1268,7 +1268,9 @@ MonoBehaviour:
   gold: 1
   spawned: []
   sceneCam: {fileID: 471166266}
-  template: {fileID: 7035226729118270333, guid: 52196803e3e5e7143b28c818644a862d,
+  templateRegular: {fileID: 7035226729118270333, guid: 52196803e3e5e7143b28c818644a862d,
+    type: 3}
+  templateLarge: {fileID: 7035226729118270333, guid: 310a64936dabf3e4d99ffbe554429568,
     type: 3}
   inputManager: {fileID: 521167733}
   safeArea: {fileID: 637012667}

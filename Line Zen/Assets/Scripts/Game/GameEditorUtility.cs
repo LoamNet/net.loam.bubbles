@@ -11,16 +11,21 @@ public class GameEditorUtility : MonoBehaviour
     public int bronze = 3;
     public int silver = 2;
     public int gold = 1;
-    public List<GameObject> spawned = new List<GameObject>();
+    public List<GameObject> bubbles = new List<GameObject>();
+    public List<GameObject> bubblesLarge = new List<GameObject>();
+
 
     [Header("Links")]
     public Camera sceneCam;
-    public GameObject template;
+    public GameObject templateRegular;
+    public GameObject templateLarge;
     public GameInputManager inputManager;
     public SpriteRenderer safeArea;
 
     public void Awake()
     {
+        templateRegular.SetActive(false);
+        templateLarge.SetActive(false);
         Clear();
     }
 
@@ -42,6 +47,11 @@ public class GameEditorUtility : MonoBehaviour
 
     }
 
+    public void SaveToClipboard()
+    {
+        GUIUtility.systemCopyBuffer = this.Serialize();
+    }
+
     public void Clear()
     {
         fileName = "challenge0000";
@@ -50,12 +60,17 @@ public class GameEditorUtility : MonoBehaviour
         silver = 2;
         gold = 1;
 
-        for (int i = 0; i < spawned.Count; ++i)
+        for (int i = 0; i < bubbles.Count; ++i)
         {
-            Destroy(spawned[i]);
+            Destroy(bubbles[i]);
+        }
+        for (int i = 0; i < bubblesLarge.Count; ++i)
+        {
+            Destroy(bubblesLarge[i]);
         }
 
-        spawned.Clear();
+        bubbles.Clear();
+        bubblesLarge.Clear();
     }
 
     public string Serialize()
@@ -67,12 +82,20 @@ public class GameEditorUtility : MonoBehaviour
         toWrite += "name=" + levelTitle + end;
         toWrite += "stars=" + bronze + sep + silver + sep + gold + end;
 
-        for(int i = 0; i < spawned.Count; ++i)
+        for(int i = 0; i < bubbles.Count; ++i)
         {
-            GameObject current = spawned[i];
+            GameObject current = bubbles[i];
             float x = current.transform.position.x;
             float y = current.transform.position.y;
             toWrite += "bubble=" + x.ToString("n3") + sep + y.ToString("n3") + end;
+        }
+
+        for (int i = 0; i < bubblesLarge.Count; ++i)
+        {
+            GameObject current = bubblesLarge[i];
+            float x = current.transform.position.x;
+            float y = current.transform.position.y;
+            toWrite += "bubbleLarge=" + x.ToString("n3") + sep + y.ToString("n3") + end;
         }
 
         return toWrite;
@@ -80,7 +103,10 @@ public class GameEditorUtility : MonoBehaviour
 
     private void Update()
     {
-        if(inputManager.PrimaryInputPressed())
+        bool primary = inputManager.PrimaryInputPressed();
+        bool secondary = inputManager.SecondaryInputPressed();
+
+        if (primary || secondary)
         {
             RaycastHit hit;
             bool hitSomething = false;
@@ -92,7 +118,7 @@ public class GameEditorUtility : MonoBehaviour
                 if (hit.collider != null)
                 {
                     hitSomething = true;
-                    spawned.Remove(hit.collider.gameObject);
+                    bubbles.Remove(hit.collider.gameObject);
                     Destroy(hit.collider.gameObject);
                 }
             }
@@ -113,12 +139,32 @@ public class GameEditorUtility : MonoBehaviour
                     return;
                 }
 
-                GameObject newBubble = GameObject.Instantiate(template);
+                // Default to regular bubble
+                GameObject toSpawn = templateRegular;
+                float radius = 1;
+
+                // Override to large bubble
+                if(secondary)
+                {
+                    toSpawn = templateLarge;
+                    radius = 1.0f;
+                }
+
+                GameObject newBubble = GameObject.Instantiate(toSpawn);
                 newBubble.transform.position = pos;
                 newBubble.SetActive(true);
+
                 SphereCollider col = newBubble.AddComponent<SphereCollider>();
-                col.radius = .5f;
-                spawned.Add(newBubble);
+                col.radius = radius;
+
+                if (secondary)
+                {
+                    bubblesLarge.Add(newBubble);
+                }
+                else if (primary)
+                {
+                    bubbles.Add(newBubble);
+                }
             }
         }
     }

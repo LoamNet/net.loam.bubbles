@@ -53,6 +53,16 @@ public class GameInputManager : MonoBehaviour
         return false;
     }
 
+    public bool SecondaryInputPressed()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private void Update()
     {
         if(PrimaryInputPressed())

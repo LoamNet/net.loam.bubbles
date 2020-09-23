@@ -115,7 +115,7 @@ public class VisualCore : MonoBehaviour
 
         foreach (DataBubble bubble in bubbles)
         {
-            trackedBubbles.Add(bubbleManager.CreateBubble(bubble.GetPosition()));
+            trackedBubbles.Add(bubbleManager.CreateBubble(bubble));
         }
     }
 
@@ -182,9 +182,9 @@ public class VisualCore : MonoBehaviour
                     if (bubble.visual != null)
                     {
                         DataPoint closestPoint = Utils.GetClosestPointOnLine(line.Start(), line.End(), bubble.Position);
-                        float triggerRadius = GameCore.bubbleRadius + VisualLineManager.width / 2 + GameCore.widthLeeway;
+                        float triggerRadius = bubble.Radius;
 
-                        bool isHit = Utils.IsLineTouchingCircle(line.Start(), line.End(), bubble.Position, triggerRadius, GameCore.bubbleRadius);
+                        bool isHit = Utils.IsLineTouchingCircle(line.Start(), line.End(), bubble.Position, triggerRadius, GameCore.bubbleRadiusStandard);
                         bool isIntermediate = Utils.IsInRadiusLineRange(line.Start(), line.End(), bubble.Position, triggerRadius);
 
                         if (closestPoint.IsRealNumber())
@@ -216,14 +216,16 @@ public class VisualCore : MonoBehaviour
                 debugLines.Add(lineManager.CreateLine(line.End(), line.End() + new DataPoint(direction * length), col, lineWidth));
             }
 
-            /*
+            
             // Screen boundary debugging
             DataPoint screenSize = inputManager.ScreenSizeWorld();
-            debugLines.Add(lineManager.CreateLine(new DataPoint(-screenSize.X, screenSize.Y), new DataPoint(-screenSize.X, -screenSize.Y), Color.magenta, .1f)); // left
-            debugLines.Add(lineManager.CreateLine(new DataPoint(screenSize.X, screenSize.Y), new DataPoint(screenSize.X, -screenSize.Y), Color.magenta, .1f)); // right
-            debugLines.Add(lineManager.CreateLine(new DataPoint(-screenSize.X, screenSize.Y), new DataPoint(screenSize.X, screenSize.Y), Color.magenta, .1f)); // top
-            debugLines.Add(lineManager.CreateLine(new DataPoint(-screenSize.X, -screenSize.Y), new DataPoint(screenSize.X, -screenSize.Y), Color.magenta, .1f)); // bottom
-            */
+            Color borderColor = new Color(1f, .7f, .8f);
+            float borderThickness = 0.1f;
+            debugLines.Add(lineManager.CreateLine(new DataPoint(-screenSize.X, screenSize.Y), new DataPoint(-screenSize.X, -screenSize.Y), borderColor, borderThickness)); // left
+            debugLines.Add(lineManager.CreateLine(new DataPoint(screenSize.X, screenSize.Y), new DataPoint(screenSize.X, -screenSize.Y), borderColor, borderThickness)); // right
+            debugLines.Add(lineManager.CreateLine(new DataPoint(-screenSize.X, screenSize.Y), new DataPoint(screenSize.X, screenSize.Y), borderColor, borderThickness)); // top
+            debugLines.Add(lineManager.CreateLine(new DataPoint(-screenSize.X, -screenSize.Y), new DataPoint(screenSize.X, -screenSize.Y), borderColor, borderThickness)); // bottom
+            
         }
     }
 }

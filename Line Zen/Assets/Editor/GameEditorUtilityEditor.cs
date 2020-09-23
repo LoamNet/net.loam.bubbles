@@ -24,6 +24,11 @@ public class GameEditorUtilityEditor : Editor
             util.Clear();
         }
 
+        if (GUILayout.Button("Copy to Clipboard"))
+        {
+            util.SaveToClipboard();
+        }
+
         DrawDefaultInspector();
     }
 }

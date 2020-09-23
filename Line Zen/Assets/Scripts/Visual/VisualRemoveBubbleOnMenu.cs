@@ -25,7 +25,7 @@ public class VisualRemoveBubbleOnMenu : MonoBehaviour
         }
 
         timeout = Random.Range(2f, 5f);
-        size = GameCore.bubbleRadius * 2;
+        size = GameCore.bubbleRadiusStandard * 2;
     }
 
     private void OnDestroy()

@@ -13,7 +13,8 @@ public class GameCore : MonoBehaviour
 
     // Static values
     public static readonly float widthLeeway = 0.025f;
-    public static readonly float bubbleRadius = .3f;
+    public static readonly float bubbleRadiusStandard = .3f;
+    public static readonly float bubbleRadiusLarge = bubbleRadiusStandard * 2;
     public static readonly int bonusThreshold = 1;
     public static readonly int pointsPerBubble = 20;
     public static readonly int pointsPerBonusBubble = 10;
@@ -246,8 +247,14 @@ public class GameCore : MonoBehaviour
                     string value = split[1].Trim();
 
                     // Bubbles can appear as a duplicate key, and are treated as such.
-                    if (key.Equals("bubble"))
+                    if (key.Contains("bubble"))
                     {
+                        BubbleType bubbleType = BubbleType.Standard;
+                        if(key.Contains("large"))
+                        {
+                            bubbleType = BubbleType.Large;
+                        }
+
                         // There are two formats for the bubble value in the serialized file.
                         // The first of the two is just the location of the bubble in the world itself,
                         // and the second specifies any movement associated with the bubble.
@@ -282,7 +289,7 @@ public class GameCore : MonoBehaviour
                         float y = float.Parse(point[1].Trim());
 
                         // Add a new bubble with parsed info 
-                        bubbles.Add(new DataBubble(new DataPoint(x, y), new DataPoint(target_x, target_y), speed));
+                        bubbles.Add(new DataBubble(new DataPoint(x, y), new DataPoint(target_x, target_y), speed, bubbleType));
                     }
 
                     // Lines can be duplicate keys, and so are treated as such
@@ -421,7 +428,7 @@ public class GameCore : MonoBehaviour
                 double x = (rand.Next() - 0.5f) * 2;
                 double y = (rand.Next() - 0.5f) * 2;
                 DataPoint screenSize = inputManager.ScreenSizeWorld();
-                DataPoint pos = new DataPoint(x * (screenSize.X - bubbleRadius), y * (screenSize.Y - bubbleRadius * 2));
+                DataPoint pos = new DataPoint(x * (screenSize.X - bubbleRadiusStandard), y * (screenSize.Y - bubbleRadiusStandard * 2));
                 bubbles.Add(new DataBubble(new DataPoint(pos)));
             }
 
@@ -466,8 +473,6 @@ public class GameCore : MonoBehaviour
     // Returns how much the score changed by
     private DataEarnedScore CollectBubblesAsNecessary(bool impactsScore = true)
     {
-        float triggerRadius = bubbleRadius + VisualLineManager.width / 2 + GameCore.widthLeeway;
-
         List<DataPoint> locs = new List<DataPoint>();
         List<int> collectedIndexes = new List<int>();
 
@@ -476,7 +481,9 @@ public class GameCore : MonoBehaviour
         {
             DataBubble bubble = bubbles[i];
 
-            bool isHit = Utils.IsLineTouchingCircle(lastLineStart, lastLineEnd, bubble.GetPosition(), triggerRadius, bubbleRadius);
+            // Determine if we're hitting
+            float triggerRadius = bubble.AdjustedRadius();
+            bool isHit = Utils.IsLineTouchingCircle(lastLineStart, lastLineEnd, bubble.GetPosition(), triggerRadius, bubbleRadiusStandard);
             
             if(isHit)
             {

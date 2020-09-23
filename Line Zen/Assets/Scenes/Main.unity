@@ -5584,7 +5584,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Line Zen
+  m_text: Bubbles
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ab610228f0a2ede47a5246ef5b53dbb8, type: 2}
   m_sharedMaterial: {fileID: 8884694207298648802, guid: ab610228f0a2ede47a5246ef5b53dbb8,
@@ -7655,7 +7655,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   events: {fileID: 399031073}
-  template: {fileID: 7035226729118270333, guid: 52196803e3e5e7143b28c818644a862d,
+  bubbleStandard: {fileID: 7035226729118270333, guid: 52196803e3e5e7143b28c818644a862d,
+    type: 3}
+  bubbleLarge: {fileID: 7035226729118270333, guid: 310a64936dabf3e4d99ffbe554429568,
     type: 3}
 --- !u!114 &1314188665
 MonoBehaviour:

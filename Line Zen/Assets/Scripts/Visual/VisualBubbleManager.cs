@@ -4,38 +4,51 @@ using UnityEngine;
 
 public class VisualBubbleManager : MonoBehaviour
 {
+    // Inspector Variables
     public Events events;
-    public GameObject template;
-    
+    public GameObject bubbleStandard;
+    public GameObject bubbleLarge;
+
+    // Internal Variables
+    private GameObject fallback;
+
     // Start is called before the first frame update
     void Start()
     {
-        if (template == null)
-        { 
-            template = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            template.name = "default bubble template";    
-            GameObject.Destroy(GetComponent<SphereCollider>());
+        // Construct fallback bubble
+        fallback = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        fallback.name = "default bubble template";    
+        GameObject.Destroy(fallback.GetComponent<SphereCollider>());
+        Utils.SetMaterialToColorWithAlpha(fallback, new Color(.2f, .8f, 1f, .2f));
+        fallback.SetActive(false);
 
-            Utils.SetMaterialToColorWithAlpha(template, new Color(.2f, .8f, 1f, .2f));
-        }
-
-        template.transform.localScale = new Vector3(GameCore.bubbleRadius * 2, GameCore.bubbleRadius * 2, GameCore.bubbleRadius * 2);
-        template.SetActive(false);
+        // Scale standard bubble
+        bubbleStandard.transform.localScale = new Vector3(GameCore.bubbleRadiusStandard * 2, GameCore.bubbleRadiusStandard * 2, GameCore.bubbleRadiusStandard * 2);
+        bubbleStandard.SetActive(false);
+        bubbleLarge.transform.localScale = new Vector3(GameCore.bubbleRadiusStandard * 2, GameCore.bubbleRadiusStandard * 2, GameCore.bubbleRadiusStandard * 2);
+        bubbleLarge.SetActive(false);
     }
 
-    public VisualBubble CreateBubble(DataPoint position)
+    public VisualBubble CreateBubble(DataBubble data)
     {
-        GameObject bubble = Instantiate(template);
+        BubbleType type = data.TypeOfBubble();
+        string name = $"bubble {data.TypeOfBubble()}";
+        GameObject toSpawn = bubbleStandard;
+        if (type == BubbleType.Large)
+        {
+            toSpawn = bubbleLarge;
+        }
+
+        GameObject bubble = Instantiate(toSpawn, this.transform);
         VisualRemoveBubbleOnMenu vrbm = bubble.GetComponent<VisualRemoveBubbleOnMenu>();
         if(vrbm != null)
         {
             vrbm.events = events;
         }
         bubble.SetActive(true);
-        bubble.name = "bubble";
-        bubble.transform.SetParent(this.transform);
-        bubble.transform.position = position;
+        bubble.name = name;
+        bubble.transform.position = data.GetPosition();
 
-        return new VisualBubble(bubble, position);
+        return new VisualBubble(bubble, data.GetPosition(), data.AdjustedRadius());
     }
 }
