@@ -1,5 +1,5 @@
 name=Curve
-stars=3,2,1
+stars=2,1
 bubble=0.068,2.955
 bubble=1.195,3.812
 bubble=-0.023,1.677

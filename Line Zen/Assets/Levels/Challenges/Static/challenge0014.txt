@@ -1,5 +1,5 @@
 name=One Past Twelve
-stars=7,5,3
+stars=5,3
 bubble=-1.398,-2.564
 bubble=-1.053,-1.226
 bubble=0.526,-2.729

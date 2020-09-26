@@ -1,5 +1,5 @@
 name=Tracks
-stars=4,3,2
+stars=3,2
 bubble=-1.019,3.790
 bubble=0.478,2.978
 bubble=1.736,0.510

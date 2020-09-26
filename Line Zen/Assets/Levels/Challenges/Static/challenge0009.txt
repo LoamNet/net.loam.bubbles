@@ -1,5 +1,5 @@
 name=Spire
-stars=3,2,2
+stars=2,2
 bubble=-0.008,3.511
 bubble=1.406,1.165
 bubble=0.068,-0.459

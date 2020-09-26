@@ -1,5 +1,5 @@
 name=E-ll-even
-stars=6,4,2
+stars=4,2
 bubble=1.368,3.947
 bubble=-0.256,3.752
 bubble=0.812,1.481

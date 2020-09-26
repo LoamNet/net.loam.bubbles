@@ -1,5 +1,5 @@
 name=Swish
-stars=4,3,2
+stars=3,2
 bubble=-1.035,3.344
 bubble=1.067,3.328
 bubble=-0.111,0.812
