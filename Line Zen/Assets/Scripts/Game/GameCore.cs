@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,12 +18,13 @@ public class GameCore : MonoBehaviour
     public static readonly int pointsPerBubble = 20;
     public static readonly int pointsPerBonusBubble = 10;
     public static readonly int maxBubblesOnScreen = 30;
+    public static readonly string compressionIndicator = "c_";
 
     [Header("Levels")]
     public TextAsset tutorialOne;
     public TextAsset tutorialTwo;
     public TextAsset internalLevel;
-    private int star1 = 0;
+    // There's an implicit "star1" which is any level of completion.
     private int star2 = 0;
     private int star3 = 0;
 
@@ -40,6 +40,7 @@ public class GameCore : MonoBehaviour
     private DataPoint lastLineStart;
     private DataPoint lastLineEnd;
     private bool hasInit;
+    private bool isPaused;
 
     // Internal bubble and level tracking
     private List<DataBubble> bubbles;
@@ -60,6 +61,11 @@ public class GameCore : MonoBehaviour
         {
             internalState = value;
             internalStateCurrentHasInit = false;
+            if (internalState != GameState.Game)
+            {
+                events.OnRequestPauseState?.Invoke(false);
+            }
+
             events.OnGameStateChange?.Invoke(internalState, Mode);
         } 
     }
@@ -86,7 +92,6 @@ public class GameCore : MonoBehaviour
         {
             internalLevel = value;
             linesDrawn = 0;
-            star1 = 0;
             star2 = 0;
             star3 = 0;
         }
@@ -140,7 +145,26 @@ public class GameCore : MonoBehaviour
             State = GameState.Game;
         };
 
-        events.OnGameStateChangeRequest += (state, mode) => { Mode = mode; State = state; };
+        events.OnLevelReloadRequest += () => {
+            Mode = GameMode.ChallengeLevel;
+            CurrentLevel = CurrentLevel; // Done to force the value resets. Not ideal technique for this.
+            PopulateLevelBubbles(CurrentLevel);
+            State = GameState.Game;
+        };
+
+        events.OnGameStateChangeRequest += (state, mode) => {
+            Mode = mode;
+            State = state;
+        };
+
+        events.OnRequestPauseState += (state) => {
+            isPaused = state;
+            events.OnEnactPauseState?.Invoke(isPaused);
+        };
+
+        // Note that by default, we should make sure we don't have a visible pause menu.
+        // Go through standard request line.
+        events.OnRequestPauseState?.Invoke(false);
     }
 
     private void Update()
@@ -165,19 +189,19 @@ public class GameCore : MonoBehaviour
                 if (!data.GetDataGeneral().showTutorial)
                 {
                     State = GameState.PickMode;
-                    PopulateLevelBubbles(null);
+                    PopulateLevelBubbles(levelData: null);
                     goto case GameState.PickMode;
                 }
                 else
                 {
                     PopulateLevelBubbles(tutorialOne);
-                    UpdatePlayerLine(false);
+                    UpdatePlayerLine(recordScore: false);
                     CheckIfDoneTutorialBubbles(GameState.TutorialTwo);
                     break;
                 }
             case GameState.TutorialTwo:
                 PopulateLevelBubbles(tutorialTwo);
-                UpdatePlayerLine(false);
+                UpdatePlayerLine(recordScore: false);
                 CheckIfDoneTutorialBubbles(GameState.PickMode);
                 ResetTutorialIfIncomplete();
                 break;
@@ -187,13 +211,13 @@ public class GameCore : MonoBehaviour
                 if (Mode == GameMode.ChallengeLevel)
                 {
                     PopulateLevelBubbles(CurrentLevel);
-                    UpdatePlayerLine(false);
+                    UpdatePlayerLine(recordScore: false);
                     CheckIfDoneChallengeBubbles(GameState.Game);
                 }
                 else if (Mode == GameMode.Infinite)
                 {
                     PopulateUnlimitedBubbles();
-                    UpdatePlayerLine(true);
+                    UpdatePlayerLine(recordScore: true);
                     CheckIfDoneUnlimitedBubbles();
                 }
                 break;
@@ -315,9 +339,8 @@ public class GameCore : MonoBehaviour
                     {
                         string[] values = value.Split(',');
 
-                        star1 = int.Parse(values[0].Trim());
-                        star2 = int.Parse(values[1].Trim());
-                        star3 = int.Parse(values[2].Trim());
+                        star2 = int.Parse(values[0].Trim());
+                        star3 = int.Parse(values[1].Trim());
                     }
                 }
 
@@ -440,8 +463,13 @@ public class GameCore : MonoBehaviour
     }
 
     // Handles updating positions for the player line, along with line starting and finishing events.
-    private void UpdatePlayerLine(bool impactScore)
+    private void UpdatePlayerLine(bool recordScore)
     {
+        if(isPaused)
+        {
+            return;
+        }
+
         if (inputManager.PrimaryInputDown())
         {
             if (wasDownPreviously)
@@ -462,7 +490,7 @@ public class GameCore : MonoBehaviour
         {
             if (wasDownPreviously)
             {
-                DataEarnedScore points = CollectBubblesAsNecessary(impactScore);
+                DataEarnedScore points = CollectBubblesAsNecessary(recordScore);
                 events.OnBubblesChange?.Invoke(bubbles);
                 events.OnLineDestroyed?.Invoke(lastLineStart, lastLineEnd, points);
                 wasDownPreviously = false;

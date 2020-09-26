@@ -20,8 +20,7 @@ public class VisualRemoveBubbleOnMenu : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("no event system found! Will operate without, but no events will be fired from this bubble!");
-            name += "[No Events]";
+            name = $"[No Events] {name}";
         }
 
         timeout = Random.Range(2f, 5f);
@@ -36,14 +35,16 @@ public class VisualRemoveBubbleOnMenu : MonoBehaviour
         }
     }
 
+    // Handle what states the bubbles pop themselves.
     private void StartShrinkOut(GameState state, GameMode mode)
     {
-        if(state != GameState.Startup)
+        if(state == GameState.Startup || state == GameState.PickChallenge || state == GameState.Extras)
         {
+            isShrinking = true;
             return;
         }
 
-        isShrinking = true;
+        return;
     }
 
     private void Update()

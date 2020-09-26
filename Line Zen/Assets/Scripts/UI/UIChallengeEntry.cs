@@ -14,7 +14,11 @@ public class UIChallengeEntry : MonoBehaviour
 
     [Header("Stars")]
     public Sprite unstarred;
+    public Color unstarredColor;
+    [Space]
     public Sprite starred;
+    public Color starredColor;
+    [Space]
     public Image star1;
     public Image star2;
     public Image star3;
@@ -35,9 +39,38 @@ public class UIChallengeEntry : MonoBehaviour
     {
         this.file = file;
 
-        if (stars >= 3) { star3.sprite = starred; } else { star3.sprite = unstarred; }
-        if (stars >= 2) { star2.sprite = starred; } else { star2.sprite = unstarred; }
-        if (stars >= 1) { star1.sprite = starred; } else { star1.sprite = unstarred; }
+        if (stars >= 3)
+        {
+            star3.sprite = starred;
+            star3.color = starredColor;
+        }
+        else
+        {
+            star3.sprite = unstarred;
+            star3.color = unstarredColor;
+        }
+
+        if (stars >= 2)
+        {
+            star2.sprite = starred;
+            star2.color = starredColor;
+        }
+        else
+        {
+            star2.sprite = unstarred;
+            star2.color = unstarredColor;
+        }
+
+        if (stars >= 1)
+        {
+            star1.sprite = starred;
+            star1.color = starredColor;
+        }
+        else
+        {
+            star1.sprite = unstarred;
+            star1.color = unstarredColor;
+        }
 
         this.title.text = title;
     }

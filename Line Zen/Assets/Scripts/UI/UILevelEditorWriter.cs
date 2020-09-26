@@ -6,56 +6,80 @@ using UnityEngine.UI;
 public class UILevelEditorWriter : MonoBehaviour
 {
     public GameEditorUtility editor;
-    public InputField fileName;
     public InputField levelName;
-    public InputField starBronze;
-    public InputField starSilver;
-    public InputField starGold;
+    public InputField star3;
+    public InputField star2;
     public Button clearAll;
     public Button saveAll;
+    public Button toClipboard;
 
     // Start is called before the first frame update
-    void Start()
+    private void OnEnable()
     {
         // String value parsing
-        fileName.onValueChanged.AddListener((newval) => { editor.fileName = newval; });
-        levelName.onValueChanged.AddListener((newval) => { editor.levelTitle = newval; });
+        levelName.onValueChanged.AddListener(LevelNameChanged);
 
-        // Star parsing/binding
-        starBronze.onValueChanged.AddListener((newval) => {
-            if (int.TryParse(newval, out int result))
-            {
-                editor.bronze = result;
-            }
-        });
-        starSilver.onValueChanged.AddListener((newval) => {
-            if (int.TryParse(newval, out int result))
-            {
-                editor.silver = result;
-            }
-        });
-        starGold.onValueChanged.AddListener((newval) => {
-            if (int.TryParse(newval, out int result))
-            {
-                editor.gold = result;
-            }
-        });
+        star3.onValueChanged.AddListener(SetGoldValue);
+        star2.onValueChanged.AddListener(SetSilverValue);
 
         // Button hooking up
         clearAll.onClick.AddListener(() => { editor.Clear(); UpdateToEditorContent(); });
         saveAll.onClick.AddListener(() => { editor.SaveToFile(); UpdateToEditorContent(); });
+        toClipboard.onClick.AddListener(() => { editor.SaveToClipboard(compressed: false); });
 
         // Initial reset
         UpdateToEditorContent();
+    }
+
+    private void OnDisable()
+    {
+        levelName.onValueChanged.RemoveListener(LevelNameChanged);
+        star3.onValueChanged.RemoveListener(SetGoldValue);
+        star2.onValueChanged.RemoveListener(SetSilverValue);
+        clearAll.onClick.RemoveAllListeners();
+        saveAll.onClick.RemoveAllListeners();
+    }
+
+    void LevelNameChanged(string newval)
+    {
+        editor.levelTitle = newval;
+    }
+
+
+    void SetGoldValue(string newval)
+    {
+        if (int.TryParse(newval, out int result))
+        {
+            editor.gold = result;
+        }
+        else
+        {
+            star3.text = "";
+        }
+    }
+
+    void SetSilverValue(string newval)
+    {
+        if (int.TryParse(newval, out int result))
+        {
+            editor.silver = result;
+        }
+        else
+        {
+            star2.text = "";
+        }
+    }
+
+    void SetSilverValue()
+    {
+
     }
 
     // This sets the state of the UI to the state of the editor internally.
     void UpdateToEditorContent()
     {
         levelName.text = editor.levelTitle;
-        fileName.text = editor.fileName;
-        starBronze.text = editor.bronze.ToString();
-        starSilver.text = editor.silver.ToString();
-        starGold.text = editor.gold.ToString();
+        star3.text = editor.silver.ToString();
+        star2.text = editor.gold.ToString();
     }
 }

@@ -31,7 +31,8 @@ public class Events : MonoBehaviour
     public Action<bool> OnShowHelpToggle;      // When the guide lines section is toggled on or off in settings
     public Action<bool> OnShowParticlesToggle; // When the particles visual is toggled on or off in settings.
     public Action<bool> OnTutorialToggle;      // Should we display the tutorial when starting a play session?
-    
+    public Action<bool> OnRequestPauseState;   // Requests a specific state of the pause menu
+
     /// <summary>
     /// Internal
     /// </summary>
@@ -40,5 +41,7 @@ public class Events : MonoBehaviour
     public Action OnClearSavedData;           // When requesting the existing saved game data be cleared, post-confirm. At this point, we're positive we want it gone.
     public Action OnGameInitialized;          // When the game core itself is ready to go - happens AFTER start().
     public Action<string> OnNoSaveEntryFound; // When a level save isn't found when populating the level list
-    public Action<string> OnLevelLoadRequest; // Contains name of the levle to load. Dispatched when challenge level button/entry is pressed.
+    public Action<string> OnLevelLoadRequest; // Contains name of the level to load. Dispatched when challenge level button/entry is pressed.
+    public Action OnLevelReloadRequest;       // Requets a restart of the existing level
+    public Action<bool> OnEnactPauseState;    // Set the state of the pause menu being visible.
 }
