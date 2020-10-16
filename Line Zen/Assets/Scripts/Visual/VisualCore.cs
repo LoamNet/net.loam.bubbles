@@ -204,7 +204,17 @@ public class VisualCore : MonoBehaviour
                             debugLines.Add(visual);
                         }
                     }
+
+                    if (bubble.Radius > (GameCore.bubbleRadiusStandard + VisualLineManager.width / 2 + GameCore.widthLeeway) + 0.001f)
+                    {
+                        DataPoint[] pos = GameCore.DetermineSplits(new DataBubble(bubble.Position, new DataPoint(), speed: 0, BubbleType.Large), line.Start(), line.End());
+                        foreach (DataPoint point in pos)
+                        {
+                            debugLines.AddRange(lineManager.CreatePlus(point, Color.white));
+                        }
+                    }
                 }
+
 
                 // Draw extensions on the line itself
                 Vector2 directionUnscaled = new Vector2(line.End().X - line.Start().X, line.End().Y - line.Start().Y);

@@ -46,8 +46,7 @@ public struct DataBubble
         return type;
     }
 
-    // Calculates the radius
-    public float AdjustedRadius()
+    public float RawRadius()
     {
         float radius = GameCore.bubbleRadiusStandard;
         if (type == BubbleType.Large)
@@ -55,6 +54,13 @@ public struct DataBubble
             radius = GameCore.bubbleRadiusLarge;
         }
 
+        return radius;
+    }
+
+    // Calculates the radius with leeway offset
+    public float AdjustedRadius()
+    {
+        float radius = RawRadius();
         return radius + VisualLineManager.width / 2 + GameCore.widthLeeway;
     }
 }

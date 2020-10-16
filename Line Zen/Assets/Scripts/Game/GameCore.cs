@@ -67,7 +67,7 @@ public class GameCore : MonoBehaviour
             }
 
             events.OnGameStateChange?.Invoke(internalState, Mode);
-        } 
+        }
     }
 
     private GameMode Mode
@@ -169,7 +169,7 @@ public class GameCore : MonoBehaviour
 
     private void Update()
     {
-        if(!hasInit)
+        if (!hasInit)
         {
             data.Initialize();
             events.OnGameStateChange?.Invoke(internalState, Mode);
@@ -235,15 +235,16 @@ public class GameCore : MonoBehaviour
 
     public void ResetTutorialIfIncomplete()
     {
-        if(bubbles.Count == 1)
+        if (bubbles.Count == 1)
         {
             internalStateCurrentHasInit = false;
         }
     }
 
+    // Parses the files and places bubbles in the world based on type, position, etc.
     public void PopulateLevelBubbles(TextAsset levelData)
     {
-        if(!internalStateCurrentHasInit)
+        if (!internalStateCurrentHasInit)
         {
             CurrentLevel = levelData;
 
@@ -274,7 +275,7 @@ public class GameCore : MonoBehaviour
                     if (key.Contains("bubble"))
                     {
                         BubbleType bubbleType = BubbleType.Standard;
-                        if(key.Contains("large"))
+                        if (key.Contains("large"))
                         {
                             bubbleType = BubbleType.Large;
                         }
@@ -365,7 +366,7 @@ public class GameCore : MonoBehaviour
         {
             int target = levels.levels.IndexOf(CurrentLevel) + 1;
 
-            if(linesDrawn > 0)
+            if (linesDrawn > 0)
             {
                 DataGeneral toModify = data.GetDataGeneral();
 
@@ -465,7 +466,7 @@ public class GameCore : MonoBehaviour
     // Handles updating positions for the player line, along with line starting and finishing events.
     private void UpdatePlayerLine(bool recordScore)
     {
-        if(isPaused)
+        if (isPaused)
         {
             return;
         }
@@ -512,8 +513,8 @@ public class GameCore : MonoBehaviour
             // Determine if we're hitting
             float triggerRadius = bubble.AdjustedRadius();
             bool isHit = Utils.IsLineTouchingCircle(lastLineStart, lastLineEnd, bubble.GetPosition(), triggerRadius, bubbleRadiusStandard);
-            
-            if(isHit)
+
+            if (isHit)
             {
                 collectedIndexes.Add(i);
                 locs.Add(bubble.GetPosition());
@@ -524,13 +525,13 @@ public class GameCore : MonoBehaviour
         int hit = collectedIndexes.Count;
         int scoreBase = GameCore.pointsPerBubble * hit;
         int scoreBonus = 0;
-        
-        if(hit > 0)
+
+        if (hit > 0)
         {
             ++linesDrawn;
         }
 
-        if(hit > bonusThreshold)
+        if (hit > bonusThreshold)
         {
             int bonusHits = hit - bonusThreshold;
             scoreBonus = bonusHits * bonusHits * pointsPerBonusBubble;
@@ -549,13 +550,65 @@ public class GameCore : MonoBehaviour
             }
         }
 
-        // Clear colleted bubbles
+        // Clear colleted bubbles. The indexes are from back to front, so the removal is safe. 
         foreach (int index in collectedIndexes)
         {
-            events.OnBubbleDestroyed?.Invoke(bubbles[index].GetPosition());
+            DataBubble bubble = bubbles[index];
+            events.OnBubbleDestroyed?.Invoke(bubble.GetPosition());
             bubbles.RemoveAt(index);
+
+            DataPoint[] newBubbles = DetermineSplits(bubble, lastLineStart, lastLineEnd);
+            if(newBubbles != null)
+            {
+                foreach(DataPoint point in newBubbles)
+                {
+                    DataBubble newBubble = new DataBubble(point, new DataPoint(0, 0), speed: 0, BubbleType.Standard);
+                    bubbles.Add(newBubble);
+                }
+            }
         }
 
         return dataEarnedScore;
+    }
+
+    // Calculates perpendicular bubbles
+    public static DataPoint[] DetermineSplits(DataBubble bubble, DataPoint lineStart, DataPoint lineEnd)
+    {
+        BubbleType type = bubble.TypeOfBubble();
+
+        if (type == BubbleType.Large)
+        {
+            float yDiff = lineEnd.Y - lineStart.Y;
+            float xDiff = lineEnd.X - lineStart.X;
+
+            // Normally, a slope is y/x. Perpendicular is -x/y.
+            float mPerp = -(xDiff / yDiff);
+
+            // We need to figure out the angle to calculate the X offset required for getting us to this radius via the function y = mPerp(X).
+            //                      v Angle C
+            //                     /|
+            //                    / |
+            //       side  b ->  /  |  <- Side a
+            //      (radius)    /   |
+            //                 /    |
+            //                /    _|
+            //    angle A -> .____|_| <- Angle B (90 deg)
+            //                  ^ side c
+            float B = Mathf.Deg2Rad * 90f;
+            float A = Mathf.Atan(mPerp);
+            float C = (Mathf.Deg2Rad * 180) - A - B;
+
+            float b = bubble.RawRadius();
+            float a = b * Mathf.Sin(A) / Mathf.Sin(B); // This is the Y offset
+            float c = b * Mathf.Sin(C) / Mathf.Sin(B);  // This is the X offset
+
+            DataPoint start = bubble.GetPosition();
+            DataPoint b1 = new DataPoint(start.X + c, start.Y + a);
+            DataPoint b2 = new DataPoint(start.X - c, start.Y - a);
+
+            return new DataPoint[] {b1, b2};
+        }
+
+        return null;
     }
 }

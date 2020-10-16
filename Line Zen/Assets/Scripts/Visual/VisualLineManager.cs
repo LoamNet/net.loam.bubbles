@@ -60,6 +60,15 @@ public class VisualLineManager : MonoBehaviour
         return visualLine;
     }
 
+    public VisualLine[] CreatePlus(DataPoint pos, Color color, float size = 0.2f)
+    {
+        const float width = 0.025f;
+        VisualLine vertical = CreateLine(new DataPoint(pos.X - size / 2, pos.Y), new DataPoint(pos.X + size / 2, pos.Y), color, width);
+        VisualLine horizontal = CreateLine(new DataPoint(pos.X, pos.Y - size / 2), new DataPoint(pos.X, pos.Y + size / 2), color, width);
+
+        return new VisualLine[] { vertical, horizontal };
+    }
+
     public void StopTrackingLine(VisualLine line)
     {
         lines.Remove(line);
