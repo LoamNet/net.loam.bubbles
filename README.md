@@ -1,2 +1,7 @@
 # Bubbles
-A chill game about collecting bubbles with lines! Designed to both explore new Unity features and the webGL + mobile development process, this is a donation-based free to play game!
+A zen puzzle game about collecting bubbles with a few lines as possible. This game is free, and the source is available. This represents a more experimental, donation based project!
+
+Platforms:
+- Web
+- Android
+- Desktop
