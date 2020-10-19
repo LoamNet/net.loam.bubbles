@@ -66,3 +66,11 @@ The following packages were updated:
   com.unity.ide.vscode from version 1.2.0 to 1.2.1
   com.unity.test-framework from version 1.1.13 to 1.1.16
   com.unity.textmeshpro from version 3.0.0-preview.1 to 3.0.1
+
+=== Sun Oct 18 01:01:09 2020
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.ide.vscode from version 1.2.1 to 1.2.2

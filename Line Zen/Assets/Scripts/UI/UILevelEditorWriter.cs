@@ -70,10 +70,6 @@ public class UILevelEditorWriter : MonoBehaviour
         }
     }
 
-    void SetSilverValue()
-    {
-
-    }
 
     // This sets the state of the UI to the state of the editor internally.
     void UpdateToEditorContent()

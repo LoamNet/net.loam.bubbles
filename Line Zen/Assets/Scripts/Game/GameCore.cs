@@ -105,6 +105,14 @@ public class GameCore : MonoBehaviour
         }
     }
 
+    public int NumberOfBubbles
+    {
+        get
+        {
+            return bubbles == null ? 0 : bubbles.Count;
+        }
+    }
+
     private void Start()
     {
         hasInit = false;
@@ -356,7 +364,7 @@ public class GameCore : MonoBehaviour
     // Check to see if bubbles have been collected
     private void CheckIfDoneChallengeBubbles(GameState nextState)
     {
-        if (CurrentLevel == null)
+        if (CurrentLevel == null || levels == null)
         {
             State = GameState.Game;
             return;

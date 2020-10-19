@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Benchmark.unity
     guid: ab385346289132143a388b172ffcbaf1
+  - enabled: 1
+    path: Assets/Scenes/LevelRunner.unity
+    guid: 4901f733a23b97b448e6dbb54896e3b3
   m_configObjects: {}
