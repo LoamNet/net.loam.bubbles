@@ -80,8 +80,9 @@ public class BenchmarkManager : MonoBehaviour
                 rand = new Utils.WichmannRng(BENCH_GENERAL_SEED);
                 display.ClearAll();
 
-                // discourage const folding w/ sys rand, use wichmannRNG for controlled rand in testing
+                // Prevent const folding w/ sys rand, use wichmannRNG for controlled rand in testing
                 double sysDouble = sysRand.NextDouble() * 2;
+                Debug.Log($"Sys double: {sysDouble}");
 
                 const string wordInt = "Int";
                 const string wordLong = "Long";
@@ -94,12 +95,12 @@ public class BenchmarkManager : MonoBehaviour
                 benchmarks.Add(new Benchmark_Int(rand, $"{wordInt} ops"));
                 benchmarks.Add(new Benchmark_Long(rand, $"{wordLong} ops"));
                 benchmarks.Add(new Benchmark_Long(rand, $"{wordLong} ops"));
-                benchmarks.Add(new Benchmark_Double(rand, $"1B {wordDouble} ops"));
-                benchmarks.Add(new Benchmark_Double(rand, $"1B {wordDouble} ops"));
-                benchmarks.Add(new Benchmark_Double(rand, $"1B {wordFloat} ops"));
-                benchmarks.Add(new Benchmark_Double(rand, $"1B {wordDouble} ops"));
-                benchmarks.Add(new Benchmark_Double(rand, $"1B {wordFloat} ops"));
-                benchmarks.Add(new Benchmark_Double(rand, $"1B {wordFloat} ops"));
+                benchmarks.Add(new Benchmark_Double(rand, $"{wordDouble} ops"));
+                benchmarks.Add(new Benchmark_Double(rand, $"{wordDouble} ops"));
+                benchmarks.Add(new Benchmark_Double(rand, $"{wordFloat} ops"));
+                benchmarks.Add(new Benchmark_Double(rand, $"{wordDouble} ops"));
+                benchmarks.Add(new Benchmark_Double(rand, $"{wordFloat} ops"));
+                benchmarks.Add(new Benchmark_Double(rand, $"{wordFloat} ops"));
 
                 if (sysDouble >= 1)
                 {
