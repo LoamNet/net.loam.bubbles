@@ -1,4 +1,4 @@
-name=E-ll-even
+name=Elleven
 stars=4,2
 bubble=1.368,3.947
 bubble=-0.256,3.752
