@@ -9,6 +9,7 @@ public class GameCore : MonoBehaviour
     public Data data;
     public Events events;
     public GameInputManager inputManager;
+    public UIChallengeComplete challengeComplete;
 
     // Static values
     public static readonly float widthLeeway = 0.025f;
@@ -26,7 +27,7 @@ public class GameCore : MonoBehaviour
     public TextAsset internalLevel;
     // There's an implicit "star1" which is any level of completion.
     private int star2 = 0;
-    private int star3 = 0;
+    private int star3 = 0; // This is the threshold for what star 3 needs 
 
     [Header("Internals")]
     public GameMode internalMode;
@@ -220,7 +221,7 @@ public class GameCore : MonoBehaviour
                 {
                     PopulateLevelBubbles(CurrentLevel);
                     UpdatePlayerLine(recordScore: false);
-                    CheckIfDoneChallengeBubbles(GameState.Game);
+                    CheckIfDoneChallengeBubbles();
                 }
                 else if (Mode == GameMode.Infinite)
                 {
@@ -228,6 +229,8 @@ public class GameCore : MonoBehaviour
                     UpdatePlayerLine(recordScore: true);
                     CheckIfDoneUnlimitedBubbles();
                 }
+                break;
+            case GameState.ChallengeSummary:
                 break;
             case GameState.Exit:
 #if UNITY_EDITOR
@@ -361,8 +364,28 @@ public class GameCore : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Based on current lines drawn, get the current star count
+    /// </summary>
+    /// <returns></returns>
+    private int GetStarCount()
+    {
+        if (linesDrawn <= star3)
+        {
+            return 3;
+        }
+        else if (linesDrawn <= star2)
+        {
+            return 2;
+        }
+        else
+        {
+            return 1;
+        }
+    }
+
     // Check to see if bubbles have been collected
-    private void CheckIfDoneChallengeBubbles(GameState nextState)
+    private void CheckIfDoneChallengeBubbles()
     {
         if (CurrentLevel == null || levels == null)
         {
@@ -377,35 +400,41 @@ public class GameCore : MonoBehaviour
             if (linesDrawn > 0)
             {
                 DataGeneral toModify = data.GetDataGeneral();
-
-                if (linesDrawn <= star3)
-                {
-                    toModify.SetChallengeStats(internalLevel.name, 3);
-                }
-                else if (linesDrawn <= star2)
-                {
-                    toModify.SetChallengeStats(internalLevel.name, 2);
-                }
-                else
-                {
-                    toModify.SetChallengeStats(internalLevel.name, 1);
-                }
-
+                toModify.SetChallengeStats(internalLevel.name, GetStarCount());
                 data.SetDataGeneral(toModify);
             }
 
-            if (target >= levels.levels.Count)
+
+            if (!challengeComplete.Visible)
             {
-                State = GameState.PickChallenge;
-                CurrentLevel = null;
-                return;
+                int bestStars = 0;
+                if(data.GetDataGeneral().TryGetChallenge(internalLevel.name, out DataChallenge outData))
+                {
+                    bestStars = outData.stars;
+                }
+                    
+                State = GameState.ChallengeSummary;
+                challengeComplete.challengeEntry.Initialize(null, GetStarCount(), null);
+                challengeComplete.challengeBest.Initialize(null, bestStars, null);
+                challengeComplete.confirmationDialog.Display(
+                    () => {
+                        if (target >= levels.levels.Count)
+                        {
+                            State = GameState.PickChallenge;
+                            CurrentLevel = null;
+                        }
+                        else
+                        {
+                            CurrentLevel = levels.levels[target];
+                            State = GameState.Game;
+                        }
+                    },
+                    () => {
+                        State = GameState.PickChallenge;
+                    });
             }
-            else
-            {
-                CurrentLevel = levels.levels[target];
-                State = nextState;
-                return;
-            }
+                
+            return;
         }
     }
 
@@ -507,7 +536,11 @@ public class GameCore : MonoBehaviour
         }
     }
 
-    // Returns how much the score changed by
+    /// <summary>
+    /// Returns how much the score changed by
+    /// </summary>
+    /// <param name="impactsScore"></param>
+    /// <returns></returns>
     private DataEarnedScore CollectBubblesAsNecessary(bool impactsScore = true)
     {
         List<DataPoint> locs = new List<DataPoint>();

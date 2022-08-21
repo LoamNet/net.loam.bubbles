@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameInputManager : MonoBehaviour
 {
@@ -33,34 +31,22 @@ public class GameInputManager : MonoBehaviour
         return new DataPoint(world.x, world.y);
     }
 
+    /// <summary>
+    /// For one frame only
+    /// </summary>
     public bool PrimaryInputPressed()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            return true;
-        }
-
-        return false;
+        return Input.GetMouseButtonDown(0);
     }
 
     public bool PrimaryInputDown()
     {
-        if(Input.GetMouseButton(0))
-        {
-            return true;
-        }
-
-        return false;
+        return Input.GetMouseButton(0);
     }
 
     public bool SecondaryInputPressed()
     {
-        if (Input.GetMouseButtonDown(1))
-        {
-            return true;
-        }
-
-        return false;
+        return Input.GetMouseButtonDown(1);
     }
 
     private void Update()

@@ -37,6 +37,26 @@ public struct DataGeneral
         }
     }
 
+    /// <summary>
+    /// Nullable, will return either the challenge found or null if not found
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public bool TryGetChallenge(string name, out DataChallenge data)
+    {
+        data = default;
+
+        for (int i = 0; i < challenges.Count; ++i)
+        {
+            if(challenges[i].name.Equals(name))
+            {
+                data = challenges[i];
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     // Copy constructor
     public DataGeneral(DataGeneral other)

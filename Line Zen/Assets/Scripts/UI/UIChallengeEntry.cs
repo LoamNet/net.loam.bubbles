@@ -72,6 +72,9 @@ public class UIChallengeEntry : MonoBehaviour
             star1.color = unstarredColor;
         }
 
-        this.title.text = title;
+        if (this.title != null)
+        {
+            this.title.text = title;
+        }
     }
 }

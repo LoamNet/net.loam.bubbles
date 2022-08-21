@@ -80,48 +80,36 @@ public class BenchmarkManager : MonoBehaviour
                 rand = new Utils.WichmannRng(BENCH_GENERAL_SEED);
                 display.ClearAll();
 
-                // Prevent const folding w/ sys rand, use wichmannRNG for controlled rand in testing
+                // discourage const folding w/ sys rand, use wichmannRNG for controlled rand in testing
                 double sysDouble = sysRand.NextDouble() * 2;
-                Debug.Log($"Sys double: {sysDouble}");
+
+                const string wordInt = "Int";
+                const string wordLong = "Long";
+                const string wordDouble = "Double";
+                const string wordFloat = "Float";
+
+                benchmarks.Add(new Benchmark_Int(rand, $"{wordInt} ops"));
+                benchmarks.Add(new Benchmark_Int(rand, $"{wordInt} ops"));
+                benchmarks.Add(new Benchmark_Long(rand, $"{wordLong} ops"));
+                benchmarks.Add(new Benchmark_Int(rand, $"{wordInt} ops"));
+                benchmarks.Add(new Benchmark_Long(rand, $"{wordLong} ops"));
+                benchmarks.Add(new Benchmark_Long(rand, $"{wordLong} ops"));
+                benchmarks.Add(new Benchmark_Double(rand, $"1B {wordDouble} ops"));
+                benchmarks.Add(new Benchmark_Double(rand, $"1B {wordDouble} ops"));
+                benchmarks.Add(new Benchmark_Double(rand, $"1B {wordFloat} ops"));
+                benchmarks.Add(new Benchmark_Double(rand, $"1B {wordDouble} ops"));
+                benchmarks.Add(new Benchmark_Double(rand, $"1B {wordFloat} ops"));
+                benchmarks.Add(new Benchmark_Double(rand, $"1B {wordFloat} ops"));
+
                 if (sysDouble >= 1)
                 {
-                    benchmarks.Add(new Benchmark_Int(rand, "I ops"));
-                    benchmarks.Add(new Benchmark_Int(rand, "I ops"));
-                    benchmarks.Add(new Benchmark_Long(rand, "L ops"));
-                    benchmarks.Add(new Benchmark_Int(rand, "I ops"));
-                    benchmarks.Add(new Benchmark_Long(rand, "L ops"));
-                    benchmarks.Add(new Benchmark_Long(rand, "L ops"));
-                    benchmarks.Add(new Benchmark_Double(rand, "1B D ops"));
-                    benchmarks.Add(new Benchmark_Double(rand, "1B D ops"));
-                    benchmarks.Add(new Benchmark_Double(rand, "1B F ops"));
-                    benchmarks.Add(new Benchmark_Double(rand, "1B D ops"));
-                    benchmarks.Add(new Benchmark_Double(rand, "1B F ops"));
-                    benchmarks.Add(new Benchmark_Double(rand, "1B F ops"));
+                    benchmarks.Reverse();
                 }
-                else
-                {
-                    benchmarks.Add(new Benchmark_Double(rand, "1B F ops"));
-                    benchmarks.Add(new Benchmark_Double(rand, "1B F ops"));
-                    benchmarks.Add(new Benchmark_Double(rand, "1B D ops"));
-                    benchmarks.Add(new Benchmark_Double(rand, "1B D ops"));
-                    benchmarks.Add(new Benchmark_Double(rand, "1B F ops"));
-                    benchmarks.Add(new Benchmark_Double(rand, "1B D ops"));
-                    benchmarks.Add(new Benchmark_Long(rand, "L ops"));
-                    benchmarks.Add(new Benchmark_Long(rand, "L ops"));
-                    benchmarks.Add(new Benchmark_Int(rand, "I ops"));
-                    benchmarks.Add(new Benchmark_Int(rand, "I ops"));
-                    benchmarks.Add(new Benchmark_Long(rand, "L ops"));
-                    benchmarks.Add(new Benchmark_Int(rand, "I ops"));
-                }
-
 
                 currentBench = benchmarks[currentBenchIndex];
                 run.interactable = false;
                 state = BenchmarkState.Init;
                 break;
-
-
-
 
 
             case BenchmarkState.Init:
@@ -212,7 +200,7 @@ public class Benchmark_Int : Benchmark
         int arb5 = (int)(rand.Next() * 100);
 
         // Encourage fold
-        const int num = 100000000;
+        const int num = 100000000; // (there are 10 operations done per loop)
         const int mod = (((int)num) / 20);
 
         for (int i = 0; i < num; ++i)
@@ -264,7 +252,7 @@ public class Benchmark_Long : Benchmark
         long arb5 = (long)(rand.Next() * 100);
 
         // Encourage fold
-        const int num = 100000000;
+        const int num = 100000000; // (there are 10 operations done per loop)
         const int mod = (((int)num) / 20); // Permissable int
 
         for (int i = 0; i < num; ++i)
@@ -316,7 +304,7 @@ public class Benchmark_Double : Benchmark
         double arb4 = (double)(rand.Next() * 10d);
 
         // Encourage fold
-        const double num = 100000000.0d;
+        const double num = 100000000.0d; // (there are 10 operations done per loop)
         const int mod = (((int)num) / 20);
 
         for (double i = 0; i < num; i += 1.0d)
@@ -367,7 +355,7 @@ public class Benchmark_Float : Benchmark
         float arb4 = (float)(rand.Next() * 10f);
 
         // Encourage fold
-        const float num = 100000000.0f;
+        const float num = 100000000.0f; // (there are 10 operations done per loop)
         const int mod = (((int)num) / 20);
 
         for (float i = 0; i < num; i += 1.0f)
