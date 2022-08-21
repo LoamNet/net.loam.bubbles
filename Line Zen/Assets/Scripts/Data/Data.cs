@@ -8,6 +8,7 @@ public class Data : MonoBehaviour
 {
     public Events events;
     public SerializedDataIO dataIO;
+    public UIConfirmationDialog confirmationDialog;
 
     private DataGeneral data;
 
@@ -24,10 +25,16 @@ public class Data : MonoBehaviour
         }
         
         events.OnClearSavedData += () => {
-            int savedSeed = dataIO.GetData().seed;
-            DataGeneral resetData = DataGeneral.Defaults();
-            resetData.seed = savedSeed;
-            SetDataGeneral(resetData);
+            confirmationDialog.Display(
+            () => {
+                int savedSeed = dataIO.GetData().seed;
+                DataGeneral resetData = DataGeneral.Defaults();
+                resetData.seed = savedSeed;
+                SetDataGeneral(resetData);
+            },
+            () => {
+                // Do nothing on cancel.
+            });
         };
     }
 

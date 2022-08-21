@@ -15,7 +15,7 @@ public class UIConfirmationDialog : MonoBehaviour
     // Internal Variables
     private Action onConfirm;
     private Action onCancel;
-    public bool Visible { get; private set; }
+    public bool HasSomeVisibility { get; private set; }
 
 #if UNITY_EDITOR
     // Editor only automatic validation
@@ -32,10 +32,15 @@ public class UIConfirmationDialog : MonoBehaviour
 
     private void SetVisibility(bool isVisible)
     {
-        this.Visible = isVisible;
+        this.HasSomeVisibility = isVisible;
         visibility.alpha = isVisible ? 1 : 0;
         visibility.interactable = isVisible ? true : false;
         visibility.blocksRaycasts = isVisible ? true : false;
+
+        if (isVisible)
+        {
+            gameObject.SetActive(true);
+        }
 
         // Clear conditions when invisible to prevent issues
         if(isVisible == false)
@@ -74,6 +79,7 @@ public class UIConfirmationDialog : MonoBehaviour
         {
             Debug.LogError("Attempted to cancel, but no method was bound!");
         }
+
         SetVisibility(false);
     }
 

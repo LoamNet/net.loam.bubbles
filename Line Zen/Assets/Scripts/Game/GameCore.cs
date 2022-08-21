@@ -192,8 +192,6 @@ public class GameCore : MonoBehaviour
                 break;
             case GameState.Options:
                 break;
-            case GameState.PickMode:
-                break;
             case GameState.TutorialOne:
                 if (!data.GetDataGeneral().showTutorial)
                 {
@@ -213,6 +211,14 @@ public class GameCore : MonoBehaviour
                 UpdatePlayerLine(recordScore: false);
                 CheckIfDoneTutorialBubbles(GameState.PickMode);
                 ResetTutorialIfIncomplete();
+                break;
+            case GameState.PickMode:
+                DataGeneral gen = data.GetDataGeneral();
+                if (gen.showTutorial)
+                {
+                    gen.showTutorial = false;
+                    data.SetDataGeneral(gen);
+                }
                 break;
             case GameState.PickChallenge:
                 break;
@@ -482,14 +488,53 @@ public class GameCore : MonoBehaviour
             bubbles.Clear();
             guideLines.Clear();
 
+            // Burn some rands
+            rand.Next(); 
+            rand.Next();
+            rand.Next();
+            rand.Next();
+            rand.Next();
+            rand.Next();
+
+            // Loads of random numbers. Honestly this is to get it sooooorta ramping up to somewhere 
+            // between 10 and 15 bubbles aftera bout 70 levels. The number ramps up until 11, then adds noise.
+            const float noisePoint = 11f;
             float bubbleCountFloat = 12.0f * Mathf.Log10(((float)level) + 9.1f) - 9.9f;
+            if (bubbleCountFloat >= noisePoint)
+            {
+                bubbleCountFloat = noisePoint;
+                bubbleCountFloat += (float)((rand.Next() - 0.5f) * 7.2f);
+            }
 
             while (bubbles.Count < bubbleCountFloat)
             {
                 double x = (rand.Next() - 0.5f) * 2;
                 double y = (rand.Next() - 0.5f) * 2;
+                if(y > 0.90f)
+                {
+                    y = 0.90f;
+                }
+
+                // Debug.Log($"x,y: {x}, {y}");
                 DataPoint screenSize = inputManager.ScreenSizeWorld();
                 DataPoint pos = new DataPoint(x * (screenSize.X - bubbleRadiusStandard), y * (screenSize.Y - bubbleRadiusStandard * 2));
+
+                // See if we have >1/4 the radius overlap between bubbles
+                bool skip = false;
+                foreach(DataBubble toCheck in bubbles)
+                {
+                    if (Vector2.Distance(toCheck.GetPosition(), pos) < toCheck.AdjustedRadius())
+                    {
+                        skip = true;
+                        break;
+                    }
+                }
+                
+                if(skip)
+                {
+                    continue;
+                }
+
                 bubbles.Add(new DataBubble(new DataPoint(pos)));
             }
 
