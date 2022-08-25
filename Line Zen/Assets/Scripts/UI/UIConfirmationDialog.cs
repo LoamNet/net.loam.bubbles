@@ -11,10 +11,13 @@ public class UIConfirmationDialog : MonoBehaviour
     [SerializeField] private CanvasGroup visibility;
     [SerializeField] private Button buttonConfirm;
     [SerializeField] private Button buttonCancel;
+    [SerializeField] private Button buttonThird;
 
     // Internal Variables
     private Action onConfirm;
     private Action onCancel;
+    private Action onThird;
+
     public bool HasSomeVisibility { get; private set; }
 
 #if UNITY_EDITOR
@@ -54,12 +57,15 @@ public class UIConfirmationDialog : MonoBehaviour
     {
         buttonConfirm.onClick.AddListener(Confirm);
         buttonCancel.onClick.AddListener(Cancel);
+        buttonThird?.onClick.AddListener(DoThird);
     }
+
 
     private void OnDisable()
     {
         buttonConfirm.onClick.RemoveListener(Confirm);
         buttonCancel.onClick.RemoveListener(Cancel);
+        buttonThird?.onClick.RemoveListener(DoThird);
     }
 
     private void Confirm()
@@ -83,10 +89,22 @@ public class UIConfirmationDialog : MonoBehaviour
         SetVisibility(false);
     }
 
-    public void Display(Action onConfirm, Action onCancel)
+    private void DoThird()
+    {
+        onThird?.Invoke();
+        if (onThird == null)
+        {
+            Debug.LogError("Attempted to restart, but no method was bound!");
+        }
+
+        SetVisibility(false);
+    }
+
+    public void Display(Action onConfirm, Action onCancel, Action onThird)
     {
         this.onConfirm = onConfirm;
         this.onCancel = onCancel;
+        this.onThird = onThird;
 
         SetVisibility(true);
     }

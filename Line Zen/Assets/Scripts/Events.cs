@@ -45,5 +45,5 @@ public class Events : MonoBehaviour
     public Action OnLevelReloadRequest;       // Requets a restart of the existing level
     public Action<bool> OnEnactPauseState;    // Set the state of the pause menu being visible.
 
-    public Action<int> OnDebugScoreChange; // Debug score stuff, for level building.
+    public Action<long> OnLevelSpecificScoreChange; // Debug score stuff, for level building.
 }

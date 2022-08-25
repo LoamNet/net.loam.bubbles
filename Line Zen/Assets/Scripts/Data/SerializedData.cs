@@ -21,7 +21,7 @@ public struct DataGeneral
     //////////////////////////////////////////////////////////
 
     // Utility function for updating tracked level info.
-    public void SetChallengeStats(string name, int score, bool onlyIncrease = true)
+    public void SetChallengeStats(string name, int stars, long score, bool onlyIncrease = true)
     {
         for (int i = 0; i < challenges.Count; ++i)
         {
@@ -29,7 +29,7 @@ public struct DataGeneral
             {
                 if (!onlyIncrease || score > challenges[i].stars)
                 {
-                    challenges[i] = new DataChallenge(score, name);
+                    challenges[i] = new DataChallenge(stars, name, score);
                 }
 
                 return;

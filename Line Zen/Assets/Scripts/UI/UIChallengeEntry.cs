@@ -11,6 +11,7 @@ public class UIChallengeEntry : MonoBehaviour
 
     [Header("Info")]
     public TextMeshProUGUI title;
+    public TextMeshProUGUI scoreText;
 
     [Header("Stars")]
     public Sprite unstarred;
@@ -35,7 +36,7 @@ public class UIChallengeEntry : MonoBehaviour
     }
 
     // Set default values and content, and adjust display settings
-    public void Initialize(string file, int stars, string title)
+    public void Initialize(string file, int stars, string title, long score)
     {
         this.file = file;
 
@@ -75,6 +76,18 @@ public class UIChallengeEntry : MonoBehaviour
         if (this.title != null)
         {
             this.title.text = title;
+        }
+
+        if(this.scoreText != null)
+        {
+            if (score > 0)
+            {
+                this.scoreText.text = score.ToString();
+            }
+            else
+            {
+                this.scoreText.text = "";
+            }
         }
     }
 }

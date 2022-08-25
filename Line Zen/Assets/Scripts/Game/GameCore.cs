@@ -31,6 +31,7 @@ public class GameCore : MonoBehaviour
     // There's an implicit "star1" which is any level of completion.
     private int star2 = 0;
     private int star3 = 0; // This is the threshold for what star 3 needs 
+    private long levelScore = 0;
 
     [Header("Internals")]
     public GameMode internalMode;
@@ -146,7 +147,7 @@ public class GameCore : MonoBehaviour
 
         events.OnNoSaveEntryFound += (name) => {
             DataGeneral toModify = data.GetDataGeneral();
-            toModify.challenges.Add(new DataChallenge(0, name));
+            toModify.challenges.Add(new DataChallenge(0, name, 0));
             data.SetDataGeneral(toModify);
         };
 
@@ -226,6 +227,12 @@ public class GameCore : MonoBehaviour
             case GameState.PickChallenge:
                 break;
             case GameState.Game:
+                if (!internalStateCurrentHasInit)
+                {
+                    levelScore = 0;
+                    events.OnLevelSpecificScoreChange?.Invoke(0);
+                }
+
                 if (Mode == GameMode.ChallengeLevel)
                 {
                     PopulateLevelBubbles(CurrentLevel);
@@ -413,8 +420,8 @@ public class GameCore : MonoBehaviour
             if(isLevelTester || levels == null)
             {
                 State = GameState.ChallengeSummary;
-                challengeComplete.challengeEntry.Initialize(null, GetStarCount(), null);
-                challengeComplete.challengeBest.Initialize(null, 0, null);
+                challengeComplete.challengeEntry.Initialize(null, GetStarCount(), null, levelScore);
+                challengeComplete.challengeBest.Initialize(null, 0, null, 0);
                 challengeComplete.confirmationDialog.Display(
                     () => {
                         State = GameState.Game;
@@ -423,7 +430,7 @@ public class GameCore : MonoBehaviour
                     () => {
                         UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenu);
                         return;
-                    });
+                    }, null);
                 return;
             }
 
@@ -433,21 +440,23 @@ public class GameCore : MonoBehaviour
             if (linesDrawn > 0)
             {
                 DataGeneral toModify = data.GetDataGeneral();
-                toModify.SetChallengeStats(internalLevel.name, GetStarCount());
+                toModify.SetChallengeStats(internalLevel.name, GetStarCount(), levelScore);
                 data.SetDataGeneral(toModify);
             }
 
             if (!challengeComplete.Visible)
             {
                 int bestStars = 0;
+                long bestScore = 0;
                 if(data.GetDataGeneral().TryGetChallenge(internalLevel.name, out DataChallenge outData))
                 {
                     bestStars = outData.stars;
+                    bestScore = outData.score;
                 }
                     
                 State = GameState.ChallengeSummary;
-                challengeComplete.challengeEntry.Initialize(null, GetStarCount(), null);
-                challengeComplete.challengeBest.Initialize(null, bestStars, null);
+                challengeComplete.challengeEntry.Initialize(null, GetStarCount(), null, levelScore);
+                challengeComplete.challengeBest.Initialize(null, bestStars, null, bestScore);
                 challengeComplete.confirmationDialog.Display(
                     () => {
                         if (target >= levels.levels.Count)
@@ -463,7 +472,11 @@ public class GameCore : MonoBehaviour
                     },
                     () => {
                         State = GameState.PickChallenge;
-                    });
+                    },
+                    () => {
+                        events.OnLevelReloadRequest?.Invoke();
+                    }
+                    );
             }
                 
             return;
@@ -604,10 +617,8 @@ public class GameCore : MonoBehaviour
                 events.OnLineDestroyed?.Invoke(lastLineStart, lastLineEnd, points);
                 wasDownPreviously = false;
 
-                if(isLevelTester)
-                {
-                    events.OnDebugScoreChange?.Invoke((int)points.total);
-                }
+                levelScore += points.total;
+                events.OnLevelSpecificScoreChange?.Invoke(levelScore);
             }
         }
     }

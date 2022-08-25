@@ -33,6 +33,16 @@ public class UIChallengeList : MonoBehaviour
         };
     }
 
+    /// <summary>
+    /// Hardcoded name acquire. Not very safe, but gets the job done.
+    /// </summary>
+    /// <param name="asset"></param>
+    /// <returns></returns>
+    public static string GetNameFromAsset(TextAsset asset)
+    {
+        return asset.text.Split(DataGeneral.contentSeparator)[0].Trim().Split(DataGeneral.keyValueSeparator)[1].Trim();
+    }
+
     public void Initialize(SOChallengeList challenges)
     {
         int count = challenges.levels.Count;
@@ -47,14 +57,8 @@ public class UIChallengeList : MonoBehaviour
             UIChallengeEntry toParent = Instantiate(entryTemplate);
             TextAsset entry = challenges.levels[i];
 
-            ////////////////////////////
-            // Temporary name acqurie //
-            ////////////////////////////
-            
-            string displayName = entry.text.Split(DataGeneral.contentSeparator)[0].Trim().Split(DataGeneral.keyValueSeparator)[1].Trim();
+            string displayName = GetNameFromAsset(entry);
 
-            ////////////////////////////
-            
             toParent.events = events;
 
             // Parent accordingly
@@ -65,14 +69,16 @@ public class UIChallengeList : MonoBehaviour
             // Parse out existing data, if present, and initialize entries.
             DataChallenge? challenge = GetSavedDataChallenge(challenges, entry.name);
             int stars = 0;
+            long score = 0;
             if (challenge.HasValue)
             {
                 stars = challenge.Value.stars;
+                score = challenge.Value.score;
                 starsCurrent += stars;
             }
 
             toParent.gameObject.SetActive(true);
-            toParent.Initialize(entry.name, stars, displayName);
+            toParent.Initialize(entry.name, stars, displayName, score);
             entries.Add(toParent);
         }
 

@@ -34,7 +34,7 @@ public class Data : MonoBehaviour
             },
             () => {
                 // Do nothing on cancel.
-            });
+            }, null);
         };
     }
 
