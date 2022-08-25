@@ -7,10 +7,12 @@ using UnityEngine;
 // Custom editor for levels to make creating them easier
 public class GameEditorUtility : MonoBehaviour
 {
+    public const int SILVER_DEFAULT = 25;
+    public const int GOLD_DEFAULT = 55;
     public string fileName = "challenge0000";
     public string levelTitle = "Untitled";
-    public int silver = 2;
-    public int gold = 1;
+    public int silver = SILVER_DEFAULT;
+    public int gold = GOLD_DEFAULT;
     public List<GameObject> bubbles = new List<GameObject>();
     public List<GameObject> bubblesLarge = new List<GameObject>();
 
@@ -73,8 +75,8 @@ public class GameEditorUtility : MonoBehaviour
     {
         fileName = "challenge0000";
         levelTitle = "Untitled";
-        silver = 2;
-        gold = 1;
+        silver = SILVER_DEFAULT;
+        gold = GOLD_DEFAULT;
 
         for (int i = 0; i < bubbles.Count; ++i)
         {

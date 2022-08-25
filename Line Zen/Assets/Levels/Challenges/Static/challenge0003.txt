@@ -2,5 +2,5 @@ name=Four
 bubble=0,1
 bubble=1,-1
 bubble=1,-2.25
-bubble=-.5,.25
-stars=3,2
+bubble=-.25,.25
+stars=60,110

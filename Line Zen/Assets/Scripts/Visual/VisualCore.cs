@@ -20,12 +20,15 @@ public class VisualCore : MonoBehaviour
 
     [Header("Specific Visuals")]
     public GameObject lineEndCap;
+    public float lineThickeningSpeedScalar = 1;
+    public AnimationCurve curve;
 
     [Header("Colors")]
     public Color guideLineColor = new Color(.4f, .4f, .6f, .1f);
 
     // Internal private variables
     private VisualLine line;
+    private float lineVisualWidth = 0;
     private List<VisualBubble> trackedBubbles;
     private List<VisualLine> trackedGuideLines;
     private List<GameObject> trackedGuideLineCaps;
@@ -42,7 +45,7 @@ public class VisualCore : MonoBehaviour
     {
         // Line related gameplay events
         events.OnLineCreated += OnLineCreated;
-        events.OnLineUpdated += OnLineDrawn;
+        events.OnLineUpdated += OnLineUpdate;
         events.OnLineDestroyed += OnLineDestroyed;
 
         // Bubble related gameplay events
@@ -69,10 +72,11 @@ public class VisualCore : MonoBehaviour
 
     private void OnLineCreated(DataPoint start, DataPoint end)
     {
-        line = lineManager.CreateLine(start, end);
+        line = lineManager.CreateLine(start, end, null, 0);
+        lineVisualWidth = 0;
     }
 
-    private void OnLineDrawn(DataPoint start, DataPoint end)
+    private void OnLineUpdate(DataPoint start, DataPoint end)
     {
         line?.SetStart(start);
         line?.SetEnd(end);
@@ -101,6 +105,7 @@ public class VisualCore : MonoBehaviour
         }
 
         line = null;
+        lineVisualWidth = 0;
     }
 
     // When bubbles change in any way, redraw them all at their new positions.
@@ -156,6 +161,17 @@ public class VisualCore : MonoBehaviour
     private void Update()
     {
         DrawDebug();
+
+        if (line != null)
+        {
+            lineVisualWidth += Time.deltaTime * lineThickeningSpeedScalar;
+            Mathf.Clamp(lineVisualWidth, 0, VisualLineManager.PLAYER_LINE_MAX_WIDTH);
+
+            float t = lineVisualWidth / VisualLineManager.PLAYER_LINE_MAX_WIDTH;
+            float adjusted = curve.Evaluate(t);
+
+            line?.SetThickness(adjusted * VisualLineManager.PLAYER_LINE_MAX_WIDTH);
+        }
     }
 
 
@@ -205,7 +221,7 @@ public class VisualCore : MonoBehaviour
                         }
                     }
 
-                    if (bubble.Radius > (GameCore.bubbleRadiusStandard + VisualLineManager.width / 2 + GameCore.widthLeeway) + 0.001f)
+                    if (bubble.Radius > (GameCore.bubbleRadiusStandard + VisualLineManager.PLAYER_LINE_MAX_WIDTH / 2 + GameCore.widthLeeway) + 0.001f)
                     {
                         DataPoint[] pos = GameCore.DetermineSplits(new DataBubble(bubble.Position, new DataPoint(), speed: 0, BubbleType.Large), line.Start(), line.End());
                         foreach (DataPoint point in pos)

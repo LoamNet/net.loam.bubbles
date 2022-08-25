@@ -99,6 +99,7 @@ public class GameCore : MonoBehaviour
             linesDrawn = 0;
             star2 = 0;
             star3 = 0;
+            levelScore = 0;
         }
     }
 
@@ -227,14 +228,14 @@ public class GameCore : MonoBehaviour
             case GameState.PickChallenge:
                 break;
             case GameState.Game:
-                if (!internalStateCurrentHasInit)
-                {
-                    levelScore = 0;
-                    events.OnLevelSpecificScoreChange?.Invoke(0);
-                }
-
                 if (Mode == GameMode.ChallengeLevel)
                 {
+                    if (!internalStateCurrentHasInit)
+                    {
+                        levelScore = 0;
+                        events.OnLevelSpecificScoreChange?.Invoke(0);
+                    }
+
                     PopulateLevelBubbles(CurrentLevel);
                     UpdatePlayerLine(recordScore: false);
                     CheckIfDoneChallengeBubbles();
@@ -391,15 +392,16 @@ public class GameCore : MonoBehaviour
     /// <returns></returns>
     private int GetStarCount()
     {
-        if (linesDrawn <= star3)
+        //if (linesDrawn <= star3)
+        if(levelScore >= star3) // Largest
         {
             return 3;
         }
-        else if (linesDrawn <= star2)
+        else if (levelScore >= star2) // second largest
         {
             return 2;
         }
-        else
+        else // Could be anything
         {
             return 1;
         }
@@ -617,8 +619,11 @@ public class GameCore : MonoBehaviour
                 events.OnLineDestroyed?.Invoke(lastLineStart, lastLineEnd, points);
                 wasDownPreviously = false;
 
-                levelScore += points.total;
-                events.OnLevelSpecificScoreChange?.Invoke(levelScore);
+                if (Mode == GameMode.ChallengeLevel)
+                {
+                    levelScore += points.total;
+                    events.OnLevelSpecificScoreChange?.Invoke(levelScore);
+                }
             }
         }
     }

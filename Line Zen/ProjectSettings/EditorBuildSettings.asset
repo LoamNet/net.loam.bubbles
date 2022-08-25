@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LevelRunner.unity
     guid: 4901f733a23b97b448e6dbb54896e3b3
+  - enabled: 1
+    path: Assets/Scenes/Credits.unity
+    guid: 06f0ba7e1ca69d0428eb30588b641a9d
   m_configObjects: {}
