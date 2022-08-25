@@ -44,4 +44,6 @@ public class Events : MonoBehaviour
     public Action<string> OnLevelLoadRequest; // Contains name of the level to load. Dispatched when challenge level button/entry is pressed.
     public Action OnLevelReloadRequest;       // Requets a restart of the existing level
     public Action<bool> OnEnactPauseState;    // Set the state of the pause menu being visible.
+
+    public Action<int> OnDebugScoreChange; // Debug score stuff, for level building.
 }

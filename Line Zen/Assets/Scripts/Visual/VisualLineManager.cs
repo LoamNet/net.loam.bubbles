@@ -6,7 +6,7 @@ using UnityEngine;
 public class VisualLineManager : MonoBehaviour
 {
     public GameObject template;
-    public static float width = .2f;
+    public static float width = .21f;
     private List<VisualLine> lines;
 
     // Start is called before the first frame update

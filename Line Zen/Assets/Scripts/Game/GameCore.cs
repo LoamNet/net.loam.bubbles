@@ -16,10 +16,13 @@ public class GameCore : MonoBehaviour
     public static readonly float bubbleRadiusStandard = .3f;
     public static readonly float bubbleRadiusLarge = bubbleRadiusStandard * 2;
     public static readonly int bonusThreshold = 1;
-    public static readonly int pointsPerBubble = 20;
+    public static readonly int pointsPerBubble = 5;
     public static readonly int pointsPerBonusBubble = 10;
     public static readonly int maxBubblesOnScreen = 30;
     public static readonly string compressionIndicator = "c_";
+    public static readonly string mainMenu = "Main";
+
+    public bool isLevelTester = false;
 
     [Header("Levels")]
     public TextAsset tutorialOne;
@@ -270,7 +273,6 @@ public class GameCore : MonoBehaviour
 
             if (levelData != null)
             {
-
                 string content = levelData.text;
                 string[] lines = content.Split('\n');
 
@@ -362,6 +364,12 @@ public class GameCore : MonoBehaviour
                     }
                 }
 
+                if(bubbles == null || bubbles.Count == 0)
+                {
+                    CurrentLevel = null;
+                    return;
+                }
+
                 internalStateCurrentHasInit = true;
             }
 
@@ -393,7 +401,7 @@ public class GameCore : MonoBehaviour
     // Check to see if bubbles have been collected
     private void CheckIfDoneChallengeBubbles()
     {
-        if (CurrentLevel == null || levels == null)
+        if (CurrentLevel == null)
         {
             State = GameState.Game;
             return;
@@ -401,6 +409,25 @@ public class GameCore : MonoBehaviour
 
         if (bubbles.Count < 1)
         {
+            // If no levels exist to progress through, then reset since we may be in the editor.
+            if(isLevelTester || levels == null)
+            {
+                State = GameState.ChallengeSummary;
+                challengeComplete.challengeEntry.Initialize(null, GetStarCount(), null);
+                challengeComplete.challengeBest.Initialize(null, 0, null);
+                challengeComplete.confirmationDialog.Display(
+                    () => {
+                        State = GameState.Game;
+                        return;
+                    },
+                    () => {
+                        UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenu);
+                        return;
+                    });
+                return;
+            }
+
+            // This is handling gameplay
             int target = levels.levels.IndexOf(CurrentLevel) + 1;
 
             if (linesDrawn > 0)
@@ -409,7 +436,6 @@ public class GameCore : MonoBehaviour
                 toModify.SetChallengeStats(internalLevel.name, GetStarCount());
                 data.SetDataGeneral(toModify);
             }
-
 
             if (!challengeComplete.Visible)
             {
@@ -577,6 +603,11 @@ public class GameCore : MonoBehaviour
                 events.OnBubblesChange?.Invoke(bubbles);
                 events.OnLineDestroyed?.Invoke(lastLineStart, lastLineEnd, points);
                 wasDownPreviously = false;
+
+                if(isLevelTester)
+                {
+                    events.OnDebugScoreChange?.Invoke((int)points.total);
+                }
             }
         }
     }

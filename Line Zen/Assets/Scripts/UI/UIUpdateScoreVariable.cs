@@ -13,5 +13,9 @@ public class UIUpdateScoreVariable : MonoBehaviour
         events.OnDataChanged += (data) => {
             GetComponent<TMPro.TextMeshProUGUI>().text = (data.score > 0 ? "" + data.score : "0");
         };
+
+        events.OnDebugScoreChange += (valInt) => {
+            GetComponent<TMPro.TextMeshProUGUI>().text = $"{valInt}";
+        };
     }
 }
