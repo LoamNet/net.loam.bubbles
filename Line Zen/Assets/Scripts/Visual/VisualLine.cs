@@ -16,6 +16,17 @@ public class VisualLine
         this.renderer.SetPosition(1, end);
         this.renderer.startColor = color;
         this.renderer.endColor = color;
+        SetThickness(thickness);
+    }
+
+    public void SetThickness(float thickness)
+    {
+        const float minWidth = 0.01f;
+        if (thickness <= minWidth)
+        {
+            thickness = minWidth;
+        }
+
         this.renderer.startWidth = thickness;
         this.renderer.endWidth = thickness;
     }

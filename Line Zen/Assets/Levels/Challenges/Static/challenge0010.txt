@@ -1,5 +1,5 @@
 name=Bowed
-stars=3,2
+stars=135,165
 bubble=-1.391,2.429
 bubble=1.451,0.203
 bubble=-0.504,-2.293

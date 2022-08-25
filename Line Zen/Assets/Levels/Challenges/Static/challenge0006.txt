@@ -1,5 +1,5 @@
 name=Reach
-stars=3,2
+stars=165,205
 bubble=-0.218,2.323
 bubble=0.850,1.000
 bubble=0.639,0.060

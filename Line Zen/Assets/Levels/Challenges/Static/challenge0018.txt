@@ -1,5 +1,5 @@
 name=Large Bubble
-stars=2,2
+stars=75,115
 bubbleLarge=0,1
 bubble=-1,2
 bubble=1,0

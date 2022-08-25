@@ -61,6 +61,6 @@ public struct DataBubble
     public float AdjustedRadius()
     {
         float radius = RawRadius();
-        return radius + VisualLineManager.width / 2 + GameCore.widthLeeway;
+        return radius + VisualLineManager.PLAYER_LINE_MAX_WIDTH / 2 + GameCore.widthLeeway;
     }
 }

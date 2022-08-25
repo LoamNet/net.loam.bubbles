@@ -18,8 +18,11 @@ public class VisualParticleManager : MonoBehaviour
         spawnedOnStart = new List<ParticleSystem>();
         bubbleExplosionParticles = new List<ParticleSystem>();
 
-        events.OnShowParticlesToggle += (isOn) => { HandleStartupSystems(isOn); };
-        events.OnGameInitialized += () => { HandleStartupSystems(data.GetDataGeneral().showParticles); };
+        if (events)
+        {
+            events.OnShowParticlesToggle += (isOn) => { HandleStartupSystems(isOn); };
+            events.OnGameInitialized += () => { HandleStartupSystems(data.GetDataGeneral().showParticles); };
+        }
     }
 
 

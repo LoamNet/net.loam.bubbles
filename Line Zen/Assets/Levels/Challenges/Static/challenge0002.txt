@@ -1,5 +1,5 @@
 name=The Second
-stars=2,1
+stars=25,55
 bubble=-1,-2
 bubble=.5,-1
 bubble=2,-1.25

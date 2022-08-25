@@ -1,5 +1,5 @@
 name=Kite
-stars=3,2
+stars=115,165
 bubble=-0.835,2.609
 bubble=-1.165,1.000
 bubble=-0.534,-1.602

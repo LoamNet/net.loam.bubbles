@@ -75,7 +75,7 @@ public class UILevelEditorWriter : MonoBehaviour
     void UpdateToEditorContent()
     {
         levelName.text = editor.levelTitle;
-        star3.text = editor.silver.ToString();
-        star2.text = editor.gold.ToString();
+        star3.text = editor.gold.ToString();
+        star2.text = editor.silver.ToString();
     }
 }

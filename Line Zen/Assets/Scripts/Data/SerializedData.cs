@@ -25,13 +25,23 @@ public struct DataGeneral
     {
         for (int i = 0; i < challenges.Count; ++i)
         {
-            if(challenges[i].name.Equals(name))
+            DataChallenge currentStats = challenges[i];
+
+            if(currentStats.name.Equals(name))
             {
-                if (!onlyIncrease || score > challenges[i].stars)
+                DataChallenge newData = new DataChallenge(currentStats);
+
+                if (!onlyIncrease || score > currentStats.score)
                 {
-                    challenges[i] = new DataChallenge(stars, name, score);
+                    newData.score = score;
                 }
 
+                if (!onlyIncrease || stars > currentStats.stars)
+                {
+                    newData.stars = stars;
+                }
+
+                challenges[i] = newData;
                 return;
             }
         }

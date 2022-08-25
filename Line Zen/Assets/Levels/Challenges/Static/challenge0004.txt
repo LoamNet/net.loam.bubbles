@@ -3,4 +3,4 @@ bubble=2,1
 bubble=-2,-1
 bubble=1.25,-2
 bubble=-.75,.33
-stars=3,2
+stars=40,60

@@ -6,7 +6,7 @@ using UnityEngine;
 public class VisualLineManager : MonoBehaviour
 {
     public GameObject template;
-    public static float width = .21f;
+    public const float PLAYER_LINE_MAX_WIDTH = .21f;
     private List<VisualLine> lines;
 
     // Start is called before the first frame update
@@ -29,15 +29,15 @@ public class VisualLineManager : MonoBehaviour
             renderer.material = material;
 
             // Renderer settings
-            renderer.startWidth = width;
-            renderer.endWidth = width;
+            renderer.startWidth = PLAYER_LINE_MAX_WIDTH;
+            renderer.endWidth = PLAYER_LINE_MAX_WIDTH;
             renderer.numCapVertices = capVertices;
         }
 
         template.SetActive(false);
     }
 
-    public VisualLine CreateLine(DataPoint start, DataPoint end, Color? color = null, double thickness = .2)
+    public VisualLine CreateLine(DataPoint start, DataPoint end, Color? color = null, double thickness = PLAYER_LINE_MAX_WIDTH)
     {
         GameObject line = Instantiate(template);
         line.name = "line";
