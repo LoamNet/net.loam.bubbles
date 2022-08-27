@@ -37,7 +37,7 @@ public class VisualLineManager : MonoBehaviour
         template.SetActive(false);
     }
 
-    public VisualLine CreateLine(DataPoint start, DataPoint end, Color? color = null, double thickness = PLAYER_LINE_MAX_WIDTH)
+    public VisualLine CreateLine(DataPoint start, DataPoint end, Color? color = null, double thickness = PLAYER_LINE_MAX_WIDTH, int sortOffset = 0)
     {
         GameObject line = Instantiate(template);
         line.name = "line";
@@ -52,7 +52,7 @@ public class VisualLineManager : MonoBehaviour
             renderer.material.GetColor("_EmissionColor");
         }
 
-        renderer.sortingOrder = lines.Count + 1;
+        renderer.sortingOrder = lines.Count + 1 + sortOffset;
 
         VisualLine visualLine = new VisualLine(this, renderer, start, end, renderer.material.GetColor("_EmissionColor"), (float)thickness);
         lines.Add(visualLine);

@@ -1,4 +1,5 @@
-name=Large Bubble
+name=Large
+group=1
 stars=75,115
 bubbleLarge=0,1
 bubble=-1,2

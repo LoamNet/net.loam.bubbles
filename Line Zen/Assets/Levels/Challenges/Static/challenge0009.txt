@@ -1,8 +1,0 @@
-name=Spire
-stars=110,130
-bubble=-0.008,3.511
-bubble=1.206,1.165
-bubble=0.068,-0.459
-bubble=-1.677,-2.143
-bubble=-0.714,1.932
-bubble=-0.083,-3.241

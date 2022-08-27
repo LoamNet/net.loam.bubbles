@@ -38,7 +38,8 @@ public class GameCore : MonoBehaviour
     public GameState internalState;
 
     [Header("Levels")]
-    public SOChallengeList levels;
+    public SOChallenges levels;
+    public AnimationCurve movementCurve;
 
     // Private internal state
     private bool wasDownPreviously;
@@ -103,7 +104,7 @@ public class GameCore : MonoBehaviour
         }
     }
 
-    public SOChallengeList ChallengeLevels
+    public SOChallenges ChallengeLevels
     {
         get
         {
@@ -117,6 +118,11 @@ public class GameCore : MonoBehaviour
         {
             return bubbles == null ? 0 : bubbles.Count;
         }
+    }
+
+    private void Awake()
+    {
+        levels.Initialize();
     }
 
     private void Start()
@@ -207,12 +213,14 @@ public class GameCore : MonoBehaviour
                 else
                 {
                     PopulateLevelBubbles(tutorialOne);
+                    UpdateBubblePositions();
                     UpdatePlayerLine(recordScore: false);
                     CheckIfDoneTutorialBubbles(GameState.TutorialTwo);
                     break;
                 }
             case GameState.TutorialTwo:
                 PopulateLevelBubbles(tutorialTwo);
+                UpdateBubblePositions();
                 UpdatePlayerLine(recordScore: false);
                 CheckIfDoneTutorialBubbles(GameState.PickMode);
                 ResetTutorialIfIncomplete();
@@ -237,12 +245,14 @@ public class GameCore : MonoBehaviour
                     }
 
                     PopulateLevelBubbles(CurrentLevel);
+                    UpdateBubblePositions();
                     UpdatePlayerLine(recordScore: false);
                     CheckIfDoneChallengeBubbles();
                 }
                 else if (Mode == GameMode.Infinite)
                 {
                     PopulateUnlimitedBubbles();
+                    UpdateBubblePositions();
                     UpdatePlayerLine(recordScore: true);
                     CheckIfDoneUnlimitedBubbles();
                 }
@@ -437,7 +447,7 @@ public class GameCore : MonoBehaviour
             }
 
             // This is handling gameplay
-            int target = levels.levels.IndexOf(CurrentLevel) + 1;
+            int target = levels.Levels.IndexOf(CurrentLevel) + 1;
 
             if (linesDrawn > 0)
             {
@@ -461,14 +471,14 @@ public class GameCore : MonoBehaviour
                 challengeComplete.challengeBest.Initialize(null, bestStars, null, bestScore);
                 challengeComplete.confirmationDialog.Display(
                     () => {
-                        if (target >= levels.levels.Count)
+                        if (target >= levels.Levels.Count)
                         {
                             State = GameState.PickChallenge;
                             CurrentLevel = null;
                         }
                         else
                         {
-                            CurrentLevel = levels.levels[target];
+                            CurrentLevel = levels.Levels[target];
                             State = GameState.Game;
                         }
                     },
@@ -583,6 +593,14 @@ public class GameCore : MonoBehaviour
             events.OnGuideLinesChange?.Invoke(guideLines);
 
             internalStateCurrentHasInit = true;
+        }
+    }
+
+    private void UpdateBubblePositions()
+    {
+        foreach(DataBubble bubble in bubbles)
+        {
+            bubble.TickPosition(Time.deltaTime, movementCurve);
         }
     }
 

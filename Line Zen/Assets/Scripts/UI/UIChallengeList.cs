@@ -12,7 +12,7 @@ public class UIChallengeList : MonoBehaviour
     public TMPro.TextMeshProUGUI percentage;
 
     private List<UIChallengeEntry> entries;
-    private SOChallengeList list;
+    private SOChallenges list;
 
     public void Start()
     {
@@ -43,9 +43,9 @@ public class UIChallengeList : MonoBehaviour
         return asset.text.Split(DataGeneral.contentSeparator)[0].Trim().Split(DataGeneral.keyValueSeparator)[1].Trim();
     }
 
-    public void Initialize(SOChallengeList challenges)
+    public void Initialize(SOChallenges challenges)
     {
-        int count = challenges.levels.Count;
+        int count = challenges.Levels.Count;
         list = challenges;
 
         int starsTotal = count * 3;
@@ -54,8 +54,8 @@ public class UIChallengeList : MonoBehaviour
         // Parse out and add list items
         for (int i = 0; i < count; ++i)
         {
+            TextAsset entry = challenges.Levels[i];
             UIChallengeEntry toParent = Instantiate(entryTemplate);
-            TextAsset entry = challenges.levels[i];
 
             string displayName = GetNameFromAsset(entry);
 
@@ -88,7 +88,7 @@ public class UIChallengeList : MonoBehaviour
     }
 
     // Search the saved data to see if a name of a level is there, and if so, get data on it.
-    private DataChallenge? GetSavedDataChallenge(SOChallengeList challenges, string toGet)
+    private DataChallenge? GetSavedDataChallenge(SOChallenges challenges, string toGet)
     {
         DataGeneral dataGeneral = data.GetDataGeneral();
         string target = toGet.Trim().ToLowerInvariant();

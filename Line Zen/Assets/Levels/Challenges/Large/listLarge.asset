@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 890be18cfcca3ba4581ad870e1c01782, type: 3}
-  m_Name: dynamicChallenges
+  m_Script: {fileID: 11500000, guid: cf0578420de61ce4c9c14260bf778aa3, type: 3}
+  m_Name: listLarge
   m_EditorClassIdentifier: 
-  levels:
-  - {fileID: 4900000, guid: 8c79047e092d2ee429909ff9d7a52520, type: 3}
+  entries:
+  - {fileID: 4900000, guid: e5798396971d77e4d8476339e244448e, type: 3}

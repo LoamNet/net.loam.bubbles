@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01d5847be82797042b907f0037f56c93, type: 3}
+  m_Name: Challenges
+  m_EditorClassIdentifier: 
+  basic: {fileID: 11400000, guid: 6489a4bf137538d498b58c8340341c20, type: 2}
+  large: {fileID: 11400000, guid: 394c585430be46d4d896c53bcb79da4e, type: 2}
+  moving: {fileID: 11400000, guid: 45fdb8b3e5ac15449ad1878d3f52edef, type: 2}
+  varied: {fileID: 11400000, guid: 2b9ce7acfedadb14998ceb6cd05edef4, type: 2}

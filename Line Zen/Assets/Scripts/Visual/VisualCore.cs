@@ -29,14 +29,14 @@ public class VisualCore : MonoBehaviour
     // Internal private variables
     private VisualLine line;
     private float lineVisualWidth = 0;
-    private List<VisualBubble> trackedBubbles;
+    private List<Tuple<DataBubble, GameObject>> trackedBubbles;
     private List<VisualLine> trackedGuideLines;
     private List<GameObject> trackedGuideLineCaps;
     
     private void Awake()
     {
         line = null;
-        trackedBubbles = new List<VisualBubble>();
+        trackedBubbles = new List<Tuple<DataBubble, GameObject>>();
         trackedGuideLines = new List<VisualLine>();
         trackedGuideLineCaps = new List<GameObject>();
     }
@@ -72,7 +72,7 @@ public class VisualCore : MonoBehaviour
 
     private void OnLineCreated(DataPoint start, DataPoint end)
     {
-        line = lineManager.CreateLine(start, end, null, 0);
+        line = lineManager.CreateLine(start, end, null, 0, 100);
         lineVisualWidth = 0;
     }
 
@@ -111,16 +111,18 @@ public class VisualCore : MonoBehaviour
     // When bubbles change in any way, redraw them all at their new positions.
     private void OnBubblesChange(List<DataBubble> bubbles)
     {
-        foreach (VisualBubble bubble in trackedBubbles)
+        foreach (Tuple<DataBubble, GameObject> VisualBubbleTuple in trackedBubbles)
         {
-            bubble.Destroy();
+            GameObject.Destroy(VisualBubbleTuple.Item2);
         }
 
         trackedBubbles.Clear();
 
         foreach (DataBubble bubble in bubbles)
         {
-            trackedBubbles.Add(bubbleManager.CreateBubble(bubble));
+            Tuple<DataBubble, GameObject> bundle = 
+                new Tuple<DataBubble, GameObject>(bubble, bubbleManager.CreateBubble(bubble));
+            trackedBubbles.Add(bundle);
         }
     }
 
@@ -172,6 +174,31 @@ public class VisualCore : MonoBehaviour
 
             line?.SetThickness(adjusted * VisualLineManager.PLAYER_LINE_MAX_WIDTH);
         }
+
+
+        List<Tuple<DataBubble, GameObject>> toDispose = new List<Tuple<DataBubble, GameObject>>();
+        // Update positions
+        foreach (Tuple<DataBubble, GameObject> entry in trackedBubbles)
+        {
+            if (entry.Item2 == null)
+            {
+                toDispose.Add(entry);
+            }
+            else
+            {
+                entry.Item2.transform.position = entry.Item1.GetPosition();
+            }
+        }
+
+        if(toDispose.Count > 0)
+        {
+            int count = toDispose.Count;
+            foreach(Tuple<DataBubble, GameObject> entry in toDispose)
+            {
+                trackedBubbles.Remove(entry);
+            }
+            Debug.Log($"Update disposed of {count} entries in trackedBubbles");
+        }
     }
 
 
@@ -193,15 +220,15 @@ public class VisualCore : MonoBehaviour
                 float lineWidth = .04f;
 
                 // Take every bubble and draw debug lines from it to the line to help display what's going on.
-                foreach (VisualBubble bubble in trackedBubbles)
+                foreach (Tuple<DataBubble, GameObject> bubbleItem in trackedBubbles)
                 {
-                    if (bubble.visual != null)
+                    if (bubbleItem.Item2 != null)
                     {
-                        DataPoint closestPoint = Utils.GetClosestPointOnLine(line.Start(), line.End(), bubble.Position);
-                        float triggerRadius = bubble.Radius;
+                        DataPoint closestPoint = Utils.GetClosestPointOnLine(line.Start(), line.End(), bubbleItem.Item1.GetPosition());
+                        float triggerRadius = bubbleItem.Item1.AdjustedRadius(); // Eh?
 
-                        bool isHit = Utils.IsLineTouchingCircle(line.Start(), line.End(), bubble.Position, triggerRadius, GameCore.bubbleRadiusStandard);
-                        bool isIntermediate = Utils.IsInRadiusLineRange(line.Start(), line.End(), bubble.Position, triggerRadius);
+                        bool isHit = Utils.IsLineTouchingCircle(line.Start(), line.End(), bubbleItem.Item1.GetPosition(), triggerRadius, GameCore.bubbleRadiusStandard);
+                        bool isIntermediate = Utils.IsInRadiusLineRange(line.Start(), line.End(), bubbleItem.Item1.GetPosition(), triggerRadius);
 
                         if (closestPoint.IsRealNumber())
                         {
@@ -216,14 +243,14 @@ public class VisualCore : MonoBehaviour
                                 color = Color.HSVToRGB(.33f, .8f, .8f);
                             }
 
-                            VisualLine visual = lineManager.CreateLine(bubble.Position, closestPoint, color, lineWidth);
+                            VisualLine visual = lineManager.CreateLine(bubbleItem.Item1.GetPosition(), closestPoint, color, lineWidth);
                             debugLines.Add(visual);
                         }
                     }
 
-                    if (bubble.Radius > (GameCore.bubbleRadiusStandard + VisualLineManager.PLAYER_LINE_MAX_WIDTH / 2 + GameCore.widthLeeway) + 0.001f)
+                    if (bubbleItem.Item1.AdjustedRadius() > (GameCore.bubbleRadiusStandard + VisualLineManager.PLAYER_LINE_MAX_WIDTH / 2 + GameCore.widthLeeway) + 0.001f)
                     {
-                        DataPoint[] pos = GameCore.DetermineSplits(new DataBubble(bubble.Position, new DataPoint(), speed: 0, BubbleType.Large), line.Start(), line.End());
+                        DataPoint[] pos = GameCore.DetermineSplits(new DataBubble(bubbleItem.Item1.GetPosition(), new DataPoint(), speed: 0, BubbleType.Large), line.Start(), line.End());
                         foreach (DataPoint point in pos)
                         {
                             debugLines.AddRange(lineManager.CreatePlus(point, Color.white));

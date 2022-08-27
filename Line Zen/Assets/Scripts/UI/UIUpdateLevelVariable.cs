@@ -5,7 +5,7 @@ using UnityEngine;
 public class UIUpdateLevelVariable : MonoBehaviour
 {
     public Events events;
-    public SOChallengeList levelList;
+    public SOChallenges levelList;
 
     // Start is called before the first frame update
     void Start()

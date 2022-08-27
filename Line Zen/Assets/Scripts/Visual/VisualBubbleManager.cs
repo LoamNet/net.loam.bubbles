@@ -29,7 +29,12 @@ public class VisualBubbleManager : MonoBehaviour
         bubbleLarge.SetActive(false);
     }
 
-    public VisualBubble CreateBubble(DataBubble data)
+    /// <summary>
+    /// Makes a bubble game object
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public GameObject CreateBubble(DataBubble data)
     {
         BubbleType type = data.TypeOfBubble();
         string name = $"bubble {data.TypeOfBubble()}";
@@ -49,6 +54,6 @@ public class VisualBubbleManager : MonoBehaviour
         bubble.name = name;
         bubble.transform.position = data.GetPosition();
 
-        return new VisualBubble(bubble, data.GetPosition(), data.AdjustedRadius());
+        return bubble;
     }
 }
