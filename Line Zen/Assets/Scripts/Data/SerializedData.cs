@@ -17,7 +17,7 @@ public struct DataGeneral
     public bool showTutorial;
     public bool showHelp;
     public bool showParticles;
-    public List<DataChallenge> challenges;
+    public List<DataPuzzle> challenges;
     //////////////////////////////////////////////////////////
 
     // Utility function for updating tracked level info.
@@ -25,11 +25,11 @@ public struct DataGeneral
     {
         for (int i = 0; i < challenges.Count; ++i)
         {
-            DataChallenge currentStats = challenges[i];
+            DataPuzzle currentStats = challenges[i];
 
             if(currentStats.name.Equals(name))
             {
-                DataChallenge newData = new DataChallenge(currentStats);
+                DataPuzzle newData = new DataPuzzle(currentStats);
 
                 if (!onlyIncrease || score > currentStats.score)
                 {
@@ -52,7 +52,7 @@ public struct DataGeneral
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public bool TryGetChallenge(string name, out DataChallenge data)
+    public bool TryGetChallenge(string name, out DataPuzzle data)
     {
         data = default;
 
@@ -77,13 +77,13 @@ public struct DataGeneral
         this.showTutorial = other.showTutorial;
         this.showHelp = other.showHelp;
         this.showParticles = other.showParticles;
-        this.challenges = new List<DataChallenge>();
+        this.challenges = new List<DataPuzzle>();
 
         if (other.challenges != null)
         {
             for(int i = 0; i < other.challenges.Count; ++i)
             {
-                 this.challenges.Add(new DataChallenge(other.challenges[i]));
+                 this.challenges.Add(new DataPuzzle(other.challenges[i]));
             }
         }
     }
@@ -98,7 +98,7 @@ public struct DataGeneral
         data.showTutorial = true;
         data.showHelp = false;
         data.showParticles = true;
-        data.challenges = new List<DataChallenge>();
+        data.challenges = new List<DataPuzzle>();
 
         return data;
     }
@@ -125,7 +125,7 @@ public struct DataGeneral
         return created;
     }
 
-    public string ListToString(List<DataChallenge> toWrite)
+    public string ListToString(List<DataPuzzle> toWrite)
     {
         string str = "";
 
@@ -142,9 +142,9 @@ public struct DataGeneral
         return str;
     }
 
-    public List<DataChallenge> ListFromString(string toRead)
+    public List<DataPuzzle> ListFromString(string toRead)
     {
-        List<DataChallenge> parsed = new List<DataChallenge>();
+        List<DataPuzzle> parsed = new List<DataPuzzle>();
 
         if(string.IsNullOrEmpty(toRead))
         {
@@ -155,7 +155,7 @@ public struct DataGeneral
 
         for(int i = 0; i < split.Length; ++i)
         {
-            DataChallenge dataChallenge = new DataChallenge();
+            DataPuzzle dataChallenge = new DataPuzzle();
             dataChallenge.FromString(split[i]);
             parsed.Add(dataChallenge);
         }

@@ -67,7 +67,7 @@ public class UIChallengeList : MonoBehaviour
             toParent.transform.SetParent(parent.transform, false);
 
             // Parse out existing data, if present, and initialize entries.
-            DataChallenge? challenge = GetSavedDataChallenge(challenges, entry.name);
+            DataPuzzle? challenge = GetSavedDataChallenge(challenges, entry.name);
             int stars = 0;
             long score = 0;
             if (challenge.HasValue)
@@ -88,7 +88,7 @@ public class UIChallengeList : MonoBehaviour
     }
 
     // Search the saved data to see if a name of a level is there, and if so, get data on it.
-    private DataChallenge? GetSavedDataChallenge(SOChallenges challenges, string toGet)
+    private DataPuzzle? GetSavedDataChallenge(SOChallenges challenges, string toGet)
     {
         DataGeneral dataGeneral = data.GetDataGeneral();
         string target = toGet.Trim().ToLowerInvariant();

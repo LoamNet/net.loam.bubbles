@@ -11520,7 +11520,7 @@ PrefabInstance:
     - target: {fileID: 3063946321746776169, guid: 980d9536057a67849a06083d53c3f137,
         type: 3}
       propertyPath: m_text
-      value: Back to Levels
+      value: Back to Puzzles
       objectReference: {fileID: 0}
     - target: {fileID: 7897369793489251702, guid: 980d9536057a67849a06083d53c3f137,
         type: 3}
@@ -13821,7 +13821,7 @@ PrefabInstance:
     - target: {fileID: 3063946321746776169, guid: 980d9536057a67849a06083d53c3f137,
         type: 3}
       propertyPath: m_text
-      value: Play Challenges
+      value: Play Puzzles
       objectReference: {fileID: 0}
     - target: {fileID: 7897369793489251702, guid: 980d9536057a67849a06083d53c3f137,
         type: 3}

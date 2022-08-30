@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct DataChallenge
+public struct DataPuzzle
 {
     public int stars;
     public long score;
@@ -10,14 +10,14 @@ public struct DataChallenge
 
     public static readonly char separator = ':';
 
-    public DataChallenge(DataChallenge other)
+    public DataPuzzle(DataPuzzle other)
     {
         this.score = other.score;
         this.stars = other.stars;
         this.name = other.name;
     }
 
-    public DataChallenge(int stars, string name, long score)
+    public DataPuzzle(int stars, string name, long score)
     {
         this.score = score;
         this.stars = stars;

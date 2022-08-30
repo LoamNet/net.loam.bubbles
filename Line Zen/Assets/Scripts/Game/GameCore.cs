@@ -154,7 +154,7 @@ public class GameCore : MonoBehaviour
 
         events.OnNoSaveEntryFound += (name) => {
             DataGeneral toModify = data.GetDataGeneral();
-            toModify.challenges.Add(new DataChallenge(0, name, 0));
+            toModify.challenges.Add(new DataPuzzle(0, name, 0));
             data.SetDataGeneral(toModify);
         };
 
@@ -460,7 +460,7 @@ public class GameCore : MonoBehaviour
             {
                 int bestStars = 0;
                 long bestScore = 0;
-                if(data.GetDataGeneral().TryGetChallenge(internalLevel.name, out DataChallenge outData))
+                if(data.GetDataGeneral().TryGetChallenge(internalLevel.name, out DataPuzzle outData))
                 {
                     bestStars = outData.stars;
                     bestScore = outData.score;
