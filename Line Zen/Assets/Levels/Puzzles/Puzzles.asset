@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01d5847be82797042b907f0037f56c93, type: 3}
-  m_Name: Challenges
+  m_Name: Puzzles
   m_EditorClassIdentifier: 
   basic: {fileID: 11400000, guid: 6489a4bf137538d498b58c8340341c20, type: 2}
   large: {fileID: 11400000, guid: 394c585430be46d4d896c53bcb79da4e, type: 2}
