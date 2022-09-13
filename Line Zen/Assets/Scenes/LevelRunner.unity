@@ -260,7 +260,13 @@ MonoBehaviour:
   internalLevel: {fileID: 0}
   internalMode: 1
   internalState: 4
-  levels: {fileID: 0}
+  levels: {fileID: 11400000, guid: daea1422827ef584a99b10228a688e29, type: 2}
+  movementCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &57648223
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -333,6 +339,13 @@ MonoBehaviour:
   challengeList: {fileID: 0}
   lineEndCap: {fileID: 4169350683890814917, guid: 8a798642e5955ac41a4e7f16b812c07f,
     type: 3}
+  lineThickeningSpeedScalar: 1
+  curve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   guideLineColor: {r: 0.4, g: 0.4, b: 0.6, a: 0.1}
 --- !u!114 &57648227
 MonoBehaviour:
@@ -1775,6 +1788,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   events: {fileID: 0}
   title: {fileID: 0}
+  scoreText: {fileID: 0}
   unstarred: {fileID: 21300000, guid: c99fdcdb90740b54bbb21cec681b46bc, type: 3}
   unstarredColor: {r: 0.6806248, g: 0.8749122, b: 0.8962264, a: 0.8}
   starred: {fileID: 21300000, guid: 43ad7747a3f1dac4f9f93c53a84308c1, type: 3}
@@ -3916,6 +3930,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   events: {fileID: 57648228}
+  levelList: {fileID: 0}
 --- !u!114 &1080700032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4545,6 +4560,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   events: {fileID: 0}
   title: {fileID: 0}
+  scoreText: {fileID: 0}
   unstarred: {fileID: 21300000, guid: c99fdcdb90740b54bbb21cec681b46bc, type: 3}
   unstarredColor: {r: 0.6806248, g: 0.8749122, b: 0.8962264, a: 0.8}
   starred: {fileID: 21300000, guid: 43ad7747a3f1dac4f9f93c53a84308c1, type: 3}
@@ -5799,6 +5815,7 @@ MonoBehaviour:
   visibility: {fileID: 1580218135}
   buttonConfirm: {fileID: 1249345591}
   buttonCancel: {fileID: 80952772}
+  buttonThird: {fileID: 0}
 --- !u!225 &1580218135
 CanvasGroup:
   m_ObjectHideFlags: 0
