@@ -37,33 +37,56 @@ public class DataBubble
         this.cycleTime = 0;
     }
 
+    /*
+     * 
+     *         // No speed or offset? Don't bother doing anything.
+        if (speed <= 0 || (targetOffset.X == 0 && targetOffset.Y == 0))
+        {
+            return;
+        }
+
+        cycleTime += dt;
+        float t = cycleTime / speed;
+
+        if(t >= 1)
+        {
+            cycleTime = 0;
+        }
+
+        currentOffset = targetOffset
+        Debug.Log(t);
+        */
+
+
     public void TickPosition(float dt, AnimationCurve curve)
     {
-        // No speed? Don't bother doing anything.
-        if (speed > 0)
+        // No speed or offset? Don't bother doing anything.
+        if (speed <= 0 || (targetOffset.X == 0 && targetOffset.Y == 0))
         {
-            cycleTime += dt;
-            float halfTime = speed / 2;
+            return;
+        }
 
-            if(cycleTime >= speed)
-            {
-                cycleTime -= speed;
-            }
+        cycleTime += dt;
+        float halfTime = speed / 2;
 
-            // Lerp from start to target
-            if (cycleTime < halfTime)
-            {
-                float t = cycleTime / halfTime;
-                float adjusted = curve.Evaluate(t);
-                currentOffset = new DataPoint(Vector2.Lerp(position, targetOffset, adjusted));
-            }
-            else
-            {
-                // Lerp from target back to start
-                float t = (cycleTime - halfTime) / halfTime;
-                float adjusted = curve.Evaluate(t);
-                currentOffset = new DataPoint(Vector2.Lerp(targetOffset, position, adjusted));
-            }
+        if(cycleTime >= speed)
+        {
+            cycleTime -= speed;
+        }
+
+        // Lerp from start to target
+        if (cycleTime < halfTime)
+        {
+            float t = cycleTime / halfTime;
+            float adjusted = curve.Evaluate(t);
+            currentOffset = new DataPoint(Vector2.Lerp(Vector2.zero, targetOffset, adjusted));
+        }
+        else
+        {
+            // Lerp from target back to start
+            float t = (cycleTime - halfTime) / halfTime;
+            float adjusted = curve.Evaluate(t);
+            currentOffset = new DataPoint(Vector2.Lerp(targetOffset, Vector2.zero, adjusted));
         }
     }
 

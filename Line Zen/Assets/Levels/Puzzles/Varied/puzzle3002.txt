@@ -1,0 +1,6 @@
+name=Big Bubbles
+group=3
+stars=165,305
+bubbleLarge=-1,0:2,0@6
+bubbleLarge=1,2:-2,0@6
+bubbleLarge=-1,-1:2,2@6

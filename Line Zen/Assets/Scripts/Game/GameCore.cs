@@ -338,8 +338,8 @@ public class GameCore : MonoBehaviour
                         //              ^ Initial Speed (sinusoidal)
                         //
                         string[] movementSplit = value.Split(':'); // Check to see if we have velocity info. 
-                        float target_x = 0;
-                        float target_y = 0;
+                        float velocity_x = 0;
+                        float velocity_y = 0;
                         float speed = 0;
 
                         // If we found the additional informaiton section, we can parse out velocity and speed.
@@ -348,8 +348,8 @@ public class GameCore : MonoBehaviour
                         {
                             string[] speedSplit = movementSplit[1].Split('@');
                             string[] velocity = speedSplit[0].Split(',');
-                            target_x = float.Parse(velocity[0].Trim());
-                            target_y = float.Parse(velocity[1].Trim());
+                            velocity_x = float.Parse(velocity[0].Trim());
+                            velocity_y = float.Parse(velocity[1].Trim());
                             speed = float.Parse(speedSplit[1].Trim());
                         }
 
@@ -359,7 +359,7 @@ public class GameCore : MonoBehaviour
                         float y = float.Parse(point[1].Trim());
 
                         // Add a new bubble with parsed info 
-                        bubbles.Add(new DataBubble(new DataPoint(x, y), new DataPoint(target_x, target_y), speed, bubbleType));
+                        bubbles.Add(new DataBubble(new DataPoint(x, y), new DataPoint(velocity_x, velocity_y), speed, bubbleType));
                     }
 
                     // Lines can be duplicate keys, and so are treated as such

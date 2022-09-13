@@ -1,5 +1,5 @@
 name=Moving
 group=2
-stars=2,1
+stars=10,20
 bubble=-.75,0:0,1@3
 bubble=.75,1:0,-1@4
