@@ -166,6 +166,14 @@ public class GameCore : MonoBehaviour
         };
 
         events.OnLevelReloadRequest += () => {
+            // Perform saving for challenges during reload if you want to immediately try again
+            if (Mode == GameMode.ChallengeLevel)
+            {
+                DataGeneral toModify = data.GetDataGeneral();
+                toModify.SetChallengeStats(internalLevel.name, GetStarCount(), levelScore, onlyIncrease: true);
+                data.SetDataGeneral(toModify);
+            }
+
             Mode = GameMode.ChallengeLevel;
             CurrentLevel = CurrentLevel; // Done to force the value resets. Not ideal technique for this.
             PopulateLevelBubbles(CurrentLevel);
