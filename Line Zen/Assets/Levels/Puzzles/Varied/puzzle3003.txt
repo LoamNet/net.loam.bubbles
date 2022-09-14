@@ -1,0 +1,9 @@
+name=Timing
+group=3
+stars=200,300
+bubbleLarge=-1,-1:2,0@6
+bubble=0,1.5
+bubble=1,2.5
+bubble=-1.5,0.2:0,2@4
+bubble=-1.5,-2:0,1@4
+bubble=1.5,2:0,2@4
