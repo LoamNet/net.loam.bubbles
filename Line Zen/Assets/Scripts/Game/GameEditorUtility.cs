@@ -7,17 +7,56 @@ using UnityEngine;
 // Custom editor for levels to make creating them easier
 public class GameEditorUtility : MonoBehaviour
 {
+    public class BubbleEntry : System.IDisposable
+    {
+        public GameObject bubble;
+        public DataPoint movementOffset;
+        private LineRenderer bundledLine;
+
+        public BubbleEntry(GameObject bubble)
+        {
+            this.bubble = bubble;
+        }
+
+        public void BundleLine(LineRenderer linePrefab, DataPoint start, DataPoint end)
+        {
+            Color color = Color.grey;
+            bundledLine = Instantiate(linePrefab);
+            bundledLine.enabled = true;
+            bundledLine.startColor = color;
+            bundledLine.endColor = color;
+            GameEditorUtility.SetLine(bundledLine, start, end);
+        }
+
+        public int DetermineSpeed()
+        {
+             return Mathf.RoundToInt(((Vector2)movementOffset).magnitude) + MIN_MOVE_TIME;
+        }
+
+        public void Dispose()
+        {
+            Destroy(bubble);
+
+            if (bundledLine != null)
+            {
+                Destroy(bundledLine.gameObject);
+            }
+        }
+    }
+
+    public const int MIN_MOVE_TIME = 1;
     public const int SILVER_DEFAULT = 25;
     public const int GOLD_DEFAULT = 55;
     public string fileName = "challenge0000";
     public string levelTitle = "Untitled";
     public int silver = SILVER_DEFAULT;
     public int gold = GOLD_DEFAULT;
-    public List<GameObject> bubbles = new List<GameObject>();
-    public List<GameObject> bubblesLarge = new List<GameObject>();
+    public List<BubbleEntry> bubbles = new List<BubbleEntry>();
+    public List<BubbleEntry> bubblesLarge = new List<BubbleEntry>();
 
 
     [Header("Links")]
+    public LineRenderer dragLine;
     public GameObject menu; 
     public Camera sceneCam;
     public GameObject templateRegular;
@@ -25,6 +64,11 @@ public class GameEditorUtility : MonoBehaviour
     public GameInputManager inputManager;
     public SpriteRenderer safeArea;
 
+    private bool previousPrimary = false;
+    private bool previousSecondary = false;
+    private bool dragging = false;
+    private DataPoint dragStartPos = new DataPoint();
+    private BubbleEntry lastPlaced = null;
 
     public bool MenuShowing { get { return menu.activeInHierarchy; } }
 
@@ -33,6 +77,7 @@ public class GameEditorUtility : MonoBehaviour
         templateRegular.SetActive(false);
         templateLarge.SetActive(false);
         Clear();
+        dragLine.enabled = false;
     }
 
     public void SaveToFile()
@@ -80,40 +125,52 @@ public class GameEditorUtility : MonoBehaviour
 
         for (int i = 0; i < bubbles.Count; ++i)
         {
-            Destroy(bubbles[i]);
+            bubbles[i].Dispose();
         }
         for (int i = 0; i < bubblesLarge.Count; ++i)
         {
-            Destroy(bubblesLarge[i]);
+            bubblesLarge[i].Dispose();
         }
 
         bubbles.Clear();
         bubblesLarge.Clear();
     }
 
+    const string keyValSep = "=";
+    const string sep = ",";
+    const string sepSplit = ":";
+    const string sepSpeed = "@";
+    const string end = "\n";
+
+    private string Format(string key, BubbleEntry value)
+    {
+        string decimalFormatString = "n2";
+
+        string x = value.bubble.transform.position.x.ToString(decimalFormatString);
+        string y = value.bubble.transform.position.y.ToString(decimalFormatString);
+        string x_vel = value.movementOffset.X.ToString(decimalFormatString);
+        string y_vel = value.movementOffset.Y.ToString(decimalFormatString);
+        string speed = value.DetermineSpeed().ToString();
+
+        return key + keyValSep + x + sep + y + sepSplit + x_vel + sep + y_vel + sepSpeed + speed + end;
+    }
+
     public string Serialize()
     {
-        const string end = "\n";
-        const string sep = ",";
-
         string toWrite = "";
-        toWrite += "name=" + levelTitle + end;
-        toWrite += "stars=" + silver + sep + gold + end;
+        toWrite += "name" + keyValSep + levelTitle + end;
+        toWrite += "stars" + keyValSep + silver + sep + gold + end;
 
         for(int i = 0; i < bubbles.Count; ++i)
         {
-            GameObject current = bubbles[i];
-            float x = current.transform.position.x;
-            float y = current.transform.position.y;
-            toWrite += "bubble=" + x.ToString("n3") + sep + y.ToString("n3") + end;
+            BubbleEntry current = bubbles[i];
+            toWrite += Format("bubbles", current);
         }
 
         for (int i = 0; i < bubblesLarge.Count; ++i)
         {
-            GameObject current = bubblesLarge[i];
-            float x = current.transform.position.x;
-            float y = current.transform.position.y;
-            toWrite += "bubbleLarge=" + x.ToString("n3") + sep + y.ToString("n3") + end;
+            BubbleEntry current = bubblesLarge[i];
+            toWrite += Format("bubbleLarge", current);
         }
 
         return toWrite;
@@ -137,12 +194,93 @@ public class GameEditorUtility : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Given a target list of bubble entries and something to remove, search 
+    /// for and remove ONLY the FIRST INSTANCE from the front ([0]) to back (Count) of the list.
+    /// Return if we did or didn't find the item and remove it.
+    /// </summary>
+    private bool RemoveEntry(List<BubbleEntry> targetList, GameObject toRemove)
+    {
+        for(int i = 0; i < targetList.Count; ++i)
+        {
+            BubbleEntry entry = targetList[i];
+
+            if (entry.bubble == toRemove)
+            {
+                targetList[i].Dispose();
+                targetList.RemoveAt(i);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static void SetLine(LineRenderer line, DataPoint start, DataPoint end)
+    {
+        line.SetPosition(0, new Vector3(start.X, start.Y, 0));
+        line.SetPosition(1, new Vector3(end.X, end.Y));
+    }
+
+    private void SetPreviewLine(DataPoint start, DataPoint end)
+    {
+        SetLine(dragLine, start, end);
+    }
+
     private void UpdateBubblePlacement()
     {
         // Handle inputs
-        bool primary = inputManager.PrimaryInputPressed();
-        bool secondary = inputManager.SecondaryInputPressed();
+        bool primaryDown = inputManager.PrimaryInputDown(); // always true if down
+        bool secondaryDown = inputManager.SecondaryInputPressed(); // always true if down
+        bool primary = inputManager.PrimaryInputPressed(); // only true on first frame
+        bool secondary = inputManager.SecondaryInputPressed(); // only true on first frame
+        bool finishedDrag = false;
 
+        // See if we're starting a drag
+        if((primaryDown && previousPrimary == false) || (secondaryDown && previousSecondary == false))
+        {
+            dragStartPos = inputManager.PrimaryInputPosWorld();
+            dragging = true;
+            dragLine.enabled = true;
+            SetPreviewLine(dragStartPos, dragStartPos); // intentionally both the same point so the line is active but not visible.
+        }
+
+        // See if we stopped drag
+        if(dragging && primaryDown == false)
+        {
+            finishedDrag = true;
+            dragging = false;
+        }
+
+        // Update preview if dragging
+        if(dragging)
+        {
+            SetPreviewLine(dragStartPos, inputManager.PrimaryInputPosWorld());
+        }
+
+        // Once we finished dragging the difference (input up)
+        if(finishedDrag)
+        {
+            DataPoint endPos = inputManager.PrimaryInputPosWorld();
+            DataPoint difference = endPos - dragStartPos;
+
+            if (lastPlaced != null)
+            {
+                float differenceLen = Mathf.RoundToInt(((Vector2)difference).magnitude);
+                if (differenceLen > GameCore.bubbleRadiusStandard)
+                {
+                    lastPlaced.movementOffset = difference;
+                    lastPlaced.BundleLine(dragLine, dragStartPos, endPos);
+                }
+            }
+
+            // Return to defaults
+            lastPlaced = null;
+            dragStartPos = new DataPoint();
+            dragLine.enabled = false;
+        }
+
+        // Place something. (input pressed, one frame only)
         if (primary || secondary)
         {
             RaycastHit hit;
@@ -155,59 +293,71 @@ public class GameEditorUtility : MonoBehaviour
                 if (hit.collider != null)
                 {
                     hitSomething = true;
-                    bubbles.Remove(hit.collider.gameObject);
-                    bubblesLarge.Remove(hit.collider.gameObject);
-                    Destroy(hit.collider.gameObject);
+                    GameObject toTryToRemove = hit.collider.gameObject;
+
+                    // Try both lists. Will only be in one of them.
+                    RemoveEntry(bubbles, toTryToRemove);
+                    RemoveEntry(bubblesLarge, toTryToRemove);
                 }
+            }
+
+            // Early exit if we handled hitting existing things
+            if(hitSomething)
+            {
+                lastPlaced = null;
+                return;
             }
 
             // Verify we're in the safezone. If we are and nothing was hit, 
             // well, we can go ahead and place a bubble now!
-            if (!hitSomething)
+            DataPoint pos = inputManager.PrimaryInputPosWorld();
+
+            float left = safeArea.transform.position.x - safeArea.size.x / 2;
+            float right = safeArea.transform.position.x + safeArea.size.x / 2;
+            float top = safeArea.transform.position.y + safeArea.size.y / 2;
+            float bottom = safeArea.transform.position.y - safeArea.size.y / 2;
+
+            if (pos.X > right || pos.X < left || pos.Y > top || pos.Y < bottom)
             {
-                DataPoint pos = inputManager.PrimaryInputPosWorld();
-
-                float left = safeArea.transform.position.x - safeArea.size.x / 2;
-                float right = safeArea.transform.position.x + safeArea.size.x / 2;
-                float top = safeArea.transform.position.y + safeArea.size.y / 2;
-                float bottom = safeArea.transform.position.y - safeArea.size.y / 2;
-
-                if (pos.X > right || pos.X < left || pos.Y > top || pos.Y < bottom)
-                {
-                    return;
-                }
-
-                // Default to regular bubble
-                GameObject toSpawn = templateRegular;
-                float radius = GameCore.bubbleRadiusStandard;
-
-                // Override to large bubble
-                if (secondary)
-                {
-                    toSpawn = templateLarge;
-                    radius = GameCore.bubbleRadiusLarge;
-                }
-
-                // Determine scale accordingly
-                radius /= toSpawn.transform.localScale.x;
-
-                // Spawn the bubble, and provide the collider.
-                GameObject newBubble = GameObject.Instantiate(toSpawn);
-                SphereCollider col = newBubble.AddComponent<SphereCollider>();
-                newBubble.transform.position = pos;
-                newBubble.SetActive(true);
-                col.radius = radius;
-
-                if (secondary)
-                {
-                    bubblesLarge.Add(newBubble);
-                }
-                else if (primary)
-                {
-                    bubbles.Add(newBubble);
-                }
+                return;
             }
+
+            // Default to regular bubble
+            GameObject toSpawn = templateRegular;
+            float radius = GameCore.bubbleRadiusStandard;
+
+            // Override to large bubble
+            if (secondary)
+            {
+                toSpawn = templateLarge;
+                radius = GameCore.bubbleRadiusLarge;
+            }
+
+            // Determine scale accordingly
+            radius /= toSpawn.transform.localScale.x;
+
+            // Spawn the bubble, and provide the collider.
+            GameObject newBubble = GameObject.Instantiate(toSpawn);
+            SphereCollider col = newBubble.AddComponent<SphereCollider>();
+            newBubble.transform.position = pos;
+            newBubble.SetActive(true);
+            col.radius = radius;
+
+            BubbleEntry entry = new BubbleEntry(newBubble);
+            if (secondary)
+            {
+                bubblesLarge.Add(entry);
+            
+            }
+            else if (primary)
+            {
+                bubbles.Add(entry);
+            }
+            lastPlaced = entry;
         }
+
+        previousPrimary = primaryDown;
+        previousSecondary = secondaryDown;
     }
 
 }
