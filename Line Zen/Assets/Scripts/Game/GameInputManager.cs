@@ -32,13 +32,17 @@ public class GameInputManager : MonoBehaviour
     }
 
     /// <summary>
-    /// For one frame only
+    /// For one frame only (First frame)
     /// </summary>
     public bool PrimaryInputPressed()
     {
         return Input.GetMouseButtonDown(0);
     }
 
+    /// <summary>
+    /// All frames the button is down
+    /// </summary>
+    /// <returns></returns>
     public bool PrimaryInputDown()
     {
         return Input.GetMouseButton(0);
@@ -47,6 +51,11 @@ public class GameInputManager : MonoBehaviour
     public bool SecondaryInputPressed()
     {
         return Input.GetMouseButtonDown(1);
+    }
+
+    public bool SecondaryInputDown()
+    {
+        return Input.GetMouseButton(1);
     }
 
     private void Update()

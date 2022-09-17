@@ -66,7 +66,8 @@ public class GameEditorUtility : MonoBehaviour
 
     private bool previousPrimary = false;
     private bool previousSecondary = false;
-    private bool dragging = false;
+    private bool draggingPrimary = false;
+    private bool draggingSecondary = false;
     private DataPoint dragStartPos = new DataPoint();
     private BubbleEntry lastPlaced = null;
 
@@ -231,7 +232,7 @@ public class GameEditorUtility : MonoBehaviour
     {
         // Handle inputs
         bool primaryDown = inputManager.PrimaryInputDown(); // always true if down
-        bool secondaryDown = inputManager.SecondaryInputPressed(); // always true if down
+        bool secondaryDown = inputManager.SecondaryInputDown(); // always true if down
         bool primary = inputManager.PrimaryInputPressed(); // only true on first frame
         bool secondary = inputManager.SecondaryInputPressed(); // only true on first frame
         bool finishedDrag = false;
@@ -239,21 +240,35 @@ public class GameEditorUtility : MonoBehaviour
         // See if we're starting a drag
         if((primaryDown && previousPrimary == false) || (secondaryDown && previousSecondary == false))
         {
+            if(primaryDown && previousPrimary == false)
+            {
+                draggingPrimary = true;
+            }
+            if(secondaryDown && previousSecondary == false)
+            {
+                draggingSecondary = true;
+            }
+
             dragStartPos = inputManager.PrimaryInputPosWorld();
-            dragging = true;
             dragLine.enabled = true;
             SetPreviewLine(dragStartPos, dragStartPos); // intentionally both the same point so the line is active but not visible.
         }
 
         // See if we stopped drag
-        if(dragging && primaryDown == false)
+        if(draggingPrimary && primaryDown == false)
         {
             finishedDrag = true;
-            dragging = false;
+            draggingPrimary = false;
+        }
+
+        if(draggingSecondary && secondaryDown == false)
+        {
+            finishedDrag = true;
+            draggingSecondary = false;
         }
 
         // Update preview if dragging
-        if(dragging)
+        if(draggingPrimary || draggingSecondary)
         {
             SetPreviewLine(dragStartPos, inputManager.PrimaryInputPosWorld());
         }
