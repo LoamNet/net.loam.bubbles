@@ -30,7 +30,14 @@ public class GameEditorUtility : MonoBehaviour
 
         public int DetermineSpeed()
         {
-             return Mathf.RoundToInt(((Vector2)movementOffset).magnitude) + MIN_MOVE_TIME;
+            int speed = Mathf.RoundToInt(((Vector2)movementOffset).magnitude);
+            if(speed > 0)
+            {
+                speed += MIN_MOVE_TIME;
+                speed *= MOVE_SCALAR;
+            }
+
+            return speed;
         }
 
         public void Dispose()
@@ -45,6 +52,7 @@ public class GameEditorUtility : MonoBehaviour
     }
 
     public const int MIN_MOVE_TIME = 1;
+    public const int MOVE_SCALAR = 2;
     public const int SILVER_DEFAULT = 25;
     public const int GOLD_DEFAULT = 55;
     public string fileName = "challenge0000";
