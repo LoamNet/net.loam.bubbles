@@ -1,0 +1,9 @@
+name=Enhance
+stars=280,350
+bubbles=-1.12,0.05:2.48,-0.01@6
+bubbles=-0.12,1.10:0.00,0.00@0
+bubbles=-0.10,-0.89:0.00,0.00@0
+bubbleLarge=-1.10,-3.13:-0.01,2.51@8
+bubbleLarge=1.01,0.08:0.00,0.00@0
+bubbleLarge=-0.5,2:0.00,0.00@0
+group=3

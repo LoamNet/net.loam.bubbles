@@ -1,8 +1,9 @@
 name=Even Odds
-stars=25,55
+stars=310,320
 bubbles=-0.52,-2.90:-0.76,3.04@8
 bubbles=1.39,1.13:-0.50,2.20@6
 bubbles=-1.10,-0.05:1.74,0.81@6
 bubbles=1.76,-1.61:-2.29,-2.38@8
 bubbleLarge=-0.03,1.78:0.00,0.00@1
 bubbleLarge=1.13,-0.45:0.00,0.00@1
+group=3

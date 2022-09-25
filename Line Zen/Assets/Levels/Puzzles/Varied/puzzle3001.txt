@@ -1,6 +1,6 @@
 name=Varied
-group=3
 stars=75,115
 bubbleLarge=-0.5,0:1,0@5
 bubble=0,1.15:0,1@6
 bubble=0,-1.15:0,-1@6
+group=3

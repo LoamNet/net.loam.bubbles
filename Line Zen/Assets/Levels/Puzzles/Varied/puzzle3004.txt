@@ -1,7 +1,7 @@
 name=Triangle
-group=3
-stars=160,340
+stars=250,340
 bubbleLarge=-1,-1:1,0@6
 bubbleLarge=1,-1:-1,-1@6
 bubbleLarge=0,1:-1,-1@6
 bubble=1,1
+group=3
