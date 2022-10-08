@@ -14,15 +14,14 @@ public class UIToggleTargetActive : MonoBehaviour
     // Internal Variables
     private Button button;
 
-
-    private void Awake()
-    {
-        button = GetComponent<Button>();   
-    }
-
     // Hook up events
     private void OnEnable()
     {
+        if (button == null)
+        {
+            button = GetComponent<Button>();
+        }
+
         button.onClick.AddListener(ToggleActive);
     }
 

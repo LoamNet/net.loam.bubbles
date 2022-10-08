@@ -123,6 +123,16 @@ public class GameCore : MonoBehaviour
     private void Awake()
     {
         levels.Initialize();
+        if(isLevelTester)
+        {
+            if(GameEditorRepository.Instance?.LevelDataFromEditor != null)
+            {
+                TextAsset loaded = new TextAsset(GameEditorRepository.Instance.LevelDataFromEditor);
+                GameEditorRepository.Instance.LevelDataFromRunner = GameEditorRepository.Instance.LevelDataFromEditor;
+                GameEditorRepository.Instance.LevelDataFromEditor = null;
+                internalLevel = loaded;
+            }
+        }
     }
 
     private void Start()

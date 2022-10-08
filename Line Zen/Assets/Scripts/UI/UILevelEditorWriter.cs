@@ -72,10 +72,23 @@ public class UILevelEditorWriter : MonoBehaviour
 
 
     // This sets the state of the UI to the state of the editor internally.
-    void UpdateToEditorContent()
+    public void UpdateToEditorContent()
     {
-        levelName.text = editor.levelTitle;
-        star3.text = editor.gold.ToString();
-        star2.text = editor.silver.ToString();
+        if (levelName.text != editor.levelTitle)
+        {
+            levelName.text = editor.levelTitle;
+        }
+
+        string silver = editor.silver.ToString();
+        if (star2.text != silver)
+        {
+            star2.text = silver;
+        }
+
+        string gold = editor.gold.ToString();
+        if (star3.text != gold)
+        {
+            star3.text = gold;
+        }
     }
 }

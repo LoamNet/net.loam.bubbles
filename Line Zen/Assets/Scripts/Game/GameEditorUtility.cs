@@ -11,6 +11,7 @@ public class GameEditorUtility : MonoBehaviour
     {
         public GameObject bubble;
         public DataPoint movementOffset;
+        public float? speed;
         private LineRenderer bundledLine;
 
         public BubbleEntry(GameObject bubble)
@@ -71,6 +72,7 @@ public class GameEditorUtility : MonoBehaviour
     public GameObject templateLarge;
     public GameInputManager inputManager;
     public SpriteRenderer safeArea;
+    public UILevelEditorWriter writer;
 
     private bool previousPrimary = false;
     private bool previousSecondary = false;
@@ -87,6 +89,17 @@ public class GameEditorUtility : MonoBehaviour
         templateLarge.SetActive(false);
         Clear();
         dragLine.enabled = false;
+    }
+
+    public void Start()
+    {
+        if (GameEditorRepository.Instance?.LevelDataFromRunner != null)
+        {
+            Deserialize(GameEditorRepository.Instance.LevelDataFromRunner);
+            GameEditorRepository.Instance.LevelDataFromRunner = null;
+            GameEditorRepository.Instance.LevelDataFromEditor = null;
+            writer.UpdateToEditorContent();
+        }
     }
 
     public void SaveToFile()
@@ -159,7 +172,7 @@ public class GameEditorUtility : MonoBehaviour
         string y = value.bubble.transform.position.y.ToString(decimalFormatString);
         string x_vel = value.movementOffset.X.ToString(decimalFormatString);
         string y_vel = value.movementOffset.Y.ToString(decimalFormatString);
-        string speed = value.DetermineSpeed().ToString();
+        string speed = value.speed.HasValue ? value.speed.ToString() : value.DetermineSpeed().ToString();
 
         return key + keyValSep + x + sep + y + sepSplit + x_vel + sep + y_vel + sepSpeed + speed + end;
     }
@@ -183,6 +196,129 @@ public class GameEditorUtility : MonoBehaviour
         }
 
         return toWrite;
+    }
+
+    private void Deserialize(string toRead)
+    {
+        if (toRead != null)
+        {
+            string[] lines = toRead.Split('\n');
+
+            foreach (string line in lines)
+            {
+                // Split on the line, and skip if it's an empty line
+                string[] split = line.Split('=');
+                if (split.Length == 1)
+                {
+                    continue;
+                }
+
+                // Establish key/value for parsing, keys are case insensitve but really 
+                // should be lowercase.
+                string key = split[0].Trim().ToLowerInvariant();
+                string value = split[1].Trim();
+
+                if(key.Contains("name"))
+                {
+                    levelTitle =value;
+                }
+
+                // Bubbles can appear as a duplicate key, and are treated as such.
+                if (key.Contains("bubble"))
+                {
+                    BubbleType bubbleType = BubbleType.Standard;
+                    if (key.Contains("large"))
+                    {
+                        bubbleType = BubbleType.Large;
+                    }
+
+                    // There are two formats for the bubble value in the serialized file.
+                    // The first of the two is just the location of the bubble in the world itself,
+                    // and the second specifies any movement associated with the bubble.
+                    //
+                    // .75,1:0,-1@.8
+                    //  ^ Initial X position
+                    //     ^ Initial Y position
+                    //      ^ split to see if we have a velocity
+                    //       ^ Initail X velocity
+                    //          ^ Initial Y velocity
+                    //              ^ Initial Speed (sinusoidal)
+                    //
+                    string[] movementSplit = value.Split(':'); // Check to see if we have velocity info. 
+                    float velocity_x = 0;
+                    float target_y = 0;
+                    float speed = 0;
+
+                    // If we found the additional informaiton section, we can parse out velocity and speed.
+                    // Once we start parsing this section, we assume it's formatted correctly.
+                    if (movementSplit.Length > 1)
+                    {
+                        string[] speedSplit = movementSplit[1].Split('@');
+                        string[] velocity = speedSplit[0].Split(',');
+                        velocity_x = float.Parse(velocity[0].Trim());
+                        target_y = float.Parse(velocity[1].Trim());
+                        speed = float.Parse(speedSplit[1].Trim());
+                    }
+
+                    // We require the position at the very least. 
+                    string[] point = movementSplit[0].Split(',');
+                    float x = float.Parse(point[0].Trim());
+                    float y = float.Parse(point[1].Trim());
+
+                    // Default to regular bubble
+                    GameObject toSpawn = templateRegular;
+                    float radius = GameCore.bubbleRadiusStandard;
+
+                    // Override to large bubble
+                    if (bubbleType == BubbleType.Large)
+                    {
+                        toSpawn = templateLarge;
+                        radius = GameCore.bubbleRadiusLarge;
+                    }
+
+                    // Determine scale accordingly
+                    radius /= toSpawn.transform.localScale.x;
+
+                    // Spawn the bubble, and provide the collider.
+                    Vector2 bubbleStartPos = new Vector3(x, y);
+                    GameObject newBubble = GameObject.Instantiate(toSpawn);
+                    SphereCollider col = newBubble.AddComponent<SphereCollider>();
+                    newBubble.transform.position = bubbleStartPos;
+                    newBubble.SetActive(true);
+                    col.radius = radius;
+
+                    BubbleEntry entry = new BubbleEntry(newBubble);
+
+                    // Line construction
+                    if (movementSplit.Length > 1)
+                    {
+                        DataPoint offset = new DataPoint(velocity_x, target_y);
+                        entry.movementOffset = offset;
+                        entry.speed = speed;
+                        entry.BundleLine(dragLine, new DataPoint(bubbleStartPos), new DataPoint(bubbleStartPos + offset));
+                    }
+
+                    if (bubbleType == BubbleType.Large)
+                    {
+                        bubblesLarge.Add(entry);
+                    }
+                    else if (bubbleType == BubbleType.Standard)
+                    {
+                        bubbles.Add(entry);
+                    }
+                }
+
+                // There can only be one star entry, and so this entry will write over with the 
+                // last entry in the file if multiple are present.
+                else if (key.Equals("stars"))
+                {
+                    string[] values = value.Split(',');
+
+                    silver = int.Parse(values[0].Trim());
+                    gold = int.Parse(values[1].Trim());
+                }
+            }
+        }
     }
 
     private void Update()
