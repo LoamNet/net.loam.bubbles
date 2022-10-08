@@ -10232,7 +10232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   events: {fileID: 399031073}
   displayDuring: 04000000
-  selectiveMode: 0
+  selectiveMode: 1
 --- !u!1001 &1283026830
 PrefabInstance:
   m_ObjectHideFlags: 0

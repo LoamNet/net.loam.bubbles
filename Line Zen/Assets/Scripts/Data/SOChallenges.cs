@@ -30,7 +30,48 @@ public class SOChallenges : ScriptableObject
         levels.AddRange(moving.entries);
         levels.AddRange(varied.entries);
 
+        ValidateData();
+
         hasInit = true;
+    }
+
+    /// <summary>
+    /// Ensures no duplicates or other issues.
+    /// </summary>
+    /// <returns></returns>
+    private void ValidateData()
+    {
+        // Content here is run in editor
+
+        // Below this point, skip when not in editor for perf reasons.
+        bool isEditor = false;
+#if UNITY_EDITOR
+        isEditor = true;
+#endif
+        if(!isEditor)
+        {
+            return;
+        }
+
+        for (int i = 0; i < levels.Count; ++i)
+        {
+            for (int j = 0; j < levels.Count; ++j)
+            {
+                // skip same index
+                if (i == j)
+                {
+                    continue;
+                }
+
+                if (levels[i].name == levels[j].name)
+                {
+#if UNITY_EDITOR
+                    UnityEditor.EditorApplication.isPlaying = false;
+#endif
+                    throw new System.Exception($"Unsupported challenge list layout: Multiple entries with name {levels[i].name}");
+                }
+            }
+        }
     }
 
     public TextAsset GetByName(string name)
