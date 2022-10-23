@@ -17,6 +17,8 @@ public struct DataGeneral
     public bool showTutorial;
     public bool showHelp;
     public bool showParticles;
+    public float musicVolume;
+    public float sfxVolume;
     public List<DataPuzzle> challenges;
     //////////////////////////////////////////////////////////
 
@@ -77,6 +79,8 @@ public struct DataGeneral
         this.showTutorial = other.showTutorial;
         this.showHelp = other.showHelp;
         this.showParticles = other.showParticles;
+        this.musicVolume = other.musicVolume;
+        this.sfxVolume = other.sfxVolume;
         this.challenges = new List<DataPuzzle>();
 
         if (other.challenges != null)
@@ -99,6 +103,8 @@ public struct DataGeneral
         data.showHelp = false;
         data.showParticles = true;
         data.challenges = new List<DataPuzzle>();
+        data.musicVolume = 0.6f;
+        data.sfxVolume = 0.9f;
 
         return data;
     }
@@ -121,6 +127,8 @@ public struct DataGeneral
         created += Line("showTutorial", showTutorial);
         created += Line("showHelp", showHelp);
         created += Line("showParticles", showParticles);
+        created += Line("musicVolume", musicVolume);
+        created += Line("sfxVolume", sfxVolume);
 
         return created;
     }
@@ -198,6 +206,12 @@ public struct DataGeneral
                             break;
                         case "showparticles":
                             showParticles = bool.Parse(value);
+                            break;
+                        case "sfxVolume":
+                            sfxVolume = float.Parse(value);
+                            break;
+                        case "musicVolume":
+                            musicVolume = float.Parse(value);
                             break;
                     }
                 }

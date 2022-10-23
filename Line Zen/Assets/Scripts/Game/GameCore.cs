@@ -168,6 +168,18 @@ public class GameCore : MonoBehaviour
             data.SetDataGeneral(toModify);
         };
 
+        events.OnUpdateMusicVolume += (newMusicVol) => {
+            DataGeneral toModify = data.GetDataGeneral();
+            toModify.musicVolume = newMusicVol;
+            data.SetDataGeneral(toModify);
+        };
+
+        events.OnUpdateSFXVolume += (newSFXVol) => {
+            DataGeneral toModify = data.GetDataGeneral();
+            toModify.sfxVolume = newSFXVol;
+            data.SetDataGeneral(toModify);
+        };
+
         events.OnLevelLoadRequest += (levelName) => {
             Mode = GameMode.ChallengeLevel;
             CurrentLevel = levels.GetByName(levelName);

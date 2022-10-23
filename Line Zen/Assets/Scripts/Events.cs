@@ -32,6 +32,8 @@ public class Events : MonoBehaviour
     public Action<bool> OnShowParticlesToggle; // When the particles visual is toggled on or off in settings.
     public Action<bool> OnTutorialToggle;      // Should we display the tutorial when starting a play session?
     public Action<bool> OnRequestPauseState;   // Requests a specific state of the pause menu
+    public Action<float> OnUpdateMusicVolume;  // Updates music volume
+    public Action<float> OnUpdateSFXVolume;    // Updates sfx volume
 
     /// <summary>
     /// Internal
