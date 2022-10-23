@@ -683,8 +683,8 @@ public class GameCore : MonoBehaviour
     /// <returns></returns>
     private DataEarnedScore CollectBubblesAsNecessary(bool impactsScore = true)
     {
-        List<DataPoint> locs = new List<DataPoint>();
-        List<int> collectedIndexes = new List<int>();
+        List<DataPoint> hitLocations = new List<DataPoint>();
+        List<int> hitIndexes = new List<int>();
 
         // Collect collisions
         for (int i = bubbles.Count - 1; i >= 0; --i)
@@ -697,13 +697,13 @@ public class GameCore : MonoBehaviour
 
             if (isHit)
             {
-                collectedIndexes.Add(i);
-                locs.Add(bubble.GetPosition());
+                hitIndexes.Add(i);
+                hitLocations.Add(bubble.GetPosition());
             }
         }
 
         // Score updating
-        int hit = collectedIndexes.Count;
+        int hit = hitIndexes.Count;
         int scoreBase = GameCore.pointsPerBubble * hit;
         int scoreBonus = 0;
 
@@ -718,7 +718,7 @@ public class GameCore : MonoBehaviour
             scoreBonus = bonusHits * bonusHits * pointsPerBonusBubble;
         }
 
-        DataEarnedScore dataEarnedScore = new DataEarnedScore(scoreBase, scoreBonus, locs);
+        DataEarnedScore dataEarnedScore = new DataEarnedScore(scoreBase, scoreBonus, hitLocations);
 
         if (pointsPerBubble != 0)
         {
@@ -732,11 +732,13 @@ public class GameCore : MonoBehaviour
         }
 
         // Clear colleted bubbles. The indexes are from back to front, so the removal is safe. 
-        foreach (int index in collectedIndexes)
+        foreach (int index in hitIndexes)
         {
             DataBubble bubble = bubbles[index];
             events.OnBubbleDestroyed?.Invoke(bubble.GetPosition());
             bubbles.RemoveAt(index);
+
+            GameAudio.Instance.PopBubble();
 
             DataPoint[] newBubbles = DetermineSplits(bubble, lastLineStart, lastLineEnd);
             if(newBubbles != null)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -31,6 +32,7 @@ public class GameAudio : MonoBehaviour
     // Interal Storage
     private List<KeyValuePair<SoundCategory, AudioSource>> _sources;
     private bool _hasInit;
+    private int _bubbleQueueCount;
 
     /// <summary>
     /// Configure data structure
@@ -39,12 +41,20 @@ public class GameAudio : MonoBehaviour
     {
         if (Instance != null)
         {
-            throw new System.Exception("You cannot have two GameAudio singletons!");
+            Debug.LogWarning("Preventing duplicate GameAudio from being created");
+            DestroyImmediate(this.gameObject);
+            return;
         }
 
         _hasInit = false;
+        _bubbleQueueCount = 0;
         Instance = this;
         DontDestroyOnLoad(this);
+    }
+
+    public void PopBubble()
+    {
+        ++_bubbleQueueCount;
     }
 
     public void PlaySoundEffect(AudioClip clip)
@@ -155,6 +165,11 @@ public class GameAudio : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        while(_bubbleQueueCount > 0)
+        {
+            StartCoroutine(RandomlyCreateBubbleNoise());
+        }
+
         for (int i = _sources.Count - 1; i >= 0; i--)
         {
             AudioSource source = _sources[i].Value;
@@ -165,4 +180,21 @@ public class GameAudio : MonoBehaviour
             }
         }
     }
+
+
+    private IEnumerator RandomlyCreateBubbleNoise()
+    {
+        // Tick down, but prevent duplicate calls along the way.
+        if (_bubbleQueueCount <= 0)
+        {
+            yield break;
+        }
+
+        --_bubbleQueueCount;
+        float toWait = UnityEngine.Random.Range(0f, 0.15f);
+        yield return new WaitForSeconds(toWait);
+
+        Play(BubblePop, SoundCategory.SFX);
+    }
+
 }
