@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Poor form audio manager, completely isolated
+/// Poor form audio manager, completely isolated and reliant on
+/// people implementing it behaving nicely and not touching internals.
 /// </summary>
 public class GameAudio : MonoBehaviour
 {
@@ -22,6 +23,9 @@ public class GameAudio : MonoBehaviour
 
     public static GameAudio Instance { get; private set; }
 
+    // Inspector. Clips are public for external sources to provide them.
+    // This is not an advisable strategy because it lets code that interacts
+    // with the system tweak internal stuff, but it works.
     [Header("Sources")]
     [SerializeField] private AudioClip _music;
     public AudioClip Button;
@@ -29,10 +33,11 @@ public class GameAudio : MonoBehaviour
     public AudioClip SliderTick;
     public AudioClip BubblePop;
 
-    // Interal Storage
+    // Interal 
     private List<KeyValuePair<SoundCategory, AudioSource>> _sources;
     private bool _hasInit;
     private int _bubbleQueueCount;
+    Coroutine _bubblesPopping;
 
     /// <summary>
     /// Configure data structure
@@ -46,6 +51,7 @@ public class GameAudio : MonoBehaviour
             return;
         }
 
+        _bubblesPopping = null;
         _hasInit = false;
         _bubbleQueueCount = 0;
         Instance = this;
@@ -165,9 +171,9 @@ public class GameAudio : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        while(_bubbleQueueCount > 0)
+        if(_bubbleQueueCount > 0 && _bubblesPopping == null)
         {
-            StartCoroutine(RandomlyCreateBubbleNoise());
+            _bubblesPopping = StartCoroutine(RandomlyCreateBubbleNoise());
         }
 
         for (int i = _sources.Count - 1; i >= 0; i--)
@@ -187,14 +193,16 @@ public class GameAudio : MonoBehaviour
         // Tick down, but prevent duplicate calls along the way.
         if (_bubbleQueueCount <= 0)
         {
+            _bubblesPopping = null;
             yield break;
         }
 
         --_bubbleQueueCount;
-        float toWait = UnityEngine.Random.Range(0f, 0.15f);
+        float toWait = UnityEngine.Random.Range(0.0033f, 0.05f);
         yield return new WaitForSeconds(toWait);
-
         Play(BubblePop, SoundCategory.SFX);
+
+        _bubblesPopping = StartCoroutine(RandomlyCreateBubbleNoise());
     }
 
 }
