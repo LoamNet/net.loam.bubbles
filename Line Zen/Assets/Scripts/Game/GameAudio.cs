@@ -196,9 +196,10 @@ public class GameAudio : MonoBehaviour
             _bubblesPopping = null;
             yield break;
         }
-
+        
         --_bubbleQueueCount;
         float toWait = UnityEngine.Random.Range(0.0033f, 0.05f);
+        yield return null;
         yield return new WaitForSeconds(toWait);
         Play(BubblePop, SoundCategory.SFX);
 
