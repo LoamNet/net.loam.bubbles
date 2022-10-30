@@ -5320,8 +5320,8 @@ MonoBehaviour:
   _music: {fileID: 8300000, guid: 49cb1936098b01443949a8448aa3bb4e, type: 3}
   Button: {fileID: 8300000, guid: e86b9992da4619748a4a3e2449e2c049, type: 3}
   ButtonOrToggleClick: {fileID: 8300000, guid: 2894e73d5b567d3488921a48a1dea8d3, type: 3}
-  SliderTick: {fileID: 0}
-  BubblePop: {fileID: 8300000, guid: 84e2460e31c715745908b04539c3330c, type: 3}
+  SliderTick: {fileID: 8300000, guid: 3b90fed78444e864799dc705ce792c15, type: 3}
+  BubblePop: {fileID: 8300000, guid: 3b90fed78444e864799dc705ce792c15, type: 3}
 --- !u!4 &593190503
 Transform:
   m_ObjectHideFlags: 0
@@ -14269,6 +14269,7 @@ MonoBehaviour:
   _category: 0
   _slider: {fileID: 149589357}
   _text: {fileID: 112499864}
+  core: {fileID: 0}
 --- !u!1001 &1379561107
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15003,6 +15004,7 @@ MonoBehaviour:
   _category: 1
   _slider: {fileID: 1110871412}
   _text: {fileID: 1663943156}
+  core: {fileID: 1578864373}
 --- !u!114 &1472480801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21172,7 +21174,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2135569727}
   m_HandleRect: {fileID: 2135569726}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

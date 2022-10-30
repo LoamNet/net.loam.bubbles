@@ -1110,6 +1110,9 @@ GameObject:
   - component: {fileID: 567804404}
   - component: {fileID: 567804403}
   - component: {fileID: 567804401}
+  - component: {fileID: 567804407}
+  - component: {fileID: 567804406}
+  - component: {fileID: 567804402}
   m_Layer: 5
   m_Name: '[B] Back to Menu (Back to Menu)'
   m_TagString: Untagged
@@ -1150,6 +1153,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetScene: Main
+--- !u!114 &567804402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 567804399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 567804407}
+          m_TargetAssemblyTypeName: AudioPlayOnHoverButton, Assembly-CSharp
+          m_MethodName: AudioOnPlayEffectButton
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 567804406}
+          m_TargetAssemblyTypeName: AudioPlayOnToggleOrClick, Assembly-CSharp
+          m_MethodName: AudioOnPlayOnToggleOrClick
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!114 &567804403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1231,6 +1279,30 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 567804399}
   m_CullTransparentMesh: 0
+--- !u!114 &567804406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 567804399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1b9f3c6c11160d44a478fe7544daa83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &567804407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 567804399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0399e929a5f09940836efd15592f97e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &802181676
 GameObject:
   m_ObjectHideFlags: 0

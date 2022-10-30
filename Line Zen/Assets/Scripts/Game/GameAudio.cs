@@ -144,11 +144,10 @@ public class GameAudio : MonoBehaviour
     /// <summary>
     /// Creates and plays a new sound, adding it to managed list.
     /// </summary>
-    private void Play(AudioClip toPlay, SoundCategory category)
+    private AudioSource Play(AudioClip toPlay, SoundCategory category)
     {
         AudioSource source = gameObject.AddComponent<AudioSource>();
         source.clip = toPlay;
-        source.Play();
 
         if(category == SoundCategory.MUSIC)
         {
@@ -163,7 +162,9 @@ public class GameAudio : MonoBehaviour
             source.volume = vol;
         }
 
+        source.Play();
         _sources.Add(new KeyValuePair<SoundCategory, AudioSource>(category, source));
+        return source;
     }
 
     /// <summary>
@@ -198,10 +199,13 @@ public class GameAudio : MonoBehaviour
         }
         
         --_bubbleQueueCount;
-        float toWait = UnityEngine.Random.Range(0.0033f, 0.05f);
+        AudioSource source = Play(BubblePop, SoundCategory.SFX);
+        source.pitch *= Random.Range(0.925f, 1.075f);
+        source.volume *= Random.Range(0.9f, 1f);
+
         yield return null;
+        float toWait = Random.Range(0.005f, 0.015f);
         yield return new WaitForSeconds(toWait);
-        Play(BubblePop, SoundCategory.SFX);
 
         _bubblesPopping = StartCoroutine(RandomlyCreateBubbleNoise());
     }

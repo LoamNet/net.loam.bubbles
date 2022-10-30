@@ -103,8 +103,8 @@ public struct DataGeneral
         data.showHelp = false;
         data.showParticles = true;
         data.challenges = new List<DataPuzzle>();
-        data.musicVolume = 0.6f;
-        data.sfxVolume = 0.9f;
+        data.musicVolume = 0.8f;
+        data.sfxVolume = 0.6f;
 
         return data;
     }
@@ -207,10 +207,10 @@ public struct DataGeneral
                         case "showparticles":
                             showParticles = bool.Parse(value);
                             break;
-                        case "sfxVolume":
+                        case "sfxvolume":
                             sfxVolume = float.Parse(value);
                             break;
-                        case "musicVolume":
+                        case "musicvolume":
                             musicVolume = float.Parse(value);
                             break;
                     }
