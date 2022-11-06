@@ -23,9 +23,13 @@ public class Data : MonoBehaviour
             SetDataGeneral(DataGeneral.Defaults());
             Debug.LogWarning("no serialization system was specified for data. Constructing dummy data only.");
         }
-        
-        events.OnClearSavedData += () => {
-            confirmationDialog.Display(
+
+        events.OnClearSavedData += ClearSavedData;
+    }
+
+    private void ClearSavedData()
+    {
+        confirmationDialog.Display(
             () => {
                 int savedSeed = dataIO.GetData().seed;
                 DataGeneral resetData = DataGeneral.Defaults();
@@ -35,7 +39,6 @@ public class Data : MonoBehaviour
             () => {
                 // Do nothing on cancel.
             }, null);
-        };
     }
 
     public DataGeneral GetDataGeneral()
@@ -47,5 +50,10 @@ public class Data : MonoBehaviour
     {
         this.data = new DataGeneral(newData);
         events.OnDataChanged?.Invoke(data);
+    }
+
+    private void OnDestroy()
+    {
+        events.OnClearSavedData -= ClearSavedData;
     }
 }

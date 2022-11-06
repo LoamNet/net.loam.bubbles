@@ -9,7 +9,18 @@ public class SerializedDataIO : MonoBehaviour
 
     private void Start()
     {
-        events.OnDataChanged += OnSerializedDataChange;
+        if (events != null)
+        {
+            events.OnDataChanged += OnSerializedDataChange;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (events != null)
+        {
+            events.OnDataChanged -= OnSerializedDataChange;
+        }
     }
 
     void OnSerializedDataChange(DataGeneral data)

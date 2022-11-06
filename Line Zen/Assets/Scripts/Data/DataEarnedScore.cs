@@ -21,5 +21,21 @@ public struct DataEarnedScore
             this.locations = new List<DataPoint>(locations.ToArray());
         }
     }
+
+    public static DataEarnedScore None()
+    {
+        DataEarnedScore noScore = new DataEarnedScore();
+        noScore.bonus = 0;
+        noScore.locations = null;
+        noScore.score = 0;
+        noScore.total = 0;
+
+        return noScore;
+    }
+
+    public bool IsNoScore()
+    {
+        return (locations == null || locations.Count == 0) || (score == 0 && total == 0 && bonus == 0);
+    }
 }
 

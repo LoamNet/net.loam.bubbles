@@ -639,9 +639,18 @@ public class GameCore : MonoBehaviour
     {
         if (isPaused)
         {
+            // Destroy any lines if we're paused, and stop the process.
+            if (wasDownPreviously)
+            {
+                lastLineStart = DataPoint.Zero;
+                lastLineEnd = DataPoint.Zero;
+                events.OnLineDestroyed?.Invoke(lastLineStart, lastLineEnd, DataEarnedScore.None());
+                wasDownPreviously = false;
+            }
             return;
         }
 
+        // Create bubble lines, and handle collections if needed
         if (inputManager.PrimaryInputDown())
         {
             if (wasDownPreviously)
@@ -672,6 +681,18 @@ public class GameCore : MonoBehaviour
                     levelScore += points.total;
                     events.OnLevelSpecificScoreChange?.Invoke(levelScore);
                 }
+            }
+        }
+
+        // Allow user to cancel with right-click
+        if (inputManager.SecondaryInputDown())
+        {
+            if(wasDownPreviously)
+            {
+                lastLineStart = DataPoint.Zero;
+                lastLineEnd = DataPoint.Zero;
+                events.OnLineDestroyed?.Invoke(lastLineStart, lastLineEnd, DataEarnedScore.None());
+                wasDownPreviously = false;
             }
         }
     }

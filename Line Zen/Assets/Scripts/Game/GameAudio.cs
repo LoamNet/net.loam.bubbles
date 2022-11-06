@@ -37,7 +37,8 @@ public class GameAudio : MonoBehaviour
     private List<KeyValuePair<SoundCategory, AudioSource>> _sources;
     private bool _hasInit;
     private int _bubbleQueueCount;
-    Coroutine _bubblesPopping;
+    private Coroutine _bubblesPopping;
+    private DataGeneral? _backup;
 
     /// <summary>
     /// Configure data structure
@@ -98,11 +99,39 @@ public class GameAudio : MonoBehaviour
     private DataGeneral GetGameData()
     {
         GameCore core = GetCore();
-        DataGeneral data = core.data.GetDataGeneral();
+        if (core == null)
+        {
+            if (_backup == null)
+            {
+                // get component.
+                SerializedDataIO data = gameObject.GetComponent<SerializedDataIO>();
 
-        ConnectEvents();
+                // widen search
+                if (data == null)
+                {
+                    data = FindObjectOfType<SerializedDataIO>();
+                }
 
-        return data;
+                // create what we need
+                if (data == null)
+                {
+                    GameObject newObj = new GameObject("No core - Temporary SerializedDataIO object");
+                    data = newObj.AddComponent<SerializedDataIO>();
+                }
+
+                _backup = data.GetData();
+            }
+
+            return _backup.Value;
+        }
+        else
+        {
+            DataGeneral data = core.data.GetDataGeneral();
+            ConnectEvents();
+            _backup = null;
+
+            return data;
+        }
     }
 
     /// <summary>

@@ -42,6 +42,8 @@ public struct DataPoint
         return !float.IsNaN(X) && !float.IsNaN(Y);
     }
 
+    public static DataPoint Zero => new DataPoint(0, 0);
+
     /////////////////////////////////////////////////////
     // Operator overloading - implicit casting allowed //
     /////////////////////////////////////////////////////
