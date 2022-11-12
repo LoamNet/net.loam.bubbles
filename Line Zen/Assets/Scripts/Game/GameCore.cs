@@ -589,12 +589,14 @@ public class GameCore : MonoBehaviour
 
             while (bubbles.Count < bubbleCountFloat)
             {
-                double x = (rand.Next() - 0.5f) * 2;
-                double y = (rand.Next() - 0.5f) * 2;
-                if(y > 0.90f)
-                {
-                    y = 0.90f;
-                }
+                double xUnscaled = rand.Next(); // 0 to 1, can be thought of as screen with left to right as a percentage.
+                double yUnscaled = rand.Next(); // 0 to 1, can be thought oif 
+
+                xUnscaled = Mathf.Clamp((float)xUnscaled, 0.1f, 0.95f);
+                yUnscaled = Mathf.Clamp((float)yUnscaled, 0.1f, 0.9f);
+
+                double x = (xUnscaled - 0.5f) * 2; // map to -1 to 1
+                double y = (yUnscaled - 0.5f) * 2; // map to -1 to 1
 
                 // Debug.Log($"x,y: {x}, {y}");
                 DataPoint screenSize = inputManager.ScreenSizeWorld();
