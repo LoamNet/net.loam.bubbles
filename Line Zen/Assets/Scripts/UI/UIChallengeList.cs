@@ -10,6 +10,7 @@ public class UIChallengeList : MonoBehaviour
     public UIChallengeEntry entryTemplate;
     public TMPro.TextMeshProUGUI fraction;
     public TMPro.TextMeshProUGUI percentage;
+    public GameCore core;
 
     private List<UIChallengeEntry> entries;
     private SOChallenges list;
@@ -70,15 +71,40 @@ public class UIChallengeList : MonoBehaviour
             DataPuzzle? challenge = GetSavedDataChallenge(challenges, entry.name);
             int stars = 0;
             long score = 0;
+            int group = -1;
             if (challenge.HasValue)
             {
                 stars = challenge.Value.stars;
                 score = challenge.Value.score;
+
+                string content = core.levels.GetByName(challenge.Value.name).text;
+                string tag = "group";
+                int groupStart = content.IndexOf(tag);
+                if (groupStart >= 0)
+                {
+                    string groupSection = content.Substring(groupStart + tag.Length);
+
+                    int equalsStart = groupSection.IndexOf("=");
+                    int lineEnd = groupSection.IndexOf("\n");
+                    string groupVal;
+
+                    if(lineEnd != -1)
+                    {
+                        groupVal = groupSection.Substring(equalsStart + 1, lineEnd);
+                    }
+                    else
+                    {
+                        groupVal = groupSection.Substring(equalsStart + 1);
+                    }
+
+                    group = int.Parse(groupVal);
+                }
+
                 starsCurrent += stars;
             }
 
             toParent.gameObject.SetActive(true);
-            toParent.Initialize(entry.name, stars, displayName, score);
+            toParent.Initialize(entry.name, stars, displayName, score, group);
             entries.Add(toParent);
         }
 

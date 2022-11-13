@@ -17,7 +17,7 @@ public struct DataPuzzle
         this.name = other.name;
     }
 
-    public DataPuzzle(int stars, string name, long score)
+    public DataPuzzle(int stars, string name, long score, int group)
     {
         this.score = score;
         this.stars = stars;

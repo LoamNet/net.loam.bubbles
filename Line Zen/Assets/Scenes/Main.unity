@@ -8719,7 +8719,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -14241,6 +14241,7 @@ MonoBehaviour:
   events: {fileID: 399031073}
   title: {fileID: 0}
   scoreText: {fileID: 1624254364}
+  scoreTextArea: {fileID: 0}
   unstarred: {fileID: 21300000, guid: c99fdcdb90740b54bbb21cec681b46bc, type: 3}
   unstarredColor: {r: 0.6806248, g: 0.8749122, b: 0.8962264, a: 0.8}
   starred: {fileID: 21300000, guid: 43ad7747a3f1dac4f9f93c53a84308c1, type: 3}
@@ -14248,6 +14249,8 @@ MonoBehaviour:
   star1: {fileID: 137500737}
   star2: {fileID: 2132943066}
   star3: {fileID: 1702020831}
+  levelCategoryIcon: {fileID: 0}
+  groupEntries: []
 --- !u!114 &1509427766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15809,6 +15812,7 @@ MonoBehaviour:
   events: {fileID: 399031073}
   title: {fileID: 0}
   scoreText: {fileID: 721338426}
+  scoreTextArea: {fileID: 0}
   unstarred: {fileID: 21300000, guid: c99fdcdb90740b54bbb21cec681b46bc, type: 3}
   unstarredColor: {r: 0.6806248, g: 0.8749122, b: 0.8962264, a: 0.8}
   starred: {fileID: 21300000, guid: 43ad7747a3f1dac4f9f93c53a84308c1, type: 3}
@@ -15816,6 +15820,8 @@ MonoBehaviour:
   star1: {fileID: 1565589184}
   star2: {fileID: 1652475217}
   star3: {fileID: 428653401}
+  levelCategoryIcon: {fileID: 0}
+  groupEntries: []
 --- !u!114 &1688762961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20950,6 +20956,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 38054210}
     m_Modifications:
+    - target: {fileID: 1470663172307248401, guid: ae115bd4b889efd4483a65168d02ec6c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1470663172417413399, guid: ae115bd4b889efd4483a65168d02ec6c,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -21192,6 +21203,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1470663173813279265, guid: ae115bd4b889efd4483a65168d02ec6c,
         type: 3}
+      propertyPath: core
+      value: 
+      objectReference: {fileID: 1578864373}
+    - target: {fileID: 1470663173813279265, guid: ae115bd4b889efd4483a65168d02ec6c,
+        type: 3}
       propertyPath: data
       value: 
       objectReference: {fileID: 399031075}
@@ -21235,6 +21251,46 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1470663174167452534, guid: ae115bd4b889efd4483a65168d02ec6c,
+        type: 3}
+      propertyPath: events
+      value: 
+      objectReference: {fileID: 399031073}
+    - target: {fileID: 1470663174167452534, guid: ae115bd4b889efd4483a65168d02ec6c,
+        type: 3}
+      propertyPath: groupEntries.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1470663174167452534, guid: ae115bd4b889efd4483a65168d02ec6c,
+        type: 3}
+      propertyPath: groupEntries.Array.data[0]
+      value: 
+      objectReference: {fileID: 21300000, guid: ebd7abcb0a9e8d84fb8939020ae5d9b8,
+        type: 3}
+    - target: {fileID: 1470663174167452534, guid: ae115bd4b889efd4483a65168d02ec6c,
+        type: 3}
+      propertyPath: groupEntries.Array.data[1]
+      value: 
+      objectReference: {fileID: 21300000, guid: bee2044c97cbc404ab7e9fd93f1fd240,
+        type: 3}
+    - target: {fileID: 1470663174167452534, guid: ae115bd4b889efd4483a65168d02ec6c,
+        type: 3}
+      propertyPath: groupEntries.Array.data[2]
+      value: 
+      objectReference: {fileID: 21300000, guid: ab03c028d53ad7d4d94d482315360337,
+        type: 3}
+    - target: {fileID: 1470663174167452534, guid: ae115bd4b889efd4483a65168d02ec6c,
+        type: 3}
+      propertyPath: groupEntries.Array.data[3]
+      value: 
+      objectReference: {fileID: 21300000, guid: 500aa956558ad794aa8f2578fd1b0e3e,
+        type: 3}
+    - target: {fileID: 1470663174167452534, guid: ae115bd4b889efd4483a65168d02ec6c,
+        type: 3}
+      propertyPath: groupEntries.Array.data[4]
+      value: 
+      objectReference: {fileID: 21300000, guid: fa54d84c4b424e3479d7fd45f132d4f3,
+        type: 3}
     - target: {fileID: 1470663174185210865, guid: ae115bd4b889efd4483a65168d02ec6c,
         type: 3}
       propertyPath: m_AnchorMax.y

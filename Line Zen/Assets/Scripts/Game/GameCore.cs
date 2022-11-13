@@ -164,7 +164,7 @@ public class GameCore : MonoBehaviour
 
         events.OnNoSaveEntryFound += (name) => {
             DataGeneral toModify = data.GetDataGeneral();
-            toModify.challenges.Add(new DataPuzzle(0, name, 0));
+            toModify.challenges.Add(new DataPuzzle(0, name, 0, 0));
             data.SetDataGeneral(toModify);
         };
 

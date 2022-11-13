@@ -7,3 +7,4 @@ bubble=1.586,1.962
 bubble=0.654,-0.985
 bubble=1.286,3.887
 bubble=-0.083,3.872
+group=0

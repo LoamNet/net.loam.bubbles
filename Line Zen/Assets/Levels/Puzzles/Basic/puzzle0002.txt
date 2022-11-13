@@ -3,3 +3,4 @@ stars=25,55
 bubble=-1,-2
 bubble=.5,-1
 bubble=2,-1.25
+group=0

@@ -7,3 +7,4 @@ bubble=-1.6,-2.15
 bubble=0,1
 bubble=1.85,-2.25
 stars=115,165
+group=0

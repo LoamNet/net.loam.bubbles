@@ -12,6 +12,7 @@ public class UIChallengeEntry : MonoBehaviour
     [Header("Info")]
     public TextMeshProUGUI title;
     public TextMeshProUGUI scoreText;
+    public CanvasGroup scoreTextArea;
 
     [Header("Stars")]
     public Sprite unstarred;
@@ -23,6 +24,10 @@ public class UIChallengeEntry : MonoBehaviour
     public Image star1;
     public Image star2;
     public Image star3;
+    [Space]
+    public Image levelCategoryIcon;
+    [Header("Index 0 corresponds to group 0")]
+    public List<Sprite> groupEntries;
 
     private string file;
 
@@ -36,9 +41,15 @@ public class UIChallengeEntry : MonoBehaviour
     }
 
     // Set default values and content, and adjust display settings
-    public void Initialize(string file, int stars, string title, long score)
+    public void Initialize(string file, int stars, string title, long score, int group = -1)
     {
         this.file = file;
+
+        if(group >= 0)
+        {
+            // shift by one
+            levelCategoryIcon.sprite = groupEntries[group];
+        }
 
         if (stars >= 3)
         {
@@ -78,15 +89,31 @@ public class UIChallengeEntry : MonoBehaviour
             this.title.text = title;
         }
 
+
         if(this.scoreText != null)
         {
             if (score > 0)
             {
+                if (this.scoreTextArea != null)
+                {
+                    this.scoreTextArea.alpha = 1;
+                }
                 this.scoreText.text = score.ToString();
             }
             else
             {
+                if (this.scoreTextArea != null)
+                {
+                    this.scoreTextArea.alpha = 0;
+                }
                 this.scoreText.text = "";
+            }
+        }
+        else
+        {
+            if(this.scoreTextArea != null)
+            {
+                this.scoreTextArea.alpha = 0;
             }
         }
     }
