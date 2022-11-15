@@ -11,9 +11,9 @@ Play or download at https://loam.net/games/
 
 ## Casual Retrospective
 
-This game is no longer in active development. This was a project started as an HTML5 version of the unlimited mode, and to create more interesting situations and challenges I added the main challenges mode. I worked on it for a tad, but it was put down in a broken-ish state back in 2019 or so and did effectively no work until this year. I picked it back up mid 2022 to turn it into a little puzzle game for people could enjoy, but decided not to rewrite it to see what working with my old decisions and could would be like.
+This game is no longer in active development. This was a project started as a HTML5 version of the unlimited mode, and to create more interesting situations and challenges I added the main challenges mode. I worked on it for a tad, but it was put down in a broken-ish state back in 2019 or so and did effectively no work until this year. I picked it back up a month or two ago to turn it into a little puzzle game for people could enjoy, but decided not to rewrite it to see what working with my old decisions and could would be like.
 
-As of October 2022, the only changes are bug fixes and more challenges or challenge tweaks.
+As of November 2022, the only changes are bug fixes and more challenges or challenge tweaks.
 
 ### Successes:
 Vaguely ordered larger to smaller
