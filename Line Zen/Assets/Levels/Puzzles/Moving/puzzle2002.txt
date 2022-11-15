@@ -1,6 +1,6 @@
 name=Slant
 group=2
-stars=60,185
+stars=60,110
 bubbles=-0.08,2.20:0.00,0.00@0
 bubbles=0.01,-2.89:0.00,0.00@0
 bubbles=-1.32,2.24:2.18,-2.74@10
