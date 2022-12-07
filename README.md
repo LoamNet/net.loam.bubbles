@@ -39,6 +39,8 @@ These first two both stemmed from using the same pattern as the jam this was bas
 
 - Using a custom data format. None of the data structures I used would have been a problem in JSON, and I uncovered a number of serialization bugs that wouldn't have existed if I'd used even the existing unity JSON solution.
 
+- Event solution was pretty lacking. It was a file full of System.Action entries, which isn't necessarily the worst, but it had to be directly referenced and in practice it was a huge pain the moment multiple scenes were involved. In the future, a propre cross-scene event or message system would be better.
+
 - Wrapping Vector2 in a custom DataPoint class. I'd guess the intent was to give more space for debugging and to encourage splitting visuals and data - but in practice I couldn't take advantage of it, the decision didn't really help enforce separation, and it was an unnecessary pain when going between types.
 
 - A focus on struct data types when not needed. In cases where data only lasts a bit and there's no harm in having a reference, it's really just a perf hit in unity. And when there's a list or array in the struct? That's just asking for headaches. I'm surprised this wasn't a bigger issue.
