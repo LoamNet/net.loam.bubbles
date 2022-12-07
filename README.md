@@ -3,7 +3,8 @@ A zen puzzle game about collecting as many bubbles with a line as possible. This
 
 ## Platforms:
 - Web (does not save progress in-browser)
-- Desktop (windows)
+- Android
+- Windows
 
 Play or download at https://loam.net/games/
 
