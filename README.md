@@ -2,7 +2,7 @@
 A zen puzzle game about collecting as many bubbles with a line as possible. This game is free, and the source is available to view/explore. 
 
 ## Platforms:
-- Web (does not save progress in-browser)
+- Web (doesn't always save progress in-browser)
 - Android
 - Windows
 
