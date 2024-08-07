@@ -1,4 +1,4 @@
-# LineZen
+# Line Zen
 A zen puzzle game about collecting as many bubbles with a line as possible. This game is free, and the source is available to view/explore. 
 
 ## Platforms:
